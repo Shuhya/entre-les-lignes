@@ -12,12 +12,16 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
+const VER="2.6";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
 nuit:{b:["lowpass",110,.03],e:[[14000,()=>hit(R(180,300),R(3,5),.04,"lowpass",1.5)],[70000,()=>tn(750,950,3,.008,1)]]}};
 AM.foret={b:["lowpass",300,.05],e:[[5200,()=>{const f=R(1800,2700),n=2+(Math.random()*3|0);for(let i=0;i<n;i++)setTimeout(()=>tn(f*R(.96,1.06),f*R(1.18,1.4),R(.07,.15),.035,.012),i*R(110,230))}],[13000,()=>tn(R(2400,3200),R(1400,1800),R(.25,.5),.018,.02)]]};
 AM.aube=AM.foret;AM.carnet=AM.gare;
+AM.cafe={b:["bandpass",520,.05,.8],e:[[9000,()=>hit(R(1800,2600),.05,R(.05,.1),"bandpass",.01,2)],[17000,()=>{tn(R(2400,3200),R(1200,1600),.08,.02,.03);setTimeout(()=>hit(R(1400,1900),.04,.05,"highpass",.005,1.5),R(120,400))}],[28000,()=>{const f=R(300,420),p=Pk([[f,f*1.19],[f*1.33,f],[f,f*1.5]]);p.forEach((x,i)=>setTimeout(()=>tn(x[0],x[1],R(.3,.5),.012,.01),i*R(180,320)))}]]};
+AM.sombre={b:["lowpass",150,.04],e:[[22000,()=>hit(R(160,260),R(3,5),.035,"lowpass",1.4)],[55000,()=>tn(R(600,800),R(400,500),2.5,.006,.8)]]};
+const AUTOAMB={cafe:"cafe",bureau:"sombre",archives:"sombre",grange:"nuit",ormes:"nuit",champ:"nuit",voiture:"nuit",train:"gare"};
 let RB=null,rb=null,rsrc=[],ambId=0;
 // b64: audio pluie désormais chargé depuis assets/audio/pluie.mp3
 const rainBuf=()=>RB||(RB=fetch("assets/audio/pluie.mp3").then(r=>r.arrayBuffer()).then(ab=>new Promise(res=>{try{ac.decodeAudioData(ab,res,()=>res(null))}catch(e){res(null)}})).catch(()=>{RB=null;return null}));
@@ -25,7 +29,8 @@ async function startRain(id,g){const buf=await rainBuf();if(!buf||id!=ambId)retu
  rb=ac.createGain();rb.gain.value=0;rb.connect(ag);rb.gain.setTargetAtTime(g||.55,ac.currentTime,1.2);
  [[1,0],[1.04,.43]].forEach(([r,o])=>{const s=ac.createBufferSource(),g=ac.createGain();s.buffer=buf;s.loop=true;s.playbackRate.value=r;g.gain.value=.7;s.connect(g);g.connect(rb);s.start(0,buf.duration*o);rsrc.push(s)})}
 function stopRain(){if(rb){const s=rsrc;rb.gain.setTargetAtTime(0,ac.currentTime,.7);setTimeout(()=>{s.forEach(x=>{try{x.stop()}catch(e){}})},3500);rb=null;rsrc=[]}}
-function amb(k){if(!ac)return;ambId++;tm.forEach(clearTimeout);tm=[];stopRain();if(bs){const c=bs;c.g.gain.setTargetAtTime(0,ac.currentTime,.6);setTimeout(()=>{try{c.s.stop()}catch(e){}},3000);bs=null}
+let ambCur=null;
+function amb(k){if(!ac)return;if(k&&k===ambCur&&(bs||rb))return;ambCur=k;ambId++;tm.forEach(clearTimeout);tm=[];stopRain();if(bs){const c=bs;c.g.gain.setTargetAtTime(0,ac.currentTime,.6);setTimeout(()=>{try{c.s.stop()}catch(e){}},3000);bs=null}
 if(k=="pluie"){startRain(ambId);return}
 if(k=="aube"){startRain(ambId,.22);AM.foret.e.forEach(([ms,fn])=>{const go=()=>{fn();tm.push(setTimeout(go,ms*R(.4,1.6)))};tm.push(setTimeout(go,ms*R(.1,.8)))});return}
 const a=AM[k];if(!a)return;const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(),fr=a.b[1],bg=a.b[2];s.buffer=nz;s.loop=true;f.type=a.b[0];f.frequency.value=fr;f.Q.value=a.b[3]||1;g.gain.value=0;s.connect(f);f.connect(g);g.connect(ag);s.start(0,Math.random()*5);bs={s,g};
@@ -50,7 +55,7 @@ async function play(id,r=run){
  const abn=$("apps");if(abn)abn.style.display="none";
  if(ADM&&$("a6"))$("a6").textContent=id;
  if(n.j)return play(n.j(st),r);
- if(n.w){scene(n.w,id);try{const sm=JSON.parse(localStorage.getItem("etl_node_sounds")||"{}");if(sm[id])amb(sm[id])}catch(e){}}
+ if(n.w){scene(n.w,id);try{const sm=JSON.parse(localStorage.getItem("etl_node_sounds")||"{}");if(sm[id])amb(sm[id]);else if(AUTOAMB[n.w])amb(AUTOAMB[n.w])}catch(e){}}
  if(n.pro)await proCards(n.pro);
  if(n.tel){const T=n.tel;await new Promise(q=>telOv(T,q))}
  if(n.app){const tA=n.app,tN=n.nm||"",oC=CAPP,oN=CNM,ck=oC+"|"+oN,nk=tA+"|"+tN;
@@ -115,19 +120,19 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel en cours",lines=T[2]|
   setTimeout(next,Math.min(4200,1300+tx.length*38)/SPD)};
  setTimeout(next,1000/SPD);
  eb.onclick=()=>{clearInterval(iv);callSpeakStop();o.remove();stopV();done()}}
-function endsTotal(s){const seen={},q=[],out=new Set();(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
+function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
  const FL=["jea","aveu","malik","bloq"];
  while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
-  if(n.e)out.add(n.e[0]);if(n.k)out.add(n.k);
+  const t=n.k||(n.e&&n.e[0]);if(t&&!out.includes(t))out.push(t);
   (n.c||[]).forEach(c2=>{if(c2[1])q.push(c2[1])});if(typeof n.x==="string")q.push(n.x);
   if(typeof n.j==="function"){
    for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c2=0;c2<2;c2++)for(let d=0;d<2;d++){
     const st={int:a*3,pov:b*2,prm:c2*2};if(d)FL.forEach(f=>st[f]=1);
     try{const t=n.j(st);if(t&&S[t]&&!seen[t])q.push(t)}catch(e){}}}}
- return out.size}
+ return out}
+function endsTotal(s){return endsList(s).length}
 function endScreen(t,x,seen){const tot=endsTotal(SS);
  const o=document.createElement("div");o.id="endOv";
- o.style.backgroundImage="linear-gradient(#000c,#000e),url("+IMG.menu+")";
  const c=document.createElement("div");c.className="card";
  const h=document.createElement("h2");h.textContent=t;c.append(h);
  const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t;c.append(sub);
@@ -135,10 +140,12 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
  bar(st.int,"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
- const fd=document.createElement("div");fd.className="endFins";const fl=document.createElement("b");fl.textContent="Fins découvertes";fd.append(fl);
- const dots=document.createElement("div");dots.className="endDots";
- for(let i=0;i<tot;i++){const d=document.createElement("i");if(i<seen.length)d.className="on";dots.append(d)}
- const dl=document.createElement("small");dl.textContent=seen.length+" / "+tot;dots.append(dl);fd.append(dots);c.append(fd);
+ const fd=document.createElement("div");fd.className="endFins";const fl=document.createElement("b");fl.textContent="Fins découvertes — "+seen.length+" / "+tot;fd.append(fl);
+ const list=document.createElement("div");list.className="endFinsList";
+ endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
+  r.innerHTML=seen.includes(t)?"<span>\u2713</span>"+t.replace(/</g,"&lt;"):"<span>\uD83D\uDD12</span>"+t.replace(/</g,"&lt;");
+  list.append(r)});
+ fd.append(list);c.append(fd);
  const b1=document.createElement("button");b1.id="ob";b1.textContent="↺ Revivre l'histoire";b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
  o.append(c);document.body.append(o);
@@ -150,7 +157,7 @@ function fin([t,x]){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.m
  setTimeout(()=>{if(r!=run)return;if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)},1800)}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={d1:"I",d1a:"I",d1b:"I",d1b2:"I",d1c:"I",d1c2:"I",d2:"II",d2c:"II",d2c2:"II",d2c3:"II",d2j:"II",d2j2:"II",d2j3:"II",d2s:"II",d3:"III",d3a:"III",d3b:"III",d3c:"III",d3d:"III",d4:"III",d4a:"III",d4b:"III",d4c:"III",d5:"IV",d5a:"IV",d5b:"IV",d5c:"IV",d5d:"IV",d5d2:"IV",d5d3:"IV",d6:"V",d6a:"V",d6a2:"V",d6a3:"V",d6b:"V",d7:"V",d7a:"V",d7b:"V",d7c:"V",d7c2:"V",d8:"VI",d8t:"VI",d8t2:"VI",d8r:"VI",d8f:"VI",d8k:"VI",d8p:"VI",d8s:"VI",d8z:"VI",d8za:"VI",d8zb:"VI",d8z2:"VI",d9:"VI",d9a:"VI",d9a1:"VI",d9j:"VI",d9a2:"VI",d9b:"VI",d9c:"VI",d10:"VI",d10b:"VI",d11a:"VI",d11b:"VI",d11bm:"VI",d11bs:"VI",d11bt:"VI",d11br:"VI",d11c:"VI",d11d:"VI",d11e:"VI",dA:"VI",dB:"VI",dC:"VI",dD:"VI",dE:"VI",dF:"VI",dG:"VI",dH:"VI"};
+const PART={d1:"I",d1a:"I",d1b:"I",d1b2:"I",d1c:"I",d1c2:"I",d2:"II",d2c:"II",d2c2:"II",d2c3:"II",d2j:"II",d2j2:"II",d2j3:"II",d2s:"II",d3:"III",d3a:"III",d3b:"III",d3c:"III",d3d:"III",d4:"III",d4a:"III",d4b:"III",d4c:"III",d5:"IV",d5a:"IV",d5b:"IV",d5c:"IV",d5d:"IV",d5d2:"IV",d5d3:"IV",d6:"V",d6a:"V",d6a2:"V",d6a3:"V",d6b:"V",d7:"V",d7a:"V",d7b:"V",d7c:"V",d7c2:"V",d8:"VI",d8t:"VI",d8t2:"VI",d8r:"VI",d8f:"VI",d8k:"VI",d8p:"VI",d8s:"VI",d8z:"VI",d8za:"VI",d8zb:"VI",d8z2:"VI",d9:"VI",d9a:"VI",d9a1:"VI",d9j:"VI",d9a2:"VI",d9b:"VI",d9c:"VI",d10:"VI",d10z:"VI",d10b:"VI",d11a:"VI",d11b:"VI",d11bm:"VI",d11bs:"VI",d11bt:"VI",d11br:"VI",d11c:"VI",d11d:"VI",d11e:"VI",dA:"VI",dB:"VI",dC:"VI",dD:"VI",dE:"VI",dF:"VI",dG:"VI",dH:"VI"};
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
  $("nm").textContent=n.nm||(SC?SS.n:SS.num);$("st").textContent=n.stx||n.app;
@@ -247,7 +254,8 @@ function homeIntro(){
   $("mn").classList.remove("on");amb(null);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
- const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="o";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});row(c,"Smiley dans les messages : "+(emojiMode?"activés":"désactivés"),"Activer ou désactiver les emojis selon ton ton de lecture",()=>{emojiMode=!emojiMode;localStorage.setItem("etl_emoji",emojiMode?"on":"off");menu()});const vr=row(c,"Affichage : "+(PC?"PC":"Téléphone"),"Touche pour changer",()=>{setView(!PC);vr.children[0].textContent="Affichage : "+(PC?"PC":"Téléphone")});show(c);
+ const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="o";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
+ row(c,"Smiley dans les messages : "+(emojiMode?"activés":"désactivés"),"Activer ou désactiver les emojis selon ton ton de lecture",()=>{emojiMode=!emojiMode;localStorage.setItem("etl_emoji",emojiMode?"on":"off");menu()});const vr=row(c,"Affichage : "+(PC?"PC":"Téléphone"),"Touche pour changer",()=>{setView(!PC);vr.children[0].textContent="Affichage : "+(PC?"PC":"Téléphone")});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
