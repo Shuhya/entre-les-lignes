@@ -286,12 +286,28 @@ body.pc .bk .bkLock{right:24px}
 .notif{animation:nSh 2.4s ease-in-out infinite}
 @keyframes nSh{0%,100%{box-shadow:0 10px 30px #0009}50%{box-shadow:0 10px 34px #000b,0 0 0 3px #ffd16633}}
 /* ---- liste de conversations (fils) ---- */
-#thrOv{position:absolute;inset:0;z-index:34;background:linear-gradient(#151824,#0f1119);overflow-y:auto;padding:16px 14px;color:#fff;animation:fo .35s}
+#thrOv{position:absolute;inset:0;z-index:34;background:#0b141a;overflow-y:auto;padding:0;color:#fff;animation:fo .35s}
+#thrOv .thrHead{display:flex;align-items:baseline;justify-content:space-between;padding:18px 20px 12px;background:#1f2c34;position:sticky;top:0;z-index:2;box-shadow:0 1px 3px #0008}
+#thrOv .thrHead h2{font:500 20px system-ui,-apple-system,sans-serif;margin:0}
+#thrOv .thrSub{font:400 12px system-ui;color:#8fa6b0}
+#thrOv .ahBack{margin:18px 16px 10px;width:calc(100% - 32px)}
 #thrOv h2,#notesOv h2{font:400 21px Georgia,serif;margin:4px 2px 12px}
-.thrR{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#ffffff0d;border:0;border-radius:14px;padding:12px;margin:7px 0;cursor:pointer;color:#fff;transition:background .15s}
-.thrR:hover{background:#ffffff1a}
-.thrA{width:42px;height:42px;border-radius:50%;background:#6b5bd6;display:grid;place-items:center;font-size:19px;flex:none}
-.thrT b{display:block;font-size:15px}
+.thrR{display:flex;align-items:center;gap:15px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid #ffffff0d;border-radius:0;padding:13px 16px 13px 20px;margin:0;cursor:pointer;color:#fff;transition:background .15s;font-family:system-ui,-apple-system,sans-serif}
+.thrR:hover{background:#202c33}
+.thrA{width:49px;height:49px;border-radius:50%;background:#37424a;display:grid;place-items:center;font:600 20px system-ui;flex:none;color:#cfd8dc}
+.thrA.ph{background-size:cover;background-position:center}
+.thrA.unk{color:#9ab0ba;background:#24343d}
+.thrA.file{color:#ffd54f;background:#2a3a2a}
+.thrA.grp{display:flex;align-items:center;background:none;padding:0}
+.thrA.grp img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1.5px solid #1f2c34}
+.thrA.grp img+img,.thrA.grp i+i{margin-left:-8px}
+.thrA.grp i{width:30px;height:30px;border-radius:50%;background:#24343d;display:grid;place-items:center;font:600 14px system-ui;font-style:normal;color:#cfd8dc;border:1.5px solid #1f2c34}
+.thrT{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.thrT b{font:500 16px system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thrT small{font:400 13.5px system-ui;color:#8696a0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.thrM{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.thrM i{font:400 11.5px system-ui;color:#8696a0;font-style:normal}
+.thrM em{min-width:19px;height:19px;border-radius:50%;background:#25d366;color:#0b141a;font:700 11.5px system-ui;display:grid;place-items:center;font-style:normal;padding:0 3px}
 /* ---- notes de l'enquête ---- */
 #notesOv{position:absolute;inset:0;z-index:35;background:linear-gradient(#171922,#101219);overflow-y:auto;padding:18px 16px;color:#fff;animation:fo .35s}
 #notesOv>b{display:block;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:#ffd166c4;margin:16px 0 6px}

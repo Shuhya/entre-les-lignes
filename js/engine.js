@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.13";console.log("Entre les lignes · v"+VER);
+const VER="2.14";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -211,10 +211,28 @@ function goApp(app,lbl){const t=APPH[app+"|"+lbl]||{};applyApp(hdrOf(app,lbl));
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
  $("chat").scrollTop=1e9}
 function thrOv(app){const o=document.createElement("div");o.id="thrOv";
- $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"📱":"💬"}
- let h='<h2>'+(app==="SMS"?"Messages":app)+'</h2>';
- (THR[app]||[]).forEach(lbl=>{h+='<button class="thrR" data-l="'+lbl+'"><span class="thrA">'+(app==="SMS"?"📱":"💬")+'</span><span class="thrT"><b>'+lbl+'</b></span></button>'});
- h+='<button class="ahBack" id="thrB">‹ Applications</button>';o.innerHTML=h;$("app").append(o);
+ $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"\u{1F4F1}":"\u{1F4AC}"}
+ const title=app==="SMS"?"Messages":app;
+ const MEM={"Les Inoubliables":["Camille","Jeanne"],"Projet Orph\u00E9e":["L\u00E9o","Adrien","V."]};
+ const PH={"Camille":"C","Jeanne":"J"};
+ const mkAv=lbl=>{
+  if(app==="Fichiers")return '<span class="thrA file">\u{1F4C4}</span>';
+  const mem=MEM[lbl];
+  if(mem){return '<span class="thrA grp">'+mem.map(m=>PH[m]&&AVGR[PH[m]]?'<img alt="'+m+'" src="'+AVGR[PH[m]]+'">':'<i>'+m[0]+'</i>').join("")+'</span>'}
+  const k=PH[lbl];
+  if(k&&AVGR[k])return '<span class="thrA ph" style="background-image:url('+AVGR[k]+')"></span>';
+  if(/^(Num\u00E9ro|\+33)/.test(lbl))return '<span class="thrA unk">\u{1F464}</span>';
+  return '<span class="thrA">'+lbl[0]+'</span>'};
+ const prev=lbl=>{const t=APPH[app+"|"+lbl]||{};const d=document.createElement("div");d.innerHTML=t.c||"";
+  const bs=d.querySelectorAll(".b");let tx=bs.length?bs[bs.length-1].textContent.trim().replace(/\s+/g," "):"";
+  if(tx.length>52)tx=tx.slice(0,51)+"\u2026";
+  const tss=d.querySelectorAll(".ts");let tm=tss.length?tss[tss.length-1].textContent.split(" ").pop():"";
+  const unread=(t.h||"").includes("<button")?1:0;
+  return{tx,tm,unread}};
+ let h='<div class="thrHead"><h2>'+title+'</h2><span class="thrSub">'+((THR[app]||[]).length)+' conversation'+(((THR[app]||[]).length>1)?'s':'')+'</span></div>';
+ (THR[app]||[]).forEach(lbl=>{const p=prev(lbl);
+  h+='<button class="thrR" data-l="'+lbl+'">'+mkAv(lbl)+'<span class="thrT"><b>'+lbl+'</b><small>'+(p.tx?p.tx:"")+'</small></span><span class="thrM"><i>'+(p.tm||"")+'</i>'+(p.unread?'<em>'+p.unread+'</em>':'')+'</span></button>'});
+ h+='<button class="ahBack" id="thrB">\u2039 Applications</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";

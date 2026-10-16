@@ -289,12 +289,28 @@ body.pc .bk .bkLock{right:24px}
 .notif{animation:nSh 2.4s ease-in-out infinite}
 @keyframes nSh{0%,100%{box-shadow:0 10px 30px #0009}50%{box-shadow:0 10px 34px #000b,0 0 0 3px #ffd16633}}
 /* ---- liste de conversations (fils) ---- */
-#thrOv{position:absolute;inset:0;z-index:34;background:linear-gradient(#151824,#0f1119);overflow-y:auto;padding:16px 14px;color:#fff;animation:fo .35s}
+#thrOv{position:absolute;inset:0;z-index:34;background:#0b141a;overflow-y:auto;padding:0;color:#fff;animation:fo .35s}
+#thrOv .thrHead{display:flex;align-items:baseline;justify-content:space-between;padding:18px 20px 12px;background:#1f2c34;position:sticky;top:0;z-index:2;box-shadow:0 1px 3px #0008}
+#thrOv .thrHead h2{font:500 20px system-ui,-apple-system,sans-serif;margin:0}
+#thrOv .thrSub{font:400 12px system-ui;color:#8fa6b0}
+#thrOv .ahBack{margin:18px 16px 10px;width:calc(100% - 32px)}
 #thrOv h2,#notesOv h2{font:400 21px Georgia,serif;margin:4px 2px 12px}
-.thrR{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#ffffff0d;border:0;border-radius:14px;padding:12px;margin:7px 0;cursor:pointer;color:#fff;transition:background .15s}
-.thrR:hover{background:#ffffff1a}
-.thrA{width:42px;height:42px;border-radius:50%;background:#6b5bd6;display:grid;place-items:center;font-size:19px;flex:none}
-.thrT b{display:block;font-size:15px}
+.thrR{display:flex;align-items:center;gap:15px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid #ffffff0d;border-radius:0;padding:13px 16px 13px 20px;margin:0;cursor:pointer;color:#fff;transition:background .15s;font-family:system-ui,-apple-system,sans-serif}
+.thrR:hover{background:#202c33}
+.thrA{width:49px;height:49px;border-radius:50%;background:#37424a;display:grid;place-items:center;font:600 20px system-ui;flex:none;color:#cfd8dc}
+.thrA.ph{background-size:cover;background-position:center}
+.thrA.unk{color:#9ab0ba;background:#24343d}
+.thrA.file{color:#ffd54f;background:#2a3a2a}
+.thrA.grp{display:flex;align-items:center;background:none;padding:0}
+.thrA.grp img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1.5px solid #1f2c34}
+.thrA.grp img+img,.thrA.grp i+i{margin-left:-8px}
+.thrA.grp i{width:30px;height:30px;border-radius:50%;background:#24343d;display:grid;place-items:center;font:600 14px system-ui;font-style:normal;color:#cfd8dc;border:1.5px solid #1f2c34}
+.thrT{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.thrT b{font:500 16px system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thrT small{font:400 13.5px system-ui;color:#8696a0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.thrM{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.thrM i{font:400 11.5px system-ui;color:#8696a0;font-style:normal}
+.thrM em{min-width:19px;height:19px;border-radius:50%;background:#25d366;color:#0b141a;font:700 11.5px system-ui;display:grid;place-items:center;font-style:normal;padding:0 3px}
 /* ---- notes de l'enquête ---- */
 #notesOv{position:absolute;inset:0;z-index:35;background:linear-gradient(#171922,#101219);overflow-y:auto;padding:18px 16px;color:#fff;animation:fo .35s}
 #notesOv>b{display:block;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:#ffd166c4;margin:16px 0 6px}
@@ -714,7 +730,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.13";console.log("Entre les lignes · v"+VER);
+const VER="2.14";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -914,10 +930,28 @@ function goApp(app,lbl){const t=APPH[app+"|"+lbl]||{};applyApp(hdrOf(app,lbl));
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
  $("chat").scrollTop=1e9}
 function thrOv(app){const o=document.createElement("div");o.id="thrOv";
- $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"📱":"💬"}
- let h='<h2>'+(app==="SMS"?"Messages":app)+'</h2>';
- (THR[app]||[]).forEach(lbl=>{h+='<button class="thrR" data-l="'+lbl+'"><span class="thrA">'+(app==="SMS"?"📱":"💬")+'</span><span class="thrT"><b>'+lbl+'</b></span></button>'});
- h+='<button class="ahBack" id="thrB">‹ Applications</button>';o.innerHTML=h;$("app").append(o);
+ $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"\u{1F4F1}":"\u{1F4AC}"}
+ const title=app==="SMS"?"Messages":app;
+ const MEM={"Les Inoubliables":["Camille","Jeanne"],"Projet Orph\u00E9e":["L\u00E9o","Adrien","V."]};
+ const PH={"Camille":"C","Jeanne":"J"};
+ const mkAv=lbl=>{
+  if(app==="Fichiers")return '<span class="thrA file">\u{1F4C4}</span>';
+  const mem=MEM[lbl];
+  if(mem){return '<span class="thrA grp">'+mem.map(m=>PH[m]&&AVGR[PH[m]]?'<img alt="'+m+'" src="'+AVGR[PH[m]]+'">':'<i>'+m[0]+'</i>').join("")+'</span>'}
+  const k=PH[lbl];
+  if(k&&AVGR[k])return '<span class="thrA ph" style="background-image:url('+AVGR[k]+')"></span>';
+  if(/^(Num\u00E9ro|\+33)/.test(lbl))return '<span class="thrA unk">\u{1F464}</span>';
+  return '<span class="thrA">'+lbl[0]+'</span>'};
+ const prev=lbl=>{const t=APPH[app+"|"+lbl]||{};const d=document.createElement("div");d.innerHTML=t.c||"";
+  const bs=d.querySelectorAll(".b");let tx=bs.length?bs[bs.length-1].textContent.trim().replace(/\s+/g," "):"";
+  if(tx.length>52)tx=tx.slice(0,51)+"\u2026";
+  const tss=d.querySelectorAll(".ts");let tm=tss.length?tss[tss.length-1].textContent.split(" ").pop():"";
+  const unread=(t.h||"").includes("<button")?1:0;
+  return{tx,tm,unread}};
+ let h='<div class="thrHead"><h2>'+title+'</h2><span class="thrSub">'+((THR[app]||[]).length)+' conversation'+(((THR[app]||[]).length>1)?'s':'')+'</span></div>';
+ (THR[app]||[]).forEach(lbl=>{const p=prev(lbl);
+  h+='<button class="thrR" data-l="'+lbl+'">'+mkAv(lbl)+'<span class="thrT"><b>'+lbl+'</b><small>'+(p.tx?p.tx:"")+'</small></span><span class="thrM"><i>'+(p.tm||"")+'</i>'+(p.unread?'<em>'+p.unread+'</em>':'')+'</span></button>'});
+ h+='<button class="ahBack" id="thrB">\u2039 Applications</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
