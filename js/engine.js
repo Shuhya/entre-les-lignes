@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.6";console.log("Entre les lignes · v"+VER);
+const VER="2.7";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -175,14 +175,19 @@ function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>
 function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML};
  const o=document.createElement("div");o.id="appHome";
  const ic=(a,c,t)=>'<div class="ah-app'+(a?"":" off")+'" data-app="'+(a||"")+'"><div class="ah-ic" style="background:'+c+'">'+t+'</div><span>'+(a?({SMS:"Messages",WhatsApp:"WhatsApp",Fichiers:"Fichiers",Notes:"Notes"}[a]):t)+'</span></div>';
- o.innerHTML='<h2>Applications</h2><div class="ah-grid">'
- +ic("SMS","#6b5bd6","📱")+ic("WhatsApp","#0b6b4f","💬")+ic("Fichiers","#3a3f52","📁")+ic("Notes","#53455e","📝")
- +ic("","#2b6ea3","📞")+ic("","#42506e","🌄")
+ const t=($("clk").textContent||"9:41").trim();
+ o.innerHTML='<div class="ah-clock"><b>'+t+'</b><span>5G<i class="ah-bat"></i></span></div>'
+ +'<h2>Applications</h2>'
+ +'<div class="ah-search"><span>🔍</span><input id="ahQ" placeholder="Rechercher" autocomplete="off"></div>'
+ +'<div class="ah-grid">'
+ +ic("SMS","#6b5bd6","📱","Messages")+ic("WhatsApp","#0b6b4f","💬")+ic("Notes","#53455e","📝")+ic("Fichiers","#3a3f52","📁")
+ +ic("","#2b6ea3","📞")+ic("","#42506e","🖼️")+ic("","#1f5f5b","🎧")+ic("","#5a4a2f","⏰")+ic("","#31435e","🌤️")
  +'</div><div class="ah-dots"><i class="on"></i><i></i></div><button class="ahBack">‹ Revenir à la conversation</button>';
  $("app").append(o);
+ const q=o.querySelector("#ahQ");if(q)q.oninput=()=>{const v=q.value.trim().toLowerCase();o.querySelectorAll(".ah-app").forEach(a=>{a.style.display=(!v||a.textContent.toLowerCase().includes(v))?"":"none"})};
  o.querySelector(".ahBack").onclick=()=>{o.remove();applyApp(hdrOf(CAPP,CNM))};
  o.querySelectorAll(".ah-app:not(.off)").forEach(a=>a.onclick=()=>{const app=a.dataset.app;o.remove();
-  if(app==="Notes")return notesOv();
+  if(app==="Notes")return notesOv(true);
   if((app==="WhatsApp"||app==="SMS")&&(THR[app]||[]).length>1)return thrOv(app);
   if(app===CAPP)return;
   goApp(app,(THR[app]||[])[0]||app)})}
@@ -198,7 +203,7 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  h+='<button class="ahBack" id="thrB">‹ Applications</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
-function notesOv(){const o=document.createElement("div");o.id="notesOv";
+function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
  if(!SC||SS.id!=="o")h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
@@ -220,8 +225,8 @@ function notesOv(){const o=document.createElement("div");o.id="notesOv";
   h+='<b>O\u00F9 tu en es</b>';
   const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
   bar(s.int||0,"Int\u00E9grit\u00E9");bar(s.pov||0,"Preuves du r\u00E9seau");bar(s.prm||0,"Preuves du meurtre")}
- h+='<button class="ahBack" id="ntB2">‹ Applications</button>';o.innerHTML=h;$("app").append(o);
- o.querySelector("#ntB2").onclick=()=>{o.remove();appHome()}}
+ h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
+ o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
  (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=t;b.onclick=async()=>{c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",emojiClean(t))}else{tx();add("m",emojiClean(rm||t))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
@@ -310,10 +315,12 @@ $("clk").parentNode.addEventListener("click",()=>{const n=Date.now();tp=tp.filte
 $("set").onclick=()=>{$("vol").hidden=!$("vol").hidden};
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
- up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv()};$("apps").onclick=()=>appHome();
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};$("apps").onclick=()=>appHome();
 $("vw2").onclick=()=>setView(!PC);
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
-$("bk").onclick=()=>{const ov=document.getElementById("notesOv")||document.getElementById("thrOv");
+$("bk").onclick=()=>{const no=document.getElementById("notesOv");
+ if(no){no.remove();if(no.dataset.from==="app")appHome();else applyApp(hdrOf(CAPP,CNM));return}
+ const ov=document.getElementById("thrOv");
  if(ov){ov.remove();appHome();return}
  const ho=document.getElementById("appHome");if(ho){ho.remove();applyApp(hdrOf(CAPP,CNM));return}
  menu()};$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
