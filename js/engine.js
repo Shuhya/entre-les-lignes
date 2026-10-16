@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.15";console.log("Entre les lignes · v"+VER);
+const VER="2.17";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -104,29 +104,32 @@ function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  const cfg=CALL_VOICE[nm]||{pitch:1,rate:1};u.pitch=cfg.pitch;u.rate=cfg.rate;u.volume=Math.max(.2,Math.min(1,VS||1));
  const v=pickFr();if(v)u.voice=v;u.lang="fr-FR";speechSynthesis.speak(u)}catch(e){}}
 function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
-function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel en cours",lines=T[2]||[];let vo=null;if(typeof VOICES!=="undefined"&&VOICES[nm]){try{vo=new Audio(VOICES[nm]);vo.loop=true;vo.volume=.9;const p=vo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){vo=null}}
+function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let vo=null;if(typeof VOICES!=="undefined"&&VOICES[nm]){try{vo=new Audio(VOICES[nm]);vo.loop=true;vo.volume=.9;const p=vo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){vo=null}}
  const o=document.createElement("div");o.id="calOv";
- const ring=document.createElement("div");ring.className="calRing";
+ const hd=document.createElement("div");hd.className="calHd";
  const av=document.createElement("div");av.className="calAv";
  const ph=AVGR[nm[0]];if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
- ring.append(av);o.append(ring);
- const ne=document.createElement("div");ne.className="calNm";ne.textContent=nm;o.append(ne);
- const se=document.createElement("div");se.className="calSub";se.textContent=sub;o.append(se);
- const te=document.createElement("div");te.className="calTm";te.textContent="0:00";o.append(te);
+ const tb=document.createElement("div");const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub;tb.append(ne,se);
+ hd.append(av,tb);o.append(hd);
  const tr=document.createElement("div");tr.className="calTr";o.append(tr);
  const eb=document.createElement("button");eb.className="calEnd";eb.innerHTML='<i>\u{1F4DE}</i><small>Raccrocher</small>';eb.hidden=true;o.append(eb);
  const stopV=()=>{if(vo){try{vo.pause();vo.currentTime=0}catch(e){}vo=null}};
- document.body.append(o);
+ $("app").append(o);
  beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),110);
- let sec=0;const iv=setInterval(()=>{sec++;te.textContent=Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0")},1000);
  let i=0;
+ const put=L=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
  const next=()=>{if(i>=lines.length){eb.hidden=false;return}
-  const[sd,tx]=lines[i++];const d=document.createElement("div");
-  d.className="calL "+(sd===1?"them":sd===2?"me":"info");d.textContent=tx;tr.append(d);tr.scrollTop=1e9;
-  if(sd===1){rx();callSpeak(tx,nm)}
-  setTimeout(next,Math.min(4200,1300+tx.length*38)/SPD)};
- setTimeout(next,1000/SPD);
- eb.onclick=()=>{clearInterval(iv);callSpeakStop();o.remove();stopV();done()}}
+  const L=lines[i++];
+  if(L[0]===2&&Array.isArray(L[1])){
+   const bx=document.createElement("div");bx.className="calCh";
+   L[1].forEach(opt=>{const b=document.createElement("button");b.textContent=opt;
+    b.onclick=()=>{bx.remove();put([2,opt]);tx();setTimeout(next,700/SPD)};bx.append(b)});
+   tr.append(bx);tr.scrollTop=1e9;return}
+  put(L);
+  if(L[0]===1){rx();callSpeak(L[1],nm)}
+  setTimeout(next,Math.min(4200,1300+L[1].length*38)/SPD)};
+ setTimeout(next,700/SPD);
+ eb.onclick=()=>{callSpeakStop();o.remove();stopV();done()}}
 function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
  const FL=["jea","aveu","malik","bloq"];
  while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
@@ -285,8 +288,9 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
   bar(s.int||0,"Int\u00E9grit\u00E9");bar(s.pov||0,"Preuves du r\u00E9seau");bar(s.prm||0,"Preuves du meurtre")}}
  h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
+const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].trim():x};
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
- (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=t;b.onclick=async()=>{c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",emojiClean(t))}else{tx();add("m",emojiClean(rm||t))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);play(nx,run)};c.append(b)});
+ (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(t);b.onclick=async()=>{c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",emojiClean(t))}else{tx();add("m",emojiClean(rm?unq(rm):unq(t)))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
 function start(){run++;SK=1;$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";const p0=$("pI");if(p0)p0.textContent="";
