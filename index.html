@@ -1,30 +1,46 @@
 <!DOCTYPE html>
-<html lang="fr"><head>
-<link rel="stylesheet" href="css/style.css?v=2.25"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Entre les lignes</title>
-<meta name="description" content="Des histoires qui se lisent en messages — et dont tu écris la suite. Deux enquêtes jouables, des fins multiples : chaque réponse compte.">
-<meta property="og:type" content="website">
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Entre les lignes — des histoires qui s'écrivent en messages</title>
+<meta name="description" content="Un téléphone qui vibre. Des messages qui arrivent. Quelqu'un attend une réponse — la tienne. Chaque mot peut sauver, ou faire taire.">
 <meta property="og:title" content="Entre les lignes">
 <meta property="og:description" content="Un téléphone qui vibre. Des messages qui arrivent. Quelqu'un attend une réponse — la tienne. Chaque mot peut sauver, ou faire taire.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shuhya.github.io/entre-les-lignes/">
 <meta property="og:image" content="https://shuhya.github.io/entre-les-lignes/assets/img/menu.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0a0d16">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1424'/%3E%3Cpath d='M14 18h36v20H30l-9 9v-9h-7z' fill='%23ffd166'/%3E%3Ccircle cx='24' cy='28' r='2.6' fill='%230a1424'/%3E%3Ccircle cx='33' cy='28' r='2.6' fill='%230a1424'/%3E%3Ccircle cx='42' cy='28' r='2.6' fill='%230a1424'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1024'/%3E%3Crect x='14' y='8' width='36' height='48' rx='6' fill='none' stroke='%23ffd166' stroke-width='3'/%3E%3Ccircle cx='32' cy='46' r='2.5' fill='%23ffd166'/%3E%3C/svg%3E">
+<style>
+:root{--gold:#ffd166;--tx:#eef4ff}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--tx);background:#060a14;overflow-x:hidden}
+#stage{position:fixed;inset:0;background:#060a14 url('assets/img/menu.jpg') center/cover no-repeat}
+#stage:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#060a14cc 0%,#060a1499 40%,#060a14e6 100%)}
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100dvh;align-items:center;justify-content:center;padding:48px 24px;text-align:center}
+h1{font:400 clamp(42px,9vw,84px)/1.05 'Palatino Linotype','Iowan Old Style','Book Antiqua',Palatino,Georgia,serif;letter-spacing:.5px;text-shadow:0 2px 30px #000c;animation:up .8s .1s both}
+.tag{font-size:12.5px;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold);margin:18px 0 26px;opacity:.9;animation:up .8s .25s both}
+.pitch{max-width:560px;font-size:17.5px;line-height:1.75;color:#cfe0f5;animation:up .8s .4s both;text-shadow:0 1px 12px #000a}
+.pitch b{color:#fff;font-weight:600}
+.metaL{font-size:12.5px;letter-spacing:1.1px;color:#8fa5c5;margin-top:22px;animation:up .8s .55s both}
+#go{margin-top:40px;padding:15px 42px;font-size:16.5px;letter-spacing:2px;color:#fff;border:1px solid #ffffff42;border-radius:28px;background:#00000073;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;text-decoration:none;display:inline-block;transition:.3s;animation:up .8s .7s both}
+#go:hover{background:#ffd16622;border-color:#ffd16688;transform:translateY(-2px);box-shadow:0 10px 34px #0009}
+.foot{position:relative;z-index:1;text-align:center;padding:18px;font-size:11.5px;color:#5d6f8f;letter-spacing:.4px}
+.foot a{color:#8fa5c5;text-decoration:none}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-<div id="app">
-<div class="sbar"><span id="clk"></span><button id="infoB" aria-label="Progression de l'histoire"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><line x1="12" y1="10.8" x2="12" y2="17"/><circle cx="12" cy="7.4" r="0.5" fill="currentColor" stroke="none"/></svg></button><i><span>5G</span><span><svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="0.8"/><rect x="9" y="3" width="3" height="9" rx="0.8"/><rect x="13.5" y="0" width="3" height="12" rx="0.8"/></svg></span><span>78%</span><span class="bt"></span></i></div>
-<header><button class="ic" id="bk" aria-label="Menu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button><div class="mid"><div class="av" id="av">👤</div><div><b id="nm"></b><small id="st">SMS</small></div></div><div class="tl"><button class="ic" id="apps" aria-label="Applications" style="display:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8.5" height="8.5" rx="2.4"/><rect x="12.5" y="3" width="8.5" height="8.5" rx="2.4"/><rect x="3" y="12.5" width="8.5" height="8.5" rx="2.4"/><rect x="12.5" y="12.5" width="8.5" height="8.5" rx="2.4"/></svg></button><button class="ic" id="set" aria-label="Réglages">⚙️
-</button></div></header>
-<div id="vol" hidden><b>Réglages</b><button id="ntB" style="display:block;width:100%;margin:8px 0 12px;padding:9px 12px;border:1px solid #2c4a73;border-radius:10px;background:#0a1424;color:#dbe7f8;font:inherit;cursor:pointer;text-align:left">📝 Notes de l'enquête</button><button id="ttsB" style="display:block;width:100%;margin:8px 0 12px;padding:9px 12px;border:1px solid #2c4a73;border-radius:10px;background:#0a1424;color:#dbe7f8;font:inherit;cursor:pointer;text-align:left"></button><label>Ambiance<input type="range" id="v1" min="0" max="150"></label><label>Sons des messages<input type="range" id="v2" min="0" max="150"></label><label>Vitesse de lecture<input type="range" id="v3" min="50" max="200"></label></div>
-<div id="chat"></div><div id="ch"></div>
-<div class="inp"><span class="pl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span><span class="fl" id="fl">Envoyer un message</span><span class="pl sd"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l7 6-7 6"/></svg></span></div>
-<div class="nav"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.2"/></svg></span><span id="nb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></span></div></div>
-<div id="ov" hidden><div class="card"><h1 id="ot"></h1><p id="ox"></p><button id="ob"></button><button id="ob2" hidden></button></div></div>
-<div id="mn"></div>
-<div id="in"><button class="vwb" id="sbi">🔊</button><button class="vwb" id="vw2"></button><div id="bgi"></div><div class="tx"><h1>Entre les lignes</h1><p class="lead">Des histoires qui se lisent en messages — et dont tu écris la suite.</p><p>Un téléphone vibre. Des messages arrivent, des conversations s'ouvrent — et quelque part derrière l'écran, quelqu'un attend une réponse. La tienne. Chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours.</p><p class="metaL">Des conversations à lire · des choix à porter · chaque réponse compte</p><button id="go">Commencer ›</button></div></div>
-<script src="js/assets.js?v=2.25"></script>
-<script src="js/story.js?v=2.25"></script>
-<script src="js/engine.js?v=2.25"></script>
-</body></html>
+<div id="stage"></div>
+<div class="wrap">
+  <h1>Entre les lignes</h1>
+  <div class="tag">Des histoires à vivre en messages</div>
+  <p class="pitch">Un téléphone vibre. Des messages arrivent, des conversations s'ouvrent — et quelque part derrière l'écran, <b>quelqu'un attend une réponse. La tienne.</b><br><br>Chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours.</p>
+  <p class="metaL">Des conversations à lire · des choix à porter · chaque réponse compte</p>
+  <a id="go" href="jeu.html">Ouvrir le téléphone ›</a>
+</div>
+<div class="foot">Entre les lignes · un jeu narratif de Dylan Gaucher</div>
+</body>
+</html>

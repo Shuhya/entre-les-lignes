@@ -30,7 +30,7 @@ old_rb = ('const b64buf=s=>{const r=atob(s),u=new Uint8Array(r.length);for(let i
 assert "fetch(" in new_rb, "rainBuf fetch introuvable"
 engine = engine.replace(new_rb, old_rb)
 
-single = read("index.html")
+single = read("jeu.html")
 single = re.sub(r'<link rel="stylesheet" href="css/style.css(\?v=[^"]*)?">', "<style>\n%s\n</style>" % read("css/style.css"), single)
 single = re.sub(r'<script src="js/assets.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % assets, single)
 single = re.sub(r'<script src="js/story.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % read("js/story.js"), single)
