@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.11";console.log("Entre les lignes · v"+VER);
+const VER="2.12";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -50,6 +50,7 @@ const nodeBackgrounds=(()=>{try{return JSON.parse(localStorage.getItem("etl_node
 function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0003,#0006),url("+u+")":"";amb(k)}
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
+ if(SS&&SS.id==="o"&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
  const pi=$("pI");if(pi)pi.textContent=(SS&&SS.id==="o"&&PART[id])?PART[id]+" / VI":"";
  if(SS&&SS.id==="o"&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_o")||0;if(pn&&pn>cu)localStorage.setItem("etl_part_o",pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
@@ -169,7 +170,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={d1:"I",d1a:"I",d1b:"I",d1b2:"I",d1c:"I",d1c2:"I",d2:"II",d2c:"II",d2c2:"II",d2c3:"II",d2j:"II",d2j2:"II",d2j3:"II",d2s:"II",d3:"III",d3a:"III",d3b:"III",d3c:"III",d3d:"III",d4:"III",d4a:"III",d4b:"III",d4c:"III",d5:"IV",d5a:"IV",d5b:"IV",d5c:"IV",d5d:"IV",d5dm:"IV",d5d2:"IV",d5d3:"IV",d6:"V",d6a:"V",d6a2:"V",d6a3:"V",d6b:"V",d7:"V",d7a:"V",d7b:"V",d7c:"V",d7c2:"V",d8:"VI",d8t:"VI",d8t2:"VI",d8r:"VI",d8f:"VI",d8k:"VI",d8p:"VI",d8s:"VI",d8z:"VI",d8za:"VI",d8zb:"VI",d8z2:"VI",d9:"VI",d9a:"VI",d9a1:"VI",d9j:"VI",d9a2:"VI",d9b:"VI",d9c:"VI",d10:"VI",d10z:"VI",d10b:"VI",d11a:"VI",d11b:"VI",d11bm:"VI",d11bs:"VI",d11bt:"VI",d11br:"VI",d11c:"VI",d11d:"VI",d11e:"VI",dA:"VI",dB:"VI",dC:"VI",dD:"VI",dE:"VI",dF:"VI",dG:"VI",dH:"VI"};
+const PART={d1:"d1",d1a:"d1a",d1a2:"d1a2",d1a3:"d1a3",d1b:"d1b",d1b2:"d1b2",d1c:"d1c",d1c2:"d1c2",d2:"d2",d2r:"d2r",d2c:"d2c",d2c2:"d2c2",d2c3:"d2c3",d2c4:"d2c4",d2j:"d2j",d2j2:"d2j2",d2j3:"d2j3",d2s:"d2s",d3:"d3",d3a:"d3a",d3b:"d3b",d3c:"d3c",d3d:"d3d",d3s:"d3s",d3f:"d3f",d3f2:"d3f2",d4:"d4",d4a:"d4a",d4b:"d4b",d4c:"d4c",d4d:"d4d",d4d2:"d4d2",d4d3:"d4d3",d4d4:"d4d4",d5:"d5",d5q:"d5q",d5q2:"d5q2",d5q3:"d5q3",d5a:"d5a",d5b:"d5b",d5c:"d5c",d5c2:"d5c2",d5d:"d5d",d5dq:"d5dq",d5dqa:"d5dqa",d5dqb:"d5dqb",d5dqc:"d5dqc",d5dq2:"d5dq2",d5dqd:"d5dqd",d5dqe:"d5dqe",d5dm:"d5dm",d5d2:"d5d2",d5d3:"d5d3",d6:"d6",d6a:"d6a",d6a1:"d6a1",d6a1b:"d6a1b",d6a1c:"d6a1c",d6a2:"d6a2",d6a3:"d6a3",d6b:"d6b",d6b2:"d6b2",d6b3:"d6b3",d7:"d7",d7a:"d7a",d7b:"d7b",d7c:"d7c",d7c2:"d7c2",d7d:"d7d",d7e:"d7e",d7f:"d7f",d8:"d8",d8t:"d8t",d8t2:"d8t2",d8r:"d8r",d8f:"d8f",d8k:"d8k",d8p:"d8p",d8s:"d8s",d8z:"d8z",d8z2:"d8z2",d8za:"d8za",d8zb:"d8zb",d8w:"d8w",d8w1:"d8w1",d8w1b:"d8w1b",d8w1c:"d8w1c",d8w2:"d8w2",d8w2b:"d8w2b",d8w2c:"d8w2c",d8w3:"d8w3",d9:"d9",d9a:"d9a",d9a1:"d9a1",d9j:"d9j",d9a2:"d9a2",d9b:"d9b",d9c:"d9c",d10y:"d10y",d10y1:"d10y1",d10y2:"d10y2",d10z:"d10z",d10:"d10",d10b:"d10b",d11a:"d11a",d11b:"d11b",d11bm:"d11bm",d11bs:"d11bs",d11bt:"d11bt",d11br:"d11br",d11c:"d11c",d11d:"d11d",d11e:"d11e",dA:"dA",dB:"dB",dC:"dC",dD:"dD",dE:"dE",dF:"dF",dG:"dG",dH:"dH"};
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
@@ -221,19 +222,29 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
  if(!SC||SS.id!=="o")h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
-  h+='<b>Qui est qui</b><div class="ntR">L\u00E9o Garnier \u2014 la victime. Analyste informatique, 32 ans.</div><div class="ntR">Camille \u2014 sa compagne.</div><div class="ntR">Jeanne \u2014 sa s\u0153ur. Leur p\u00E8re Michel est mort il y a dix ans.</div><div class="ntR">Malik \u2014 ton co\u00E9quipier.</div><div class="ntR">\u00C9lodie \u2014 ta chef.</div><div class="ntR">Marcel \u2014 le laboureur qui a trouv\u00E9 le corps.</div><div class="ntR">Adrien Valette \u2014 Vigilex S\u00E9curit\u00E9. Le suspect.</div><b>Ce que tu sais</b>';
+  h+='<b>Qui est qui</b><div class="ntR">L\u00E9o Garnier \u2014 la victime. Analyste informatique, 32 ans. Fils de Michel.</div><div class="ntR">Camille, 11 ans avec L\u00E9o \u2014 sa compagne. Prof de lettres. Elle a des r\u00E8gles, m\u00EAme dans le chagrin.</div><div class="ntR">Jeanne \u2014 la s\u0153ur de L\u00E9o. Prof de maths. Elle a gard\u00E9 la maison et le silence de la famille.</div><div class="ntR">Michel Garnier \u2014 le p\u00E8re. Technicien, mort dans un accident de voiture il y a dix ans. Dossier 2016 enterr\u00E9.</div><div class="ntR">Malik \u2014 ton co\u00E9quipier. Fils de gendarme \u00E0 Fort-de-France. Il couvre, mais pas ind\u00E9finiment.</div><div class="ntR">\u00C9lodie \u2014 ta chef. Elle veut un dossier propre, pas un h\u00E9ros.</div><div class="ntR">Marcel Vautrin, 61 ans \u2014 le laboureur qui a trouv\u00E9 le corps. Il a vu la voiture, il n\u2019ose pas le dire.</div><div class="ntR">Adrien Valette \u2014 Vigilex S\u00E9curit\u00E9. Il efface les traces, pas les gens. Jamais les m\u00EAmes mains.</div><div class="ntR">\u00AB V. \u00BB \u2014 le num\u00E9ro masqu\u00E9 qui t\u2019\u00E9crit sur le t\u00E9l\u00E9phone de L\u00E9o. Et sur le tien.</div><b>Ce que tu sais</b>';
   const R=(v,t)=>{if(v)h+='<div class="ntR">'+t+'</div>'};
-  R(true,"Le corps a \u00E9t\u00E9 d\u00E9plac\u00E9 \u2014 il a pass\u00E9 la nuit sur du b\u00E9ton.");
+  R(true,"Le corps a \u00E9t\u00E9 d\u00E9plac\u00E9 \u2014 il a pass\u00E9 la nuit sur du b\u00E9ton, avant d\u2019atterrir dans le champ de Marcel.");
   R(true,"Un dossier \u00AB ORPH\u00C9E \u00BB verrouill\u00E9 dans le t\u00E9l\u00E9phone de L\u00E9o.");
-  R(s.cam||s.jea,"Adrien Valette, chez Vigilex. L\u00E9o le craignait.");
-  R(s.prm,"Un utilitaire gris, feu arri\u00E8re gauche cass\u00E9, sorti du parc Vigilex le soir du meurtre.");
-  R(s.pov,"Des journaux d\u2019acc\u00E8s hors proc\u00E9dure \u2014 identifiant AV-7734.");
-  R(s.jea,"Le coffre de d\u00E9p\u00F4t de Michel Garnier. La r\u00E9f\u00E9rence est chez Jeanne.");
-  R(s.cam>=2,"L\u00E9o cachait des copies chez son avocate, Ma\u00EEtre Lemaire.");
+  R(true,"\u00AB Projet Orph\u00E9e \u00BB \u2014 un groupe WhatsApp archiv\u00E9 : L\u00E9o, Adrien Valette, et \u00AB V. \u00BB.");
+  R(s.pov,"Des journaux d\u2019acc\u00E8s hors proc\u00E9dure \u2014 identifiant AV-7734, encore actif apr\u00E8s la mort de L\u00E9o.");
+  R(s.tech,"Un ancien technicien de Vigilex a aid\u00E9 L\u00E9o \u00E0 voir. Parti \u00AB en burn-out \u00BB, introuvable depuis deux ans.");
+  R(s.prm,"Un utilitaire gris, feu arri\u00E8re gauche cass\u00E9, rep\u00E9r\u00E9 autour de la ferme de Marcel. Parc Vigilex.");
+  R((s.pov||0)>=2||s.prm,"Le dossier \u00AB Garnier, M. \u00BB de 2016, au sous-sol des archives : minimis\u00E9, enterr\u00E9 par un haut grad\u00E9 jamais nomm\u00E9.");
+  R(s.jea||s.d2016,"Le coffre de d\u00E9p\u00F4t de Michel Garnier existe. La r\u00E9f\u00E9rence est chez Jeanne.");
+  R(s.gr,"L\u00E9o avait promis \u00E0 Camille un week-end, et \u00E0 Jeanne un transistor pour No\u00EBl. Il y a eu un champ, \u00E0 la place.");
   R(s.aveu,"\u00C9lodie sait tout. Le dossier est pass\u00E9 en proc\u00E9dure.");
   R(s.accord,"Tu as accept\u00E9 le march\u00E9 de Valette.");
+  R(s.bloq,"Tu as bloqu\u00E9 le num\u00E9ro masqu\u00E9 \u2014 il est revenu par d\u2019autres canaux.");
   R(s.bless,"Tu es bless\u00E9.");
-  R(s.bloq,"Tu as bloqu\u00E9 le num\u00E9ro masqu\u00E9 \u2014 il est revenu par e-mail, puis par d\u2019autres canaux.");
+  h+='<b>Ce que tu as appris d\u2019eux</b>';
+  R(s.ren,"Camille et L\u00E9o se sont rencontr\u00E9s au caf\u00E9 de la gare : lui \u00E9crivait, elle lisait par-dessus son \u00E9paule.");
+  R(s.cric,"L\u00E9o appelait Camille \u00AB Cric \u00BB. Personne d\u2019autre n\u2019avait le droit.");
+  R(s.oph,"Orph\u00E9e, pour L\u00E9o : remonter du monde d\u2019en bas avec la v\u00E9rit\u00E9, sans se retourner.");
+  R(s.marc,"Marcel croit qu\u2019\u00AB on emb\u00EAte personne, personne nous emb\u00EAte \u00BB \u2014 c\u2019est ce qui lui fait taire ses subventions.");
+  R((s.malik||0)>=1,"Malik : \u00AB Une erreur, \u00E7a arrive. Deux, \u00E7a devient une histoire. \u00BB");
+  R(s.voix,"La voix de L\u00E9o, \u00AB Si je ne reviens pas \u00BB : \u00AB Si je me taisais, quelqu\u2019un d\u2019autre aurait peur \u00E0 ma place. \u00BB");
+  R(s.d2016,"Jeanne : \u00AB Papa disait que les derni\u00E8res nuits, c\u2019est l\u00E0 que tout se d\u00E9cidait. \u00BB");
   if((s.prm||0)<2)h+='<div class="ntR">\u26A0 Sans preuves mat\u00E9rielles \u2014 utilitaire, sc\u00E8ne \u2014 m\u00EAme la v\u00E9rit\u00E9 risque de ne pas tenir au proc\u00E8s.</div>';
   h+='<b>O\u00F9 tu en es</b>';
   const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
