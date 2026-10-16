@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.14";console.log("Entre les lignes · v"+VER);
+const VER="2.15";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -50,9 +50,9 @@ const nodeBackgrounds=(()=>{try{return JSON.parse(localStorage.getItem("etl_node
 function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0003,#0006),url("+u+")":"";amb(k)}
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
- if(SS&&SS.id==="o"&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
- const pi=$("pI");if(pi)pi.textContent=(SS&&SS.id==="o"&&PART[id])?PART[id]+" / VI":"";
- if(SS&&SS.id==="o"&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_o")||0;if(pn&&pn>cu)localStorage.setItem("etl_part_o",pn)}catch(e){}}
+ if(SS&&(SS.id==="o"||SS.id==="z")&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
+ const pi=$("pI");if(pi)pi.textContent=(SS&&(SS.id==="o"||SS.id==="z")&&PART[id])?PART[id]+" / VI":"";
+ if(SS&&(SS.id==="o"||SS.id==="z")&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
  if(ADM&&$("a6"))$("a6").textContent=id;
  if(n.j)return play(n.j(st),r);
@@ -97,7 +97,7 @@ function telOv(T,done){const o=document.createElement("div");o.id="telOv";
  beep(1319,.09,.05);setTimeout(()=>beep(1760,.11,.05),150);setTimeout(()=>beep(1760,.11,.04),900)}
 const TTSOK=typeof speechSynthesis!=="undefined";
 let TTS_ON=true;try{TTS_ON=localStorage.getItem("etl_tts")!=="off"}catch(e){}
-const CALL_VOICE={Jeanne:{pitch:1.18,rate:1.04},Camille:{pitch:.96,rate:.97},Malik:{pitch:.8,rate:.98},"\u00C9lodie":{pitch:1.05,rate:1}};
+const CALL_VOICE={Jeanne:{pitch:1.18,rate:1.04},Camille:{pitch:.96,rate:.97},Malik:{pitch:.8,rate:.98},"\u00C9lodie":{pitch:1.05,rate:1},Cora:{pitch:1.1,rate:1},Yasmine:{pitch:1.22,rate:1.03}};
 function pickFr(){const vs=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang));return vs.find(v=>/google/i.test(v.name))||vs.find(v=>/am\u00E9lie|audrey|marie|celine|julie|female|femme/i.test(v.name))||vs[0]||null}
 function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);
@@ -146,7 +146,7 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
- bar(st.int,"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
+ bar(st.int,SS.id==="z"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
  const fd=document.createElement("div");fd.className="endFins";const fl=document.createElement("b");fl.textContent="Fins découvertes — "+seen.length+" / "+tot;fd.append(fl);
  const list=document.createElement("div");list.className="endFinsList";
  endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
@@ -169,8 +169,8 @@ function addH(x){const d=add("h",x);
   const row=document.createElement("div");row.className="hrow";d.replaceWith(row);row.append(av,d);d.textContent=x.slice(i+3)}}
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
-const AVGR={C:AVF1,J:AVF2,N:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={d1:"d1",d1a:"d1a",d1a2:"d1a2",d1a3:"d1a3",d1b:"d1b",d1b2:"d1b2",d1c:"d1c",d1c2:"d1c2",d2:"d2",d2r:"d2r",d2c:"d2c",d2c2:"d2c2",d2c3:"d2c3",d2c4:"d2c4",d2j:"d2j",d2j2:"d2j2",d2j3:"d2j3",d2s:"d2s",d3:"d3",d3a:"d3a",d3b:"d3b",d3c:"d3c",d3d:"d3d",d3s:"d3s",d3f:"d3f",d3f2:"d3f2",d4:"d4",d4a:"d4a",d4b:"d4b",d4c:"d4c",d4d:"d4d",d4d2:"d4d2",d4d3:"d4d3",d4d4:"d4d4",d5:"d5",d5q:"d5q",d5q2:"d5q2",d5q3:"d5q3",d5a:"d5a",d5b:"d5b",d5c:"d5c",d5c2:"d5c2",d5d:"d5d",d5dq:"d5dq",d5dqa:"d5dqa",d5dqb:"d5dqb",d5dqc:"d5dqc",d5dq2:"d5dq2",d5dqd:"d5dqd",d5dqe:"d5dqe",d5dm:"d5dm",d5d2:"d5d2",d5d3:"d5d3",d6:"d6",d6a:"d6a",d6a1:"d6a1",d6a1b:"d6a1b",d6a1c:"d6a1c",d6a2:"d6a2",d6a3:"d6a3",d6b:"d6b",d6b2:"d6b2",d6b3:"d6b3",d7:"d7",d7a:"d7a",d7b:"d7b",d7c:"d7c",d7c2:"d7c2",d7d:"d7d",d7e:"d7e",d7f:"d7f",d8:"d8",d8t:"d8t",d8t2:"d8t2",d8r:"d8r",d8f:"d8f",d8k:"d8k",d8p:"d8p",d8s:"d8s",d8z:"d8z",d8z2:"d8z2",d8za:"d8za",d8zb:"d8zb",d8w:"d8w",d8w1:"d8w1",d8w1b:"d8w1b",d8w1c:"d8w1c",d8w2:"d8w2",d8w2b:"d8w2b",d8w2c:"d8w2c",d8w3:"d8w3",d9:"d9",d9a:"d9a",d9a1:"d9a1",d9j:"d9j",d9a2:"d9a2",d9b:"d9b",d9c:"d9c",d10y:"d10y",d10y1:"d10y1",d10y2:"d10y2",d10z:"d10z",d10:"d10",d10b:"d10b",d11a:"d11a",d11b:"d11b",d11bm:"d11bm",d11bs:"d11bs",d11bt:"d11bt",d11br:"d11br",d11c:"d11c",d11d:"d11d",d11e:"d11e",dA:"dA",dB:"dB",dC:"dC",dD:"dD",dE:"dE",dF:"dF",dG:"dG",dH:"dH"};
+const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
+const PART={d1:"d1",d1a:"d1a",d1a2:"d1a2",d1a3:"d1a3",d1b:"d1b",d1b2:"d1b2",d1c:"d1c",d1c2:"d1c2",d2:"d2",d2r:"d2r",d2c:"d2c",d2c2:"d2c2",d2c3:"d2c3",d2c4:"d2c4",d2j:"d2j",d2j2:"d2j2",d2j3:"d2j3",d2s:"d2s",d3:"d3",d3a:"d3a",d3b:"d3b",d3c:"d3c",d3d:"d3d",d3s:"d3s",d3f:"d3f",d3f2:"d3f2",d4:"d4",d4a:"d4a",d4b:"d4b",d4c:"d4c",d4d:"d4d",d4d2:"d4d2",d4d3:"d4d3",d4d4:"d4d4",d5:"d5",d5q:"d5q",d5q2:"d5q2",d5q3:"d5q3",d5a:"d5a",d5b:"d5b",d5c:"d5c",d5c2:"d5c2",d5d:"d5d",d5dq:"d5dq",d5dqa:"d5dqa",d5dqb:"d5dqb",d5dqc:"d5dqc",d5dq2:"d5dq2",d5dqd:"d5dqd",d5dqe:"d5dqe",d5dm:"d5dm",d5d2:"d5d2",d5d3:"d5d3",d6:"d6",d6a:"d6a",d6a1:"d6a1",d6a1b:"d6a1b",d6a1c:"d6a1c",d6a2:"d6a2",d6a3:"d6a3",d6b:"d6b",d6b2:"d6b2",d6b3:"d6b3",d7:"d7",d7a:"d7a",d7b:"d7b",d7c:"d7c",d7c2:"d7c2",d7d:"d7d",d7e:"d7e",d7f:"d7f",d8:"d8",d8t:"d8t",d8t2:"d8t2",d8r:"d8r",d8f:"d8f",d8k:"d8k",d8p:"d8p",d8s:"d8s",d8z:"d8z",d8z2:"d8z2",d8za:"d8za",d8zb:"d8zb",d8w:"d8w",d8w1:"d8w1",d8w1b:"d8w1b",d8w1c:"d8w1c",d8w2:"d8w2",d8w2b:"d8w2b",d8w2c:"d8w2c",d8w3:"d8w3",d9:"d9",d9a:"d9a",d9a1:"d9a1",d9j:"d9j",d9a2:"d9a2",d9b:"d9b",d9c:"d9c",d10y:"d10y",d10y1:"d10y1",d10y2:"d10y2",d10z:"d10z",d10:"d10",d10b:"d10b",d11a:"d11a",d11b:"d11b",d11bm:"d11bm",d11bs:"d11bs",d11bt:"d11bt",d11br:"d11br",d11c:"d11c",d11d:"d11d",d11e:"d11e",dA:"dA",dB:"dB",dC:"dC",dD:"dD",dE:"dE",dF:"dF",dG:"dG",dH:"dH",z1:"I",z2:"I",z3:"I",z4:"I",z5a:"I",z5b:"I",z5c:"I",z6:"I",z7q:"I",z7m:"I",z7m2:"I",z7h:"I",z8b:"I",z8a:"I",z8:"I",z9:"I",z9a:"I",z9b:"I",z9c:"I",z10:"I",z11b:"I",z11c:"I",z11:"I"};
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
@@ -238,9 +238,25 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
- if(!SC||SS.id!=="o")h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
+ if(!SC||(SS.id!=="o"&&SS.id!=="z"))h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
-  h+='<b>Qui est qui</b><div class="ntR">L\u00E9o Garnier \u2014 la victime. Analyste informatique, 32 ans. Fils de Michel.</div><div class="ntR">Camille, 11 ans avec L\u00E9o \u2014 sa compagne. Prof de lettres. Elle a des r\u00E8gles, m\u00EAme dans le chagrin.</div><div class="ntR">Jeanne \u2014 la s\u0153ur de L\u00E9o. Prof de maths. Elle a gard\u00E9 la maison et le silence de la famille.</div><div class="ntR">Michel Garnier \u2014 le p\u00E8re. Technicien, mort dans un accident de voiture il y a dix ans. Dossier 2016 enterr\u00E9.</div><div class="ntR">Malik \u2014 ton co\u00E9quipier. Fils de gendarme \u00E0 Fort-de-France. Il couvre, mais pas ind\u00E9finiment.</div><div class="ntR">\u00C9lodie \u2014 ta chef. Elle veut un dossier propre, pas un h\u00E9ros.</div><div class="ntR">Marcel Vautrin, 61 ans \u2014 le laboureur qui a trouv\u00E9 le corps. Il a vu la voiture, il n\u2019ose pas le dire.</div><div class="ntR">Adrien Valette \u2014 Vigilex S\u00E9curit\u00E9. Il efface les traces, pas les gens. Jamais les m\u00EAmes mains.</div><div class="ntR">\u00AB V. \u00BB \u2014 le num\u00E9ro masqu\u00E9 qui t\u2019\u00E9crit sur le t\u00E9l\u00E9phone de L\u00E9o. Et sur le tien.</div><b>Ce que tu sais</b>';
+ if(SS.id==="z"){
+  h+='<b>Qui est qui</b><div class="ntR">Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.</div><div class="ntR">Nils Aveline — l\u2019ancien propriétaire du numéro. Agent d\u2019une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.</div><div class="ntR">Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.</div><div class="ntR">Yasmine — ta meilleure amie. Elle croit que ton seul problème s\u2019appelle un hacker.</div><div class="ntR">Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.</div><div class="ntR">Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.</div>';
+  h+='<b>Ce que tu sais</b>';
+  const R=(v,t)=>{if(v)h+='<div class="ntR">'+t+'</div>'};
+  R(true,"Ton numéro était celui de Nils. Quelqu\u2019un l\u2019a volontairement remis dans le pool de recyclage.");
+  R(s.piege,"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils — et un échantillon t\u2019attend à 23h40.");
+  R(s.avou,"Cora sait que tu n\u2019es pas Nils. Elle t\u2019a appelé pour t\u2019expliquer les règles.");
+  R(s.pov,"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »");
+  R(s.prm,"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu\u2019à C. »");
+  R(true,"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. La clé est introuvable.");
+  R(s.mig,"Tu as tout migré : les fichiers de Nils sont maintenant dans ton téléphone.");
+  R((s.trst||0)>=2,"Cora te fait confiance — pour l\u2019instant.");
+  R(s.mentir,"Tu as menti à Cora en improvisant. Elle t\u2019a repéré en quatre minutes.");
+  h+='<b>Où tu en es</b>';
+  const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
+  bar(s.int||0,"Discrétion");bar(s.pov||0,"Preuves du réseau");bar(s.prm||0,"Preuves du meurtre");
+ }else{  h+='<b>Qui est qui</b><div class="ntR">L\u00E9o Garnier \u2014 la victime. Analyste informatique, 32 ans. Fils de Michel.</div><div class="ntR">Camille, 11 ans avec L\u00E9o \u2014 sa compagne. Prof de lettres. Elle a des r\u00E8gles, m\u00EAme dans le chagrin.</div><div class="ntR">Jeanne \u2014 la s\u0153ur de L\u00E9o. Prof de maths. Elle a gard\u00E9 la maison et le silence de la famille.</div><div class="ntR">Michel Garnier \u2014 le p\u00E8re. Technicien, mort dans un accident de voiture il y a dix ans. Dossier 2016 enterr\u00E9.</div><div class="ntR">Malik \u2014 ton co\u00E9quipier. Fils de gendarme \u00E0 Fort-de-France. Il couvre, mais pas ind\u00E9finiment.</div><div class="ntR">\u00C9lodie \u2014 ta chef. Elle veut un dossier propre, pas un h\u00E9ros.</div><div class="ntR">Marcel Vautrin, 61 ans \u2014 le laboureur qui a trouv\u00E9 le corps. Il a vu la voiture, il n\u2019ose pas le dire.</div><div class="ntR">Adrien Valette \u2014 Vigilex S\u00E9curit\u00E9. Il efface les traces, pas les gens. Jamais les m\u00EAmes mains.</div><div class="ntR">\u00AB V. \u00BB \u2014 le num\u00E9ro masqu\u00E9 qui t\u2019\u00E9crit sur le t\u00E9l\u00E9phone de L\u00E9o. Et sur le tien.</div><b>Ce que tu sais</b>';
   const R=(v,t)=>{if(v)h+='<div class="ntR">'+t+'</div>'};
   R(true,"Le corps a \u00E9t\u00E9 d\u00E9plac\u00E9 \u2014 il a pass\u00E9 la nuit sur du b\u00E9ton, avant d\u2019atterrir dans le champ de Marcel.");
   R(true,"Un dossier \u00AB ORPH\u00C9E \u00BB verrouill\u00E9 dans le t\u00E9l\u00E9phone de L\u00E9o.");
@@ -266,7 +282,7 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
   if((s.prm||0)<2)h+='<div class="ntR">\u26A0 Sans preuves mat\u00E9rielles \u2014 utilitaire, sc\u00E8ne \u2014 m\u00EAme la v\u00E9rit\u00E9 risque de ne pas tenir au proc\u00E8s.</div>';
   h+='<b>O\u00F9 tu en es</b>';
   const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
-  bar(s.int||0,"Int\u00E9grit\u00E9");bar(s.pov||0,"Preuves du r\u00E9seau");bar(s.prm||0,"Preuves du meurtre")}
+  bar(s.int||0,"Int\u00E9grit\u00E9");bar(s.pov||0,"Preuves du r\u00E9seau");bar(s.prm||0,"Preuves du meurtre")}}
  h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
@@ -301,7 +317,7 @@ function homeIntro(){
   $("mn").classList.remove("on");amb(null);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
- const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="o";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
+ const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=!(s.id==="o"||s.id==="z");const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
  row(c,"Smiley dans les messages : "+(emojiMode?"activés":"désactivés"),"Activer ou désactiver les emojis selon ton ton de lecture",()=>{emojiMode=!emojiMode;localStorage.setItem("etl_emoji",emojiMode?"on":"off");menu()});const vr=row(c,"Affichage : "+(PC?"PC":"Téléphone"),"Touche pour changer",()=>{setView(!PC);vr.children[0].textContent="Affichage : "+(PC?"PC":"Téléphone")});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
@@ -428,12 +444,12 @@ add=function(c,x){
   const c=card('Choisis une histoire');
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   STORIES.forEach((s,i)=>{
-   const locked=s.id!=='o';
+   const locked=!(s.id==='o'||s.id==='z');
    const b=document.createElement('button');b.className='bk'+(locked?' lock':' open');if(locked)b.disabled=true;
    let foot=locked?'En pause \u2014 bient\u00F4t':'Ouvrir le livre \u203a';
    if(!locked){let P=null;try{P=JSON.parse(localStorage.getItem('pg'+s.id))}catch(e){}
     const tot=endsOf(s),got=feN(s);const g=Math.min(got,tot);const fs=g+' fin'+(g>1?'s':'')+' trouv\u00E9e'+(g>1?'s':'');
-    if(s.id==='o'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_o')||1)}catch(e){};
+    if(s.id==='o'||s.id==='z'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_'+s.id)||1)}catch(e){};
      foot='Partie '+RN[pp]+' / VI \u00B7 '+fs}
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
@@ -488,7 +504,7 @@ add=function(c,x){
    s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(ADM||i===0||i<P.c);
     const b=row(c,(i+1)+'. '+h[0]+(ok?'':w?' \u00B7 verrouill\u00E9':' \u00B7 bient\u00F4t'),'',()=>{SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()},!ok);
     if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};b.after(rb)}});
-   if(s.id==='o'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
+   if(s.id==='o'||s.id==='z'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
    row(c,'\u2039 Retour','',menu);show(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
