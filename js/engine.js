@@ -83,6 +83,15 @@ function ov(t,x,b,f,b2,f2){$("ot").textContent=t;$("ox").textContent=x;$("ob").t
 function telOv(T,done){const o=document.createElement("div");o.id="telOv";const c=document.createElement("div");c.className="tel";
  c.innerHTML='<div class="telTop"><span>'+T[0]+'</span><span>'+T[1]+'</span></div><div class="telMsg"><b>'+T[2]+'</b><p>'+T[3]+'</p></div>';
  const b=document.createElement("button");b.textContent="Continuer";b.onclick=()=>{o.remove();done()};c.append(b);o.append(c);document.body.append(o)}
+const TTSOK=typeof speechSynthesis!=="undefined";
+let TTS_ON=true;try{TTS_ON=localStorage.getItem("etl_tts")!=="off"}catch(e){}
+const CALL_VOICE={Jeanne:{pitch:1.18,rate:1.04},Camille:{pitch:.96,rate:.97},Malik:{pitch:.8,rate:.98},"\u00C9lodie":{pitch:1.05,rate:1}};
+function pickFr(){const vs=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang));return vs.find(v=>/google/i.test(v.name))||vs.find(v=>/am\u00E9lie|audrey|marie|celine|julie|female|femme/i.test(v.name))||vs[0]||null}
+function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
+ try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);
+ const cfg=CALL_VOICE[nm]||{pitch:1,rate:1};u.pitch=cfg.pitch;u.rate=cfg.rate;u.volume=Math.max(.2,Math.min(1,VS||1));
+ const v=pickFr();if(v)u.voice=v;u.lang="fr-FR";speechSynthesis.speak(u)}catch(e){}}
+function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
 function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel en cours",lines=T[2]||[];let vo=null;if(typeof VOICES!=="undefined"&&VOICES[nm]){try{vo=new Audio(VOICES[nm]);vo.loop=true;vo.volume=.9;const p=vo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){vo=null}}
  const o=document.createElement("div");o.id="calOv";
  const ring=document.createElement("div");ring.className="calRing";
@@ -102,10 +111,10 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel en cours",lines=T[2]|
  const next=()=>{if(i>=lines.length){eb.hidden=false;return}
   const[sd,tx]=lines[i++];const d=document.createElement("div");
   d.className="calL "+(sd===1?"them":sd===2?"me":"info");d.textContent=tx;tr.append(d);tr.scrollTop=1e9;
-  if(sd===1)rx();
+  if(sd===1){rx();callSpeak(tx,nm)}
   setTimeout(next,Math.min(4200,1300+tx.length*38)/SPD)};
  setTimeout(next,1000/SPD);
- eb.onclick=()=>{clearInterval(iv);o.remove();stopV();done()}}
+ eb.onclick=()=>{clearInterval(iv);callSpeakStop();o.remove();stopV();done()}}
 function endsTotal(s){const seen={},q=[],out=new Set();(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
  const FL=["jea","aveu","malik","bloq"];
  while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
@@ -290,7 +299,10 @@ $("clk").parentNode.addEventListener("click",()=>{const n=Date.now();tp=tp.filte
   else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
   else toast("Ouvre une histoire puis 7 taps sur l\u2019horloge pour l\u2019\u00E9diter.")}});
 /* ---- boutons et démarrage ---- */
-$("set").onclick=()=>{$("vol").hidden=!$("vol").hidden};$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv()};$("apps").onclick=()=>appHome();
+$("set").onclick=()=>{$("vol").hidden=!$("vol").hidden};
+{const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
+ const TTS_OK=()=>typeof speechSynthesis!=="undefined";
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv()};$("apps").onclick=()=>appHome();
 $("vw2").onclick=()=>setView(!PC);
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
 $("bk").onclick=()=>{const ov=document.getElementById("notesOv")||document.getElementById("thrOv");
