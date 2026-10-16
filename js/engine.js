@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.23";console.log("Entre les lignes · v"+VER);
+const VER="2.24";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -51,7 +51,7 @@ function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("ch
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
  if(SS&&(SS.id==="o"||SS.id==="z")&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
- const pi=$("pI");if(pi)pi.textContent=(SS&&(SS.id==="o"||SS.id==="z")&&PART[id])?PART[id]+" / VI":"";
+ CHP=(SS&&(SS.id==="o"||SS.id==="z")&&PART[id])?PART[id]:"";
  if(SS&&(SS.id==="o"||SS.id==="z")&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
  if(ADM&&$("a6"))$("a6").textContent=id;
@@ -174,6 +174,7 @@ function addH(x){const d=add("h",x);
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
 const PART={d1:"d1",d1a:"d1a",d1a2:"d1a2",d1a3:"d1a3",d1b:"d1b",d1b2:"d1b2",d1c:"d1c",d1c2:"d1c2",d2:"d2",d2r:"d2r",d2c:"d2c",d2c2:"d2c2",d2c3:"d2c3",d2c4:"d2c4",d2j:"d2j",d2j2:"d2j2",d2j3:"d2j3",d2s:"d2s",d3:"d3",d3a:"d3a",d3b:"d3b",d3c:"d3c",d3d:"d3d",d3s:"d3s",d3f:"d3f",d3f2:"d3f2",d4:"d4",d4a:"d4a",d4b:"d4b",d4c:"d4c",d4d:"d4d",d4d2:"d4d2",d4d3:"d4d3",d4d4:"d4d4",d5:"d5",d5q:"d5q",d5q2:"d5q2",d5q3:"d5q3",d5a:"d5a",d5b:"d5b",d5c:"d5c",d5c2:"d5c2",d5d:"d5d",d5dq:"d5dq",d5dqa:"d5dqa",d5dqb:"d5dqb",d5dqc:"d5dqc",d5dq2:"d5dq2",d5dqd:"d5dqd",d5dqe:"d5dqe",d5dm:"d5dm",d5d2:"d5d2",d5d3:"d5d3",d6:"d6",d6a:"d6a",d6a1:"d6a1",d6a1b:"d6a1b",d6a1c:"d6a1c",d6a2:"d6a2",d6a3:"d6a3",d6b:"d6b",d6b2:"d6b2",d6b3:"d6b3",d7:"d7",d7a:"d7a",d7b:"d7b",d7c:"d7c",d7c2:"d7c2",d7d:"d7d",d7e:"d7e",d7f:"d7f",d8:"d8",d8t:"d8t",d8t2:"d8t2",d8r:"d8r",d8f:"d8f",d8k:"d8k",d8p:"d8p",d8s:"d8s",d8z:"d8z",d8z2:"d8z2",d8za:"d8za",d8zb:"d8zb",d8w:"d8w",d8w1:"d8w1",d8w1b:"d8w1b",d8w1c:"d8w1c",d8w2:"d8w2",d8w2b:"d8w2b",d8w2c:"d8w2c",d8w3:"d8w3",d9:"d9",d9a:"d9a",d9a1:"d9a1",d9j:"d9j",d9a2:"d9a2",d9b:"d9b",d9c:"d9c",d10y:"d10y",d10y1:"d10y1",d10y2:"d10y2",d10z:"d10z",d10:"d10",d10b:"d10b",d11a:"d11a",d11b:"d11b",d11bm:"d11bm",d11bs:"d11bs",d11bt:"d11bt",d11br:"d11br",d11c:"d11c",d11d:"d11d",d11e:"d11e",dA:"dA",dB:"dB",dC:"dC",dD:"dD",dE:"dE",dF:"dF",dG:"dG",dH:"dH",z1:"I",z2:"I",z3:"I",z4:"I",z5a:"I",z5b:"I",z5c:"I",z6:"I",z7q:"I",z7m:"I",z7m2:"I",z7h:"I",z8b:"I",z8a:"I",z8:"I",z8p:"I",z9:"I",z9a:"I",z9b:"I",z9c:"I",z10:"I",z11b:"I",z11c:"I",z11:"I"};
+let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
@@ -295,7 +296,7 @@ function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";c
  (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(t);b.onclick=async()=>{c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",emojiClean(t))}else{tx();add("m",emojiClean(rm?unq(rm):unq(t)))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
-function start(){run++;SK=1;$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";const p0=$("pI");if(p0)p0.textContent="";
+function start(){run++;SK=1;$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
  if(ADM&&ADS){try{Object.assign(st,JSON.parse(ADS))}catch(e){}}
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
@@ -310,7 +311,30 @@ let INTRO_HTML=(function(){const d=document.getElementById("in");return d?d.inne
 function addBack(c){
   let fn=null;c.querySelectorAll("button.st,button.bk").forEach(b=>{if(/^\u2039\s*Retour/.test(b.textContent.trim()))fn=b.onclick});
   const a=document.createElement("button");a.type="button";a.className="mnBack";a.setAttribute("aria-label","Retour");a.textContent="\u2190";
-  a.onclick=fn||homeIntro;c.prepend(a)}
+  a.onclick=fn||homeIntro;
+  if(c.parentElement&&c.parentElement.classList&&c.parentElement.classList.contains("rsOv")){c.style.position="relative";a.style.position="absolute";a.style.top="-56px";a.style.left="0";a.style.right="auto"}
+  c.prepend(a)}
+/* ---- Fiche progression (bouton i a cote de l'heure) ---- */
+function infoOv(){
+ try{stopPro()}catch(e){}
+ const o=document.createElement("div");o.className="rsOv";
+ const c=document.createElement("div");c.className="card";
+ const h2=document.createElement("h2");h2.textContent=SS?SS.t:"Progression";c.append(h2);
+ if(SS&&(SS.id==="o"||SS.id==="z")){
+  let pn=0;try{pn=+localStorage.getItem("etl_part_"+SS.id)||0}catch(e){}
+  const rom=["","I","II","III","IV","V","VI"][Math.max(pn,({I:1,II:2,III:3,IV:4,V:5,VI:6})[CHP]||0)]||"I";
+  const fs=document.createElement("div");fs.className="finStat";fs.innerHTML="Partie <b>"+rom+" / VI</b> \u00B7 chapitre en cours";c.append(fs);
+  let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+SS.id))||P}catch(e){}
+  SS.ch.forEach((hh,i)=>{const w=!!S[hh[1]],ok=w&&(i===0||i<P.c);const r=document.createElement("div");r.className="infoCh"+(ok?" on":"");r.innerHTML=(i+1)+". "+hh[0]+(ok?"":" \u00B7 \uD83D\uDD12");c.append(r)});
+  const tot=endsOf(SS),g0=feN(SS);const fl=document.createElement("div");fl.className="finStat";fl.innerHTML="\uD83C\uDFC1 Fins : <b>"+Math.min(g0,tot)+" / "+tot+"</b> \u2014 celles que tu as trouv\u00E9es";c.append(fl);
+ }
+ const g=document.createElement("div");g.className="infoGuide";
+ g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\u24D8</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, et tes fins trouv\u00E9es.</p><p><b>\uD83D\uDDC2 Apps</b> (dans certaines histoires) : bascule entre SMS, WhatsApp, Notes et Fichiers.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
+ c.append(g);
+ const cb=document.createElement("button");cb.className="bk";cb.innerHTML="<h3>\u2039 Retour</h3><p>Revenir \u00E0 la conversation</p>";cb.onclick=()=>{o.remove()};c.append(cb);
+ o.append(c);document.body.append(o);addBack(c);
+ o.addEventListener("click",e=>{if(e.target===o)o.remove()});
+}
 function startFromIntro(){unlock();menu();const d=$("in");if(d){d.classList.add("out");setTimeout(()=>{if(d.classList.contains("out"))d.remove()},1100)}}
 function homeIntro(){
   $("vol").hidden=true;
@@ -371,6 +395,7 @@ addEventListener("keydown",e=>{if(!e.altKey)return;const c=(e.code||"").replace(
   if(EDIT){adm(false)}
   else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
   else toast("Ouvre une histoire puis retape Alt+1510 pour l\u2019\u00E9diter.")}}});
+const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();infoOv()});
 $("clk").parentNode.addEventListener("click",()=>{const n=Date.now();tp=tp.filter(t=>n-t<3000);tp.push(n);if(tp.length>=7){tp=[];
   if(EDIT)adm(false);
   else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
