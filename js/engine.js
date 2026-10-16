@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.10";console.log("Entre les lignes · v"+VER);
+const VER="2.11";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -85,9 +85,15 @@ async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
   const b=document.createElement("button");b.className="proBtn";b.textContent=i===pars.length-1?"Reprendre le t\u00E9l\u00E9phone":"Continuer";
   b.onclick=()=>{cd.remove();if(i+1<pars.length)show(i+1);else{o.remove();done()}};cd.append(b);o.replaceChildren(cd)};show(0)})}
 function ov(t,x,b,f,b2,f2){$("ot").textContent=t;$("ox").textContent=x;$("ob").textContent=b;$("ob").onclick=()=>{$("ov").hidden=true;f()};$("ob2").hidden=!b2;if(b2){$("ob2").textContent=b2;$("ob2").onclick=()=>{$("ov").hidden=true;f2()}}$("ov").hidden=false}
-function telOv(T,done){const o=document.createElement("div");o.id="telOv";const c=document.createElement("div");c.className="tel";
- c.innerHTML='<div class="telTop"><span>'+T[0]+'</span><span>'+T[1]+'</span></div><div class="telMsg"><b>'+T[2]+'</b><p>'+T[3]+'</p></div>';
- const b=document.createElement("button");b.textContent="Continuer";b.onclick=()=>{o.remove();done()};c.append(b);o.append(c);document.body.append(o)}
+function telOv(T,done){const o=document.createElement("div");o.id="telOv";
+ const ph=document.createElement("div");ph.className="lsp";
+ ph.innerHTML='<div class="lspTop"></div><div class="lspClock">'+T[0]+'</div><div class="lspSub">'+T[1]+'</div>'
+ +'<div class="lspNotif"><i>💬</i><div><div class="lspNh"><b>'+T[2]+'</b><small>'+T[0]+'</small></div><p>'+T[3]+'</p></div></div>'
+ +'<div class="lspBar"></div>';
+ const cap=document.createElement("p");cap.className="lspCap";cap.textContent="Ton téléphone à toi — pas celui de Léo. Il vient de vibrer dans ta poche.";
+ const b=document.createElement("button");b.textContent="Déverrouiller";b.onclick=()=>{o.remove();done()};
+ o.append(ph,cap,b);document.body.append(o);
+ beep(1319,.09,.05);setTimeout(()=>beep(1760,.11,.05),150);setTimeout(()=>beep(1760,.11,.04),900)}
 const TTSOK=typeof speechSynthesis!=="undefined";
 let TTS_ON=true;try{TTS_ON=localStorage.getItem("etl_tts")!=="off"}catch(e){}
 const CALL_VOICE={Jeanne:{pitch:1.18,rate:1.04},Camille:{pitch:.96,rate:.97},Malik:{pitch:.8,rate:.98},"\u00C9lodie":{pitch:1.05,rate:1}};
@@ -163,7 +169,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={d1:"I",d1a:"I",d1b:"I",d1b2:"I",d1c:"I",d1c2:"I",d2:"II",d2c:"II",d2c2:"II",d2c3:"II",d2j:"II",d2j2:"II",d2j3:"II",d2s:"II",d3:"III",d3a:"III",d3b:"III",d3c:"III",d3d:"III",d4:"III",d4a:"III",d4b:"III",d4c:"III",d5:"IV",d5a:"IV",d5b:"IV",d5c:"IV",d5d:"IV",d5d2:"IV",d5d3:"IV",d6:"V",d6a:"V",d6a2:"V",d6a3:"V",d6b:"V",d7:"V",d7a:"V",d7b:"V",d7c:"V",d7c2:"V",d8:"VI",d8t:"VI",d8t2:"VI",d8r:"VI",d8f:"VI",d8k:"VI",d8p:"VI",d8s:"VI",d8z:"VI",d8za:"VI",d8zb:"VI",d8z2:"VI",d9:"VI",d9a:"VI",d9a1:"VI",d9j:"VI",d9a2:"VI",d9b:"VI",d9c:"VI",d10:"VI",d10z:"VI",d10b:"VI",d11a:"VI",d11b:"VI",d11bm:"VI",d11bs:"VI",d11bt:"VI",d11br:"VI",d11c:"VI",d11d:"VI",d11e:"VI",dA:"VI",dB:"VI",dC:"VI",dD:"VI",dE:"VI",dF:"VI",dG:"VI",dH:"VI"};
+const PART={d1:"I",d1a:"I",d1b:"I",d1b2:"I",d1c:"I",d1c2:"I",d2:"II",d2c:"II",d2c2:"II",d2c3:"II",d2j:"II",d2j2:"II",d2j3:"II",d2s:"II",d3:"III",d3a:"III",d3b:"III",d3c:"III",d3d:"III",d4:"III",d4a:"III",d4b:"III",d4c:"III",d5:"IV",d5a:"IV",d5b:"IV",d5c:"IV",d5d:"IV",d5dm:"IV",d5d2:"IV",d5d3:"IV",d6:"V",d6a:"V",d6a2:"V",d6a3:"V",d6b:"V",d7:"V",d7a:"V",d7b:"V",d7c:"V",d7c2:"V",d8:"VI",d8t:"VI",d8t2:"VI",d8r:"VI",d8f:"VI",d8k:"VI",d8p:"VI",d8s:"VI",d8z:"VI",d8za:"VI",d8zb:"VI",d8z2:"VI",d9:"VI",d9a:"VI",d9a1:"VI",d9j:"VI",d9a2:"VI",d9b:"VI",d9c:"VI",d10:"VI",d10z:"VI",d10b:"VI",d11a:"VI",d11b:"VI",d11bm:"VI",d11bs:"VI",d11bt:"VI",d11br:"VI",d11c:"VI",d11d:"VI",d11e:"VI",dA:"VI",dB:"VI",dC:"VI",dD:"VI",dE:"VI",dF:"VI",dG:"VI",dH:"VI"};
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
