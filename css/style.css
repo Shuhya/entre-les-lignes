@@ -69,8 +69,8 @@ header{display:grid;grid-template-columns:84px 1fr 84px;align-items:end;padding:
 .st b{font-weight:600;font-size:18px;display:block}.st small{display:block;color:#ffffffb8;margin-top:3px}
 #in{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden;transition:opacity 1s ease}
 #in.out{opacity:0;pointer-events:none}
-#in img{position:absolute;will-change:transform;backface-visibility:hidden;transform:translateZ(0);inset:0;width:100%;height:100%;object-fit:cover;object-position:62% center;opacity:0;transition:opacity 1.4s ease;will-change:transform}
-#in.on img{opacity:1;animation:kb 26s linear forwards}
+#bgi{position:absolute;inset:0;background:#000 center/cover no-repeat;background-position:62% center;opacity:0;transition:opacity 1.4s ease;will-change:transform,opacity;transform:translateZ(0)}
+#in.on #bgi{opacity:1;animation:kb 26s linear forwards}
 #in:after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 50%,#000d 0%,#0009 55%,#0003 100%)}
 #in .tx{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;width:min(420px,84vw);text-align:center}
 #in .tx>*{opacity:0;animation:txin .9s both}
@@ -115,6 +115,7 @@ header{display:flex;align-items:center;gap:6px;padding:6px 8px 8px}
 #appHome .ah-dots i{width:7px;height:7px;border-radius:50%;background:#fff3}
 #appHome .ah-dots i.on{background:#fff}
 #appHome .ahBack{background:#0007;border:1px solid #fff3;border-radius:20px;color:#fff;padding:11px 30px;font:inherit;font-size:14px}
+#thrOv .ahBack,#notesOv .ahBack{background:#0007;border:1px solid #fff3;border-radius:20px;color:#fff;padding:11px 30px;font:inherit;font-size:14px;margin:14px 0 6px;width:100%}
 body.wa header{background:#0f2519;border-bottom-color:#1d3a2c}
 body.wa #chat{background-color:#0b141a}
 body.wa .h{background:#1f3d2c;color:#e9f2e6}
@@ -139,7 +140,7 @@ body.pc #vol{top:56px}
 #in button#go{padding:13px 34px;font-size:16px;letter-spacing:2px;border:1px solid #fff3;border-radius:26px;background:#0007;backdrop-filter:blur(6px);margin-top:8px;transition:.3s;text-align:center}
 #in button#go:hover{background:#000c;border-color:#fff8;letter-spacing:3px}
 .st{padding:18px 2px}.st b{font-size:19px}
-body.pc #in img{object-position:center 40%}
+body.pc #bgi{background-position:center 40%}
 body.pc #in:after{background:radial-gradient(60% 70% at 50% 50%,#000d 0%,#0009 55%,#0002 100%)}
 body.pc #in .tx{left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%);width:min(520px,80vw)}
 body.pc #in h1{font-size:clamp(56px,6vw,96px)}

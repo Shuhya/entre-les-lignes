@@ -127,7 +127,8 @@ function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle(
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
  $("nm").textContent=n.nm||(SC?SS.n:SS.num);$("st").textContent=n.stx||n.app;
  const av=$("av");if(!av)return;
- if(n.mem){av.className="av grp";av.style.backgroundImage="";av.textContent="";n.mem.forEach(m=>{const i=document.createElement("img");i.alt=m;i.src=AVGR[m[0]]||"";av.append(i)})}
+ if(n.mem&&n.mem.length>1){av.className="av grp";av.style.backgroundImage="";av.textContent="";n.mem.forEach(m=>{const i=document.createElement("img");i.alt=m;i.src=AVGR[m[0]]||"";av.append(i)})}
+ else if(n.mem){av.className="av";const ph=AVGR[n.mem[0][0]];av.style.backgroundImage=ph?"linear-gradient(#0003,#0006),url("+ph+")":"";av.textContent=ph?"":n.mem[0][0]}
  else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="📁"}else setAv(SC?SS.n[0]:"\u{1F464}")}}
 function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95);
  const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";
@@ -144,7 +145,7 @@ function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML
  +ic("","#2b6ea3","📞")+ic("","#42506e","🌄")
  +'</div><div class="ah-dots"><i class="on"></i><i></i></div><button class="ahBack">‹ Revenir à la conversation</button>';
  $("app").append(o);
- o.querySelector(".ahBack").onclick=()=>o.remove();
+ o.querySelector(".ahBack").onclick=()=>{o.remove();applyApp(hdrOf(CAPP,CNM))};
  o.querySelectorAll(".ah-app:not(.off)").forEach(a=>a.onclick=()=>{const app=a.dataset.app;o.remove();
   if(app==="Notes")return notesOv();
   if((app==="WhatsApp"||app==="SMS")&&(THR[app]||[]).length>1)return thrOv(app);
@@ -156,12 +157,14 @@ function goApp(app,lbl){const t=APPH[app+"|"+lbl]||{};applyApp(hdrOf(app,lbl));
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
  $("chat").scrollTop=1e9}
 function thrOv(app){const o=document.createElement("div");o.id="thrOv";
+ $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"📱":"💬"}
  let h='<h2>'+(app==="SMS"?"Messages":app)+'</h2>';
  (THR[app]||[]).forEach(lbl=>{h+='<button class="thrR" data-l="'+lbl+'"><span class="thrA">'+(app==="SMS"?"📱":"💬")+'</span><span class="thrT"><b>'+lbl+'</b></span></button>'});
  h+='<button class="ahBack" id="thrB">‹ Applications</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
 function notesOv(){const o=document.createElement("div");o.id="notesOv";
+ $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
  if(!SC||SS.id!=="o")h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
@@ -209,7 +212,7 @@ function homeIntro(){
   $("vol").hidden=true;
   const old=$("in");if(old&&!old.classList.contains("out"))return;if(old)old.remove();
   const d=document.createElement("div");d.id="in";d.innerHTML=INTRO_HTML;document.body.append(d);
-  const im=d.querySelector("#bgi");if(im)im.src=IMG.menu;
+  const im=d.querySelector("#bgi");if(im)im.style.backgroundImage='url('+IMG.menu+')';
   d.querySelector("#go").onclick=startFromIntro;
   const sbi=d.querySelector("#sbi");if(sbi)sbi.onclick=togSnd;setV();
   const v=d.querySelector("#vw2");if(v){v.onclick=()=>setView(!PC);v.textContent=PC?"\uD83D\uDCF1 Mode t\u00E9l\u00E9phone":"\uD83D\uDDA5\uFE0F Mode PC"}
@@ -271,14 +274,17 @@ $("clk").parentNode.addEventListener("click",()=>{const n=Date.now();tp=tp.filte
 $("set").onclick=()=>{$("vol").hidden=!$("vol").hidden};$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv()};$("apps").onclick=()=>appHome();
 $("vw2").onclick=()=>setView(!PC);
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
-$("bk").onclick=()=>menu();$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
+$("bk").onclick=()=>{const ov=document.getElementById("notesOv")||document.getElementById("thrOv");
+ if(ov){ov.remove();appHome();return}
+ const ho=document.getElementById("appHome");if(ho){ho.remove();applyApp(hdrOf(CAPP,CNM));return}
+ menu()};$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
 function setView(p){PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE=$("vw");if(vwE)vwE.textContent=PC?"📱":"🖥️";{const v2=$("vw2");if(v2)v2.textContent=PC?"📱 Mode téléphone":"🖥️ Mode PC"}try{localStorage.setItem("view",PC)}catch(e){}}
 $("vw2").onclick=()=>setView(!PC);try{const v=localStorage.getItem("view");setView(v===null?(matchMedia("(min-width:900px) and (hover:hover)").matches?1:0):+v)}catch(e){setView(0)}
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
 $("go").onclick=startFromIntro;
 $("sbi").onclick=togSnd;
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK&&!ADM)amb(null)}},{once:true});
-(async()=>{const im=$("bgi");im.src=IMG.menu;try{await Promise.race([im.decode(),sl(2500)])}catch(e){}
+(async()=>{const im=$("bgi");const ld=new Promise(res=>{const t=new Image();t.onload=t.onerror=res;t.src=IMG.menu});im.style.backgroundImage='url('+IMG.menu+')';try{await Promise.race([ld,sl(2500)])}catch(e){}
  requestAnimationFrame(()=>$("in").classList.add("on"));
  setTimeout(()=>Object.values(IMG).forEach(u=>{const i=new Image();i.src=u;if(i.decode)i.decode().catch(()=>0)}),800)})();
 
@@ -800,7 +806,7 @@ add=function(c,x){
   const ov=clone.querySelector('#ov');if(ov)ov.setAttribute('hidden','');
   const mn=clone.querySelector('#mn');if(mn)mn.classList.remove('on');
   if(clone.querySelector('#in'))clone.querySelector('#in').classList.remove('out');
-  else{const d=document.createElement('div');d.id='in';d.innerHTML='<button class="vwb" id="sbi">=</button><button class="vwb" id="vw2"></button><img id="bgi" alt=""><div class="tx"><h1>Entre les lignes</h1><p class="lead">Des histoires qui se lisent en messages \u2014 et dont tu \u00E9cris la suite.</p><p>L\u00E9o a disparu. Il ne reste que son dernier message, un groupe WhatsApp qui s\u2019agite, des notes d\u2019enqu\u00EAte \u00E0 recouper. \u00C0 toi de lire ce qui se cache entre les lignes : douter, questionner, prot\u00E9ger \u2014 ou taire.</p><p class="metaL">Enqu\u00EAte en 6 chapitres \u00B7 8 fins possibles \u00B7 chaque r\u00E9ponse compte</p><button id="go">Commencer \u203A</button></div>';body.append(d);const sb2=d.querySelector('#sbi');if(sb2)sb2.onclick=togSnd;setV()}
+  else{const d=document.createElement('div');d.id='in';d.innerHTML='<button class="vwb" id="sbi">=</button><button class="vwb" id="vw2"></button><div id="bgi"></div><div class="tx"><h1>Entre les lignes</h1><p class="lead">Des histoires qui se lisent en messages \u2014 et dont tu \u00E9cris la suite.</p><p>L\u00E9o a disparu. Il ne reste que son dernier message, un groupe WhatsApp qui s\u2019agite, des notes d\u2019enqu\u00EAte \u00E0 recouper. \u00C0 toi de lire ce qui se cache entre les lignes : douter, questionner, prot\u00E9ger \u2014 ou taire.</p><p class="metaL">Enqu\u00EAte en 6 chapitres \u00B7 8 fins possibles \u00B7 chaque r\u00E9ponse compte</p><button id="go">Commencer \u203A</button></div>';body.append(d);const sb2=d.querySelector('#sbi');if(sb2)sb2.onclick=togSnd;setV()}
   const js='(function(){try{var D='+JSON.stringify(data).replace(/</g,'\\u003c')+';var rv=function(o){if(o&&typeof o==="object"){for(var k in o){if(k==="j"&&typeof o[k]==="string"){try{o[k]=new Function("return ("+o[k]+")")()}catch(e){}}else{rv(o[k])}}}return o};D=rv(D);for(var k in D.nodes)S[k]=D.nodes[k];for(var k in D.imgs)IMG[k]=D.imgs[k];for(var i=0;i<D.stories.length;i++)STORIES[i]=D.stories[i];STORIES.length=D.stories.length;if(D.bg&&typeof nodeBackgrounds==="object"){for(var k in D.bg)nodeBackgrounds[k]=D.bg[k]}if(D.snd){try{localStorage.setItem("etl_node_sounds",JSON.stringify(D.snd))}catch(e){}}}catch(e){}})();';
   const sc=document.createElement('script');sc.id='etlBaked';sc.textContent=js;body.append(sc);
   const html='<!DOCTYPE html>\n'+clone.outerHTML;
