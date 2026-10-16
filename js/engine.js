@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.7";console.log("Entre les lignes · v"+VER);
+const VER="2.8";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -67,7 +67,7 @@ async function play(id,r=run){
  if(n.call&&!st["cal_"+id]){await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){
-  if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();add("h",emojiClean(x));if(SS&&SS.n==="Lou"&&/(je m'appelle lou|moi c'est lou|je suis lou)/i.test(x)){$("nm").textContent="Lou";localStorage.setItem("etl_name_m","Lou");setAv("L");st.named=true}if(SS&&SS.n==="Inès"&&/(je m'appelle in[eè]s|moi c'est in[eè]s|je suis in[eè]s)/i.test(x)){$("nm").textContent="Inès";localStorage.setItem("etl_name_","Inès");setAv("I");st.named=true}if(SS&&SS.n==="Eliott"&&/(je m'appelle eliott|moi c'est eliott|je suis eliott)/i.test(x)){$("nm").textContent="Eliott";localStorage.setItem("etl_name_k","Eliott");setAv("E");st.named=true}await sl(350)}
+  if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));if(SS&&SS.n==="Lou"&&/(je m'appelle lou|moi c'est lou|je suis lou)/i.test(x)){$("nm").textContent="Lou";localStorage.setItem("etl_name_m","Lou");setAv("L");st.named=true}if(SS&&SS.n==="Inès"&&/(je m'appelle in[eè]s|moi c'est in[eè]s|je suis in[eè]s)/i.test(x)){$("nm").textContent="Inès";localStorage.setItem("etl_name_","Inès");setAv("I");st.named=true}if(SS&&SS.n==="Eliott"&&/(je m'appelle eliott|moi c'est eliott|je suis eliott)/i.test(x)){$("nm").textContent="Eliott";localStorage.setItem("etl_name_k","Eliott");setAv("E");st.named=true}await sl(350)}
   else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.e)return fin(n.e);
@@ -107,7 +107,7 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel en cours",lines=T[2]|
  const se=document.createElement("div");se.className="calSub";se.textContent=sub;o.append(se);
  const te=document.createElement("div");te.className="calTm";te.textContent="0:00";o.append(te);
  const tr=document.createElement("div");tr.className="calTr";o.append(tr);
- const eb=document.createElement("button");eb.className="calEnd";eb.textContent="Raccrocher";eb.hidden=true;o.append(eb);
+ const eb=document.createElement("button");eb.className="calEnd";eb.innerHTML='<i>\u{1F4DE}</i><small>Raccrocher</small>';eb.hidden=true;o.append(eb);
  const stopV=()=>{if(vo){try{vo.pause();vo.currentTime=0}catch(e){}vo=null}};
  document.body.append(o);
  beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),110);
@@ -155,10 +155,17 @@ function fin([t,x]){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.m
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.6),i*160));
  const nx=(SS.ch[SC+1]||[])[1],ok=!!S[nx],r=run;
  setTimeout(()=>{if(r!=run)return;if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)},1800)}
+function addH(x){const d=add("h",x);
+ if(CGP&&CGP.length>1){const i=x.indexOf(" : ");if(i>1&&i<22&&CGP.indexOf(x.slice(0,i))>=0){
+  const nm=x.slice(0,i),ph=AVGR[nm[0]],av=document.createElement("span");
+  av.className="gav";av.title=nm;if(ph)av.style.backgroundImage='url('+ph+')';else av.textContent=nm[0];
+  const row=document.createElement("div");row.className="hrow";d.replaceWith(row);row.append(av,d);d.textContent=x.slice(i+3)}}
+ return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
 const PART={d1:"I",d1a:"I",d1b:"I",d1b2:"I",d1c:"I",d1c2:"I",d2:"II",d2c:"II",d2c2:"II",d2c3:"II",d2j:"II",d2j2:"II",d2j3:"II",d2s:"II",d3:"III",d3a:"III",d3b:"III",d3c:"III",d3d:"III",d4:"III",d4a:"III",d4b:"III",d4c:"III",d5:"IV",d5a:"IV",d5b:"IV",d5c:"IV",d5d:"IV",d5d2:"IV",d5d3:"IV",d6:"V",d6a:"V",d6a2:"V",d6a3:"V",d6b:"V",d7:"V",d7a:"V",d7b:"V",d7c:"V",d7c2:"V",d8:"VI",d8t:"VI",d8t2:"VI",d8r:"VI",d8f:"VI",d8k:"VI",d8p:"VI",d8s:"VI",d8z:"VI",d8za:"VI",d8zb:"VI",d8z2:"VI",d9:"VI",d9a:"VI",d9a1:"VI",d9j:"VI",d9a2:"VI",d9b:"VI",d9c:"VI",d10:"VI",d10z:"VI",d10b:"VI",d11a:"VI",d11b:"VI",d11bm:"VI",d11bs:"VI",d11bt:"VI",d11br:"VI",d11c:"VI",d11d:"VI",d11e:"VI",dA:"VI",dB:"VI",dC:"VI",dD:"VI",dE:"VI",dF:"VI",dG:"VI",dH:"VI"};
-function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";
+let CGP=null;
+function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
  const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
  $("nm").textContent=n.nm||(SC?SS.n:SS.num);$("st").textContent=n.stx||n.app;
  const av=$("av");if(!av)return;
