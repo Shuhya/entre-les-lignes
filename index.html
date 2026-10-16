@@ -13,33 +13,39 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1024'/%3E%3Crect x='14' y='8' width='36' height='48' rx='6' fill='none' stroke='%23ffd166' stroke-width='3'/%3E%3Ccircle cx='32' cy='46' r='2.5' fill='%23ffd166'/%3E%3C/svg%3E">
 <style>
-:root{--gold:#ffd166;--tx:#eef4ff}
+:root{--gold:#ffd166}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
-body{font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--tx);background:#060a14;overflow-x:hidden}
-#stage{position:fixed;inset:0;background:#060a14 url('assets/img/menu.jpg') center/cover no-repeat}
-#stage:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#060a14cc 0%,#060a1499 40%,#060a14e6 100%)}
-.wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100dvh;align-items:center;justify-content:center;padding:48px 24px;text-align:center}
-h1{font:400 clamp(42px,9vw,84px)/1.05 'Palatino Linotype','Iowan Old Style','Book Antiqua',Palatino,Georgia,serif;letter-spacing:.5px;text-shadow:0 2px 30px #000c;animation:up .8s .1s both}
-.tag{font-size:12.5px;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold);margin:18px 0 26px;opacity:.9;animation:up .8s .25s both}
-.pitch{max-width:560px;font-size:17.5px;line-height:1.75;color:#cfe0f5;animation:up .8s .4s both;text-shadow:0 1px 12px #000a}
-.pitch b{color:#fff;font-weight:600}
-.metaL{font-size:12.5px;letter-spacing:1.1px;color:#8fa5c5;margin-top:22px;animation:up .8s .55s both}
-#go{margin-top:40px;padding:15px 42px;font-size:16.5px;letter-spacing:2px;color:#fff;border:1px solid #ffffff42;border-radius:28px;background:#00000073;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;text-decoration:none;display:inline-block;transition:.3s;animation:up .8s .7s both}
-#go:hover{background:#ffd16622;border-color:#ffd16688;transform:translateY(-2px);box-shadow:0 10px 34px #0009}
-.foot{position:relative;z-index:1;text-align:center;padding:18px;font-size:11.5px;color:#5d6f8f;letter-spacing:.4px}
-.foot a{color:#8fa5c5;text-decoration:none}
-@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body{font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff;background:#000;overflow:hidden}
+#in{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden}
+#bgi{position:absolute;inset:0;background:#000 url('assets/img/menu.jpg') center/cover no-repeat;background-position:62% center;opacity:0;transition:opacity 1.4s ease;will-change:transform,opacity;transform:translateZ(0)}
+#in.on #bgi{opacity:1;animation:kb 26s linear forwards}
+#in:after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 50%,#000d 0%,#0009 55%,#0003 100%)}
+#in .tx{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;width:min(420px,84vw);text-align:center}
+#in .tx>*{opacity:0;animation:txin .9s both}
+#in .tx h1{animation-delay:.15s}#in .tx .lead{animation-delay:.45s}#in .tx p:not(.lead):not(.metaL){animation-delay:.7s}#in .tx p.metaL{animation-delay:.9s}#in .tx a#go{animation-delay:1.1s}
+#in h1{font:400 clamp(34px,9vw,54px)/1.05 Georgia,serif;margin:0 0 10px}
+#in p{margin:0 0 22px;color:#ffffffc0;font-size:15.5px;line-height:1.6}
+#in p.lead{color:#fff;font-size:17px;margin:0 0 16px}
+#in p.metaL{font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:#ffd166c9;margin:0 0 20px}
+#in .tx p:not(.lead){margin:0 0 14px}
+#in a#go{display:inline-block;background:none;border:0;border-bottom:1px solid #fff9;color:#fff;font:inherit;padding:0 0 4px;letter-spacing:1px;text-decoration:none;cursor:pointer}
+#in a#go:hover{border-bottom-color:#fff}
+.foot{position:fixed;z-index:21;bottom:14px;left:0;right:0;text-align:center;font-size:11.5px;color:#ffffff59;letter-spacing:.4px}
+@keyframes txin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes kb{from{transform:scale(1) translateZ(0)}to{transform:scale(1.08) translateZ(0)}}
 </style>
 </head>
 <body>
-<div id="stage"></div>
-<div class="wrap">
+<div id="in" class="on">
+<div id="bgi"></div>
+<div class="tx">
   <h1>Entre les lignes</h1>
-  <div class="tag">Des histoires à vivre en messages</div>
-  <p class="pitch">Un téléphone vibre. Des messages arrivent, des conversations s'ouvrent — et quelque part derrière l'écran, <b>quelqu'un attend une réponse. La tienne.</b><br><br>Chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours.</p>
+  <p class="lead">Des histoires qui se lisent en messages — et dont tu écris la suite.</p>
+  <p>Un téléphone vibre. Des messages arrivent, des conversations s'ouvrent — et quelque part derrière l'écran, quelqu'un attend une réponse. La tienne. Chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours.</p>
   <p class="metaL">Des conversations à lire · des choix à porter · chaque réponse compte</p>
-  <a id="go" href="jeu.html">Ouvrir le téléphone ›</a>
+  <a id="go" href="jeu.html">Commencer ›</a>
+</div>
 </div>
 <div class="foot">Entre les lignes · un jeu narratif de Dylan Gaucher</div>
 </body>
