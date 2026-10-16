@@ -435,7 +435,7 @@ add=function(c,x){
    row(c,'\u2039 Retour','',menu);show(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
-   const o=document.createElement('div');o.className='rsOv';o.style.backgroundImage='linear-gradient(#000b,#000f),url('+IMG.menu+')';
+   const o=document.createElement('div');o.className='rsOv';
    const c=card(s.t);
    const lk=(t,d,fn,cls)=>{const b=document.createElement('button');b.className='bk'+(cls?' '+cls:'');b.innerHTML='<h3>'+t+'</h3><p>'+d+'</p>';b.onclick=fn;c.append(b);return b};
    lk('Reprendre la conversation','Chapitre '+Math.min((v.chapter||0)+1,((s.ch&&s.ch.length)||1))+' / '+((s.ch&&s.ch.length)||1)+' · '+(()=>{try{const f=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');return f.length+' fin'+(f.length>1?'s':'')+' vue'+(f.length>1?'s':'')}catch(e){return ''}})()+' — arrêt le '+new Date(v.at).toLocaleString('fr-FR'),()=>{o.remove();resume(v)},'open');
