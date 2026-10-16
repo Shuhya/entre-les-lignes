@@ -9,3 +9,6 @@ IMG.grange="assets/img/grange.jpg";
 IMG.ormes="assets/img/ormes.jpg";
 IMG.archives="assets/img/archives.jpg";
 const AVF1="assets/img/av-c.jpg",AVF2="assets/img/av-j.jpg",AVM1="assets/img/av-n.jpg";
+
+/* Voix des appels — ajouter les fichiers dans assets/audio/ et référencer ici */
+const VOICES={};

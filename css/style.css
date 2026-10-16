@@ -271,3 +271,27 @@ body.pc .bk .bkLock{right:24px}
 .ntB{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px;color:#ffffffc8}
 .ntB span{width:120px;flex:none}
 .ntB i{display:block;height:6px;border-radius:4px;background:#ffd166;min-width:4px}
+
+/* ---- écran de fin ---- */
+#endOv{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:#000 center/cover no-repeat;color:#fff;padding:24px;animation:fo .6s}
+#endOv .card{width:100%;max-width:460px;background:linear-gradient(180deg,#0a1424ee,#060a12f2);border:1px solid #2c4a73;border-radius:18px;padding:26px 24px;box-shadow:0 30px 90px #000d}
+#endOv h2{font:400 30px Georgia,serif;margin:0 0 4px;letter-spacing:.4px}
+.endSub{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:#9fb4d4;margin-bottom:14px}
+.endTxt{white-space:pre-line;color:#ffffffd9;line-height:1.7;font-size:15px;margin:0 0 18px}
+.endStats{border-top:1px solid #ffffff22;padding-top:14px;margin-bottom:16px}
+.endFins{border-top:1px solid #ffffff22;padding-top:14px;margin-bottom:20px}
+.endFins b{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:#ffd166c4;display:block;margin-bottom:8px}
+.endDots{display:flex;align-items:center;gap:8px}
+.endDots i{width:11px;height:11px;border-radius:50%;background:#fff3;border:1px solid #ffffff40}
+.endDots i.on{background:#ffd166;border-color:#ffd166;box-shadow:0 0 8px #ffd16666}
+.endDots small{margin-left:6px;color:#ffffffa8;font-size:13px}
+#endOv #ob{width:100%;margin-top:4px;padding:13px 16px;border-radius:999px;border:0;background:#3e91ff;color:#fff;font:inherit;font-size:15.5px}
+#endOv #ob2{width:100%;margin-top:8px;padding:12px;border-radius:14px;border:1.5px solid #fff6;background:transparent;color:#fff;font:inherit}
+/* ---- version PC assumée ---- */
+@media(min-width:900px){
+ body.pc{background:radial-gradient(1200px 800px at 70% -10%,#141d33 0%,#0a0d16 55%,#05070c 100%)}
+ body.pc #app{border-radius:44px;border-width:10px;box-shadow:0 0 0 1px #ffffff14,0 40px 120px #000e,0 0 90px #1d2f5533}
+ body.pc #app:after{content:"Entre les lignes";position:absolute;top:-38px;left:50%;transform:translateX(-50%);font:400 15px Georgia,serif;letter-spacing:2.5px;color:#8fa3c8;opacity:.75}
+ body.pc #chat{padding:24px max(14px,20vw)}
+ body.pc .b{max-width:58%}
+}
