@@ -1,3 +1,4 @@
+import re
 #!/usr/bin/env python3
 """Régénère le fichier unique jouable (export) depuis l'architecture du repo.
 Usage : python3 build/build-single.py  →  dist/entre-les-lignes.html"""
@@ -30,10 +31,10 @@ assert "fetch(" in new_rb, "rainBuf fetch introuvable"
 engine = engine.replace(new_rb, old_rb)
 
 single = read("index.html")
-single = single.replace('<link rel="stylesheet" href="css/style.css">', "<style>\n%s\n</style>" % read("css/style.css"))
-single = single.replace('<script src="js/assets.js"></script>', "<script>\n%s\n</script>" % assets)
-single = single.replace('<script src="js/story.js"></script>', "<script>\n%s\n</script>" % read("js/story.js"))
-single = single.replace('<script src="js/engine.js"></script>', "<script>\n%s\n</script>" % engine)
+single = re.sub(r'<link rel="stylesheet" href="css/style.css(\?v=[^"]*)?">', "<style>\n%s\n</style>" % read("css/style.css"), single)
+single = re.sub(r'<script src="js/assets.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % assets, single)
+single = re.sub(r'<script src="js/story.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % read("js/story.js"), single)
+single = re.sub(r'<script src="js/engine.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % engine, single)
 assert "src=\"js/" not in single and "href=\"css" not in single, "refs externes restantes"
 out_path = os.path.join(OUT, "entre-les-lignes.html")
 open(out_path, "w", encoding="utf-8").write(single)

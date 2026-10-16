@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.24";console.log("Entre les lignes · v"+VER);
+const VER="2.25";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -316,7 +316,7 @@ function addBack(c){
   c.prepend(a)}
 /* ---- Fiche progression (bouton i a cote de l'heure) ---- */
 function infoOv(){
- try{stopPro()}catch(e){}
+ try{const M=window.etlMisc;if(M&&M.stopPro)M.stopPro()}catch(e){}
  const o=document.createElement("div");o.className="rsOv";
  const c=document.createElement("div");c.className="card";
  const h2=document.createElement("h2");h2.textContent=SS?SS.t:"Progression";c.append(h2);
@@ -326,7 +326,8 @@ function infoOv(){
   const fs=document.createElement("div");fs.className="finStat";fs.innerHTML="Partie <b>"+rom+" / VI</b> \u00B7 chapitre en cours";c.append(fs);
   let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+SS.id))||P}catch(e){}
   SS.ch.forEach((hh,i)=>{const w=!!S[hh[1]],ok=w&&(i===0||i<P.c);const r=document.createElement("div");r.className="infoCh"+(ok?" on":"");r.innerHTML=(i+1)+". "+hh[0]+(ok?"":" \u00B7 \uD83D\uDD12");c.append(r)});
-  const tot=endsOf(SS),g0=feN(SS);const fl=document.createElement("div");fl.className="finStat";fl.innerHTML="\uD83C\uDFC1 Fins : <b>"+Math.min(g0,tot)+" / "+tot+"</b> \u2014 celles que tu as trouv\u00E9es";c.append(fl);
+  const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);g0=(JSON.parse(localStorage.getItem("fe"+SS.id)||"[]")).length}catch(e){}
+  if(tot){const fl=document.createElement("button");fl.className="finStat";fl.style.cursor="pointer";fl.style.width="100%";fl.innerHTML="\uD83C\uDFC1 Fins : <b>"+Math.min(g0,tot)+" / "+tot+"</b> \u2014 celles que tu as trouv\u00E9es, touche pour les voir";fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};c.append(fl)}
  }
  const g=document.createElement("div");g.className="infoGuide";
  g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\u24D8</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, et tes fins trouv\u00E9es.</p><p><b>\uD83D\uDDC2 Apps</b> (dans certaines histoires) : bascule entre SMS, WhatsApp, Notes et Fichiers.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
@@ -522,6 +523,7 @@ add=function(c,x){
    r.innerHTML='<b>'+(ok?t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</b>';c.append(r)});
   row(c,'\u2039 Retour','',()=>chap(s));show(c)}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]')).length}catch(e){return 0}};
+ try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
  chap=function(s){if(EDIT)adm(false);GHOST=false;SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
