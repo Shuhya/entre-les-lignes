@@ -1,4 +1,4 @@
-const DEF_AV={'':AVF1,m:AVF2,k:AVM1,z:AVF1};
+const DEF_AV={'':AVF1,m:AVF2,k:AVM1,z:AVF3};
 let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},ADM=0,ADS="",kb="",tp=[],nodeNow=null,EDIT=0;
 const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
 /* ---- audio ---- */
@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.18";console.log("Entre les lignes · v"+VER);
+const VER="2.19";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -21,7 +21,7 @@ AM.foret={b:["lowpass",300,.05],e:[[5200,()=>{const f=R(1800,2700),n=2+(Math.ran
 AM.aube=AM.foret;AM.carnet=AM.gare;
 AM.cafe={b:["bandpass",520,.05,.8],e:[[9000,()=>hit(R(1800,2600),.05,R(.05,.1),"bandpass",.01,2)],[17000,()=>{tn(R(2400,3200),R(1200,1600),.08,.02,.03);setTimeout(()=>hit(R(1400,1900),.04,.05,"highpass",.005,1.5),R(120,400))}],[28000,()=>{const f=R(300,420),p=Pk([[f,f*1.19],[f*1.33,f],[f,f*1.5]]);p.forEach((x,i)=>setTimeout(()=>tn(x[0],x[1],R(.3,.5),.012,.01),i*R(180,320)))}]]};
 AM.sombre={b:["lowpass",150,.04],e:[[22000,()=>hit(R(160,260),R(3,5),.035,"lowpass",1.4)],[55000,()=>tn(R(600,800),R(400,500),2.5,.006,.8)]]};
-const AUTOAMB={cafe:"cafe",bureau:"sombre",archives:"sombre",grange:"nuit",ormes:"nuit",champ:"nuit",voiture:"nuit",train:"gare"};
+const AUTOAMB={cafe:"cafe",bureau:"sombre",archives:"sombre",grange:"nuit",ormes:"nuit",champ:"nuit",voiture:"nuit",train:"gare",vaubris:"nuit",appart:"nuit",quai9:"sombre"};
 let RB=null,rb=null,rsrc=[],ambId=0;
 // b64: audio pluie désormais chargé depuis assets/audio/pluie.mp3
 const rainBuf=()=>RB||(RB=fetch("assets/audio/pluie.mp3").then(r=>r.arrayBuffer()).then(ab=>new Promise(res=>{try{ac.decodeAudioData(ab,res,()=>res(null))}catch(e){res(null)}})).catch(()=>{RB=null;return null}));
@@ -108,7 +108,7 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  const o=document.createElement("div");o.id="calOv";
  const hd=document.createElement("div");hd.className="calHd";
  const av=document.createElement("div");av.className="calAv";
- const ph=AVGR[nm[0]];if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
+ const ph=avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
  const tb=document.createElement("div");const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub;tb.append(ne,se);
  hd.append(av,tb);o.append(hd);
  const tr=document.createElement("div");tr.className="calTr";o.append(tr);
@@ -167,12 +167,12 @@ function fin([t,x]){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.m
  setTimeout(()=>{if(r!=run)return;if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)},1800)}
 function addH(x){const d=add("h",x);
  if(CGP&&CGP.length>1){const i=x.indexOf(" : ");if(i>1&&i<22&&CGP.indexOf(x.slice(0,i))>=0){
-  const nm=x.slice(0,i),ph=AVGR[nm[0]],av=document.createElement("span");
+  const nm=x.slice(0,i),ph=avOf(nm),av=document.createElement("span");
   av.className="gav";av.title=nm;if(ph)av.style.backgroundImage='url('+ph+')';else av.textContent=nm[0];
   const row=document.createElement("div");row.className="hrow";d.replaceWith(row);row.append(av,d);d.textContent=x.slice(i+3)}}
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
-const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
+const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
 const PART={d1:"d1",d1a:"d1a",d1a2:"d1a2",d1a3:"d1a3",d1b:"d1b",d1b2:"d1b2",d1c:"d1c",d1c2:"d1c2",d2:"d2",d2r:"d2r",d2c:"d2c",d2c2:"d2c2",d2c3:"d2c3",d2c4:"d2c4",d2j:"d2j",d2j2:"d2j2",d2j3:"d2j3",d2s:"d2s",d3:"d3",d3a:"d3a",d3b:"d3b",d3c:"d3c",d3d:"d3d",d3s:"d3s",d3f:"d3f",d3f2:"d3f2",d4:"d4",d4a:"d4a",d4b:"d4b",d4c:"d4c",d4d:"d4d",d4d2:"d4d2",d4d3:"d4d3",d4d4:"d4d4",d5:"d5",d5q:"d5q",d5q2:"d5q2",d5q3:"d5q3",d5a:"d5a",d5b:"d5b",d5c:"d5c",d5c2:"d5c2",d5d:"d5d",d5dq:"d5dq",d5dqa:"d5dqa",d5dqb:"d5dqb",d5dqc:"d5dqc",d5dq2:"d5dq2",d5dqd:"d5dqd",d5dqe:"d5dqe",d5dm:"d5dm",d5d2:"d5d2",d5d3:"d5d3",d6:"d6",d6a:"d6a",d6a1:"d6a1",d6a1b:"d6a1b",d6a1c:"d6a1c",d6a2:"d6a2",d6a3:"d6a3",d6b:"d6b",d6b2:"d6b2",d6b3:"d6b3",d7:"d7",d7a:"d7a",d7b:"d7b",d7c:"d7c",d7c2:"d7c2",d7d:"d7d",d7e:"d7e",d7f:"d7f",d8:"d8",d8t:"d8t",d8t2:"d8t2",d8r:"d8r",d8f:"d8f",d8k:"d8k",d8p:"d8p",d8s:"d8s",d8z:"d8z",d8z2:"d8z2",d8za:"d8za",d8zb:"d8zb",d8w:"d8w",d8w1:"d8w1",d8w1b:"d8w1b",d8w1c:"d8w1c",d8w2:"d8w2",d8w2b:"d8w2b",d8w2c:"d8w2c",d8w3:"d8w3",d9:"d9",d9a:"d9a",d9a1:"d9a1",d9j:"d9j",d9a2:"d9a2",d9b:"d9b",d9c:"d9c",d10y:"d10y",d10y1:"d10y1",d10y2:"d10y2",d10z:"d10z",d10:"d10",d10b:"d10b",d11a:"d11a",d11b:"d11b",d11bm:"d11bm",d11bs:"d11bs",d11bt:"d11bt",d11br:"d11br",d11c:"d11c",d11d:"d11d",d11e:"d11e",dA:"dA",dB:"dB",dC:"dC",dD:"dD",dE:"dE",dF:"dF",dG:"dG",dH:"dH",z1:"I",z2:"I",z3:"I",z4:"I",z5a:"I",z5b:"I",z5c:"I",z6:"I",z7q:"I",z7m:"I",z7m2:"I",z7h:"I",z8b:"I",z8a:"I",z8:"I",z8p:"I",z9:"I",z9a:"I",z9b:"I",z9c:"I",z10:"I",z11b:"I",z11c:"I",z11:"I"};
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
@@ -180,7 +180,7 @@ function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle(
  $("nm").textContent=n.nm||(SC?SS.n:SS.num);$("st").textContent=n.stx||n.app;
  const av=$("av");if(!av)return;
  if(n.mem&&n.mem.length>1){av.className="av grp";av.style.backgroundImage="";av.textContent="";n.mem.forEach(m=>{const i=document.createElement("img");i.alt=m;i.src=AVGR[m[0]]||"";av.append(i)})}
- else if(n.mem){av.className="av";const ph=AVGR[n.mem[0][0]];av.style.backgroundImage=ph?"linear-gradient(#0003,#0006),url("+ph+")":"";av.textContent=ph?"":n.mem[0][0]}
+ else if(n.mem){av.className="av";const ph=avOf(n.mem[0]);av.style.backgroundImage=ph?"linear-gradient(#0003,#0006),url("+ph+")":"";av.textContent=ph?"":n.mem[0][0]}
  else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="📁"}else setAv(SC?SS.n[0]:"\u{1F464}")}}
 function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95);
  const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";
@@ -220,6 +220,7 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  const PH={"Camille":"C","Jeanne":"J","C.":"C","Cora":"C","Yasmine":"Y"};
  const mkAv=lbl=>{
   if(app==="Fichiers")return '<span class="thrA file">\u{1F4C4}</span>';
+  if(AVN[lbl])return '<span class="thrA ph" style="background-image:url('+AVN[lbl]+')"></span>';
   const mem=MEM[lbl];
   if(mem){return '<span class="thrA grp">'+mem.map(m=>PH[m]&&AVGR[PH[m]]?'<img alt="'+m+'" src="'+AVGR[PH[m]]+'">':'<i>'+m[0]+'</i>').join("")+'</span>'}
   const k=PH[lbl];
