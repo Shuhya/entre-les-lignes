@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.42";console.log("Entre les lignes · v"+VER);
+const VER="2.43";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -479,10 +479,6 @@ function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.i
 /* ---- admin ---- */
 function adm(on){ADM=on;const p=$("adm");if(p)p.remove();}
 function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
-addEventListener("keydown",e=>{if(typeof ETL_ATELIER==="undefined"||!e.altKey)return;const c=(e.code||"").replace(/^(Digit|Numpad)/,"");if(/^\d$/.test(c)){kb=(kb+c).slice(-4);if(kb=="1510"){e.preventDefault();kb="";
-  if(EDIT){adm(false)}
-  else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
-  else toast("Ouvre une histoire puis retape Alt+1510 pour l\u2019\u00E9diter.")}}});
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();infoOv()});
 $("clk").parentNode.addEventListener("click",()=>{if(typeof ETL_ATELIER==="undefined")return;const n=Date.now();tp=tp.filter(t=>n-t<3000);tp.push(n);if(tp.length>=7){tp=[];
   if(EDIT)adm(false);
@@ -507,7 +503,7 @@ function setView(p){PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE
 {const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?0:+v)}catch(e){setView(0)}
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
 if($("go")){$("go").onclick=startFromIntro;$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
-if(typeof ETL_ATELIER!=="undefined")setTimeout(()=>toast("Atelier : ouvre une histoire, puis Alt+1510 ou 7 taps sur l'horloge pour l'\u00E9diter."),1200);
+if(typeof ETL_ATELIER!=="undefined")setTimeout(()=>toast("Atelier : ouvre une histoire, puis 7 taps sur l'horloge pour l'\u00E9diter."),1200);
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK&&!ADM)amb(null)}},{once:true});
 (async()=>{const im=$("bgi");if(!im)return;const ld=new Promise(res=>{const t=new Image();t.onload=t.onerror=res;t.src=IMG.menu});im.style.backgroundImage='url('+IMG.menu+')';try{await Promise.race([ld,sl(2500)])}catch(e){}
  requestAnimationFrame(()=>$("in").classList.add("on"));
@@ -1135,7 +1131,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
    return}
   ensureCSS();buildRail();
   if(nodeNow&&S[nodeNow])edRender(nodeNow);else updateRail();
-  toast('\u00C9dition de cette histoire \u2014 Espace ou \u2192 : message suivant \u00B7 Ctrl+Z : annuler \u00B7 Alt+1510 ou le bouton du rail pour quitter')}
+  toast('\u00C9dition de cette histoire \u2014 Espace ou \u2192 : message suivant \u00B7 Ctrl+Z : annuler \u00B7 7 taps sur l\u2019horloge ou le bouton du rail pour quitter')}
  /* en mode \u00E9dition, le r\u00E9cit attend le pas-à-pas */
  const playPrev=play;
  play=async function(id,r=run){if(EDIT&&S[id]){edRender(id);return}const v=await playPrev(id,r);return v};

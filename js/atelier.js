@@ -115,7 +115,7 @@ function open(){
 }
 function toggle(){W?close():open()}
 
-/* remplace l'ancien mini-panneau adm() : Alt+1510 et 7 taps ouvrent le studio */
+/* remplace l'ancien mini-panneau adm() : 7 taps sur l'horloge ouvrent le studio */
 try{adm=on=>{if(on===false)close();else toggle()}}catch(e){}
 
 /* bouton flottant permanent (sous le voile 403, z<9999) — styles injectés dès le chargement pour qu'il soit visible AVANT la première ouverture du studio */
