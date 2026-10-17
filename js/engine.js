@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.67";console.log("Entre les lignes · v"+VER);
+const VER="2.68";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -307,7 +307,7 @@ const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h
 let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
- const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=1;ab.style.display="none"}
+ const ab=$("apps");if(ab&&n.app&&n.app!=="SMS"){APPS_ON=SS.id==="h"?0:1;ab.style.display="none"}
  $("nm").textContent=n.nm||(SC?SS.n:SS.num);$("st").textContent=n.stx||n.app;
  const av=$("av");if(!av)return;
  if(n.mem&&n.mem.length>1){av.className="av grp";av.style.backgroundImage="";av.textContent="";n.mem.forEach(m=>{const i=document.createElement("img");i.alt=m;i.src=AVGR[m[0]]||"";av.append(i)})}
@@ -373,7 +373,7 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
- if(!SC||SS.id!=="h")h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
+ if(SS.id!=="h"||!SK)h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
  if(SS.id==="h"){
   h+='<b>Qui est qui</b><div class="ntR">Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.</div><div class="ntR">Nils Aveline — l\u2019ancien propriétaire du numéro. Agent d\u2019une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.</div><div class="ntR">Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.</div><div class="ntR">Yasmine — ta meilleure amie depuis l\u2019enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l\u2019appeler au premier détail bizarre.</div><div class="ntR">Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.</div><div class="ntR">Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.</div>';
@@ -482,7 +482,7 @@ async function introH(cb){
 }
 
 /* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
-async /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
+/* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
  o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>💬</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span></div><div class="lkHint">Appuie pour déverrouiller</div>';
  app.append(o);
@@ -624,8 +624,9 @@ function infoOv(){
   const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);g0=(JSON.parse(localStorage.getItem("fe"+SS.id)||"[]")).length}catch(e){}
   if(tot){const fl=document.createElement("button");fl.className="finStat";fl.style.cursor="pointer";fl.style.width="100%";fl.innerHTML="\uD83C\uDFC1 Fins : <b>"+Math.min(g0,tot)+" / "+tot+"</b> \u2014 celles que tu as trouv\u00E9es, touche pour les voir";fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};c.append(fl)}
  }
+ const nb2=document.createElement("button");nb2.className="finStat";nb2.style.cursor="pointer";nb2.style.width="100%";nb2.innerHTML="\uD83D\uDCDD Notes de l\u2019enqu\u00EAte — qui est qui, ce que tu sais, o\u00F9 tu en es";nb2.onclick=()=>{o.remove();if(typeof notesOv==="function")notesOv(false)};c.append(nb2);
  const g=document.createElement("div");g.className="infoGuide";
- g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\u24D8</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, et tes fins trouv\u00E9es.</p><p><b>\uD83D\uDDC2 Apps</b> (dans certaines histoires) : bascule entre SMS, WhatsApp, Notes et Fichiers.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
+ g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, tes fins trouv\u00E9es, et tes notes d'enqu\u00EAte.</p><p><b>\uD83D\uDDC2 Apps</b> (dans certaines histoires) : bascule entre SMS, WhatsApp, Notes et Fichiers.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
  c.append(g);
  const cb=document.createElement("button");cb.className="bk";cb.innerHTML="<h3>\u2039 Retour</h3><p>Revenir \u00E0 la conversation</p>";cb.onclick=()=>{o.remove()};c.append(cb);
  o.append(c);document.body.append(o);addBack(c);

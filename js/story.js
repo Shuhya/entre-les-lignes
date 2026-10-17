@@ -1,5 +1,5 @@
 /* Données narratives : helpers + nœuds (S) + sommaire (STORIES) */
-const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],M=x=>["m",x],P=x=>["p",x],K=()=>["x",""];
+const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],P=x=>["p",x],K=()=>["x",""];
 const S={
 h1:{w:"appart",pro:["Numéro attribué",
 "Vaubris, 2057. Il y a six jours, ton numéro a fuité : il traînait sur des forums, des inconnus appelaient la nuit. Tu as porté plainte. Ce soir, tu as payé pour tout changer : un numéro neuf, dans un téléphone neuf. « Tout est remis à neuf », a dit le vendeur.",
