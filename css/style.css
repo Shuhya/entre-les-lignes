@@ -516,3 +516,12 @@ body.pc .bk .bkLock{right:24px}
 .proCard p{max-width:min(560px,88vw)}
 #awayOv .awIn p{max-width:min(560px,86vw);padding:6px 18px}
 .rxOv .rxP{max-width:min(560px,86vw)}
+
+/* v2.73 : voile anti-flash, prologue une ligne par phrase, écran verrouillé, question cloud */
+#etlVeil{position:absolute;inset:0;background:#070a12;z-index:40;pointer-events:none;transition:opacity .3s}
+#etlVeil.off{opacity:0}
+.proCard p{white-space:pre-line}
+#lkWake .lkWp{position:absolute;inset:0;background:center/cover no-repeat;opacity:.14;filter:saturate(.85)}
+#lkWake .lkClock,#lkWake .lkDate,#lkWake .lkNotif,#lkWake .lkHint{position:relative;z-index:1}
+#lkWake .lkDate{font-size:13px;opacity:.65;margin:-28px 0 32px}
+.scQ{width:100%;text-align:center;font-style:italic;color:#9fb4d8;font-size:13.5px;margin:0 0 10px;letter-spacing:.2px}
