@@ -484,3 +484,14 @@ body.pc .bk .bkLock{right:24px}
 
 /* v2.63 : bulle photo MMS */
 .b.h.pm{padding:3px;max-width:82%}.b.h.pm img{max-width:100%;max-height:280px;border-radius:12px;display:block}
+
+/* v2.65 : réveil écran de verrouillage + notification */
+#lkWake{position:absolute;inset:0;background:linear-gradient(#000e,#000);z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px system-ui,sans-serif;color:#dfe7f3;cursor:pointer}
+#lkWake .lkClock{font-size:42px;font-weight:700;letter-spacing:1px;margin-bottom:34px}
+#lkWake .lkNotif{background:#141d2e;border:1px solid #2c4a73;border-radius:14px;padding:12px 16px;max-width:80%;display:flex;gap:12px;align-items:center;box-shadow:0 8px 26px #0009}
+#lkWake .lkNotif i{font-style:normal;font-size:20px}
+#lkWake .lkNotif b{display:block;font-size:14px}
+#lkWake .lkNotif span{display:block;font-size:12.5px;opacity:.78}
+#lkWake .lkHint{margin-top:38px;font-size:12px;opacity:.55;animation:lkwk 2.2s ease infinite alternate}
+@keyframes lkwk{from{opacity:.3}to{opacity:.85}}
+#lkWake.on{transition:opacity .4s;opacity:0;pointer-events:none}

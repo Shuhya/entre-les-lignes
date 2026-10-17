@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.64";console.log("Entre les lignes · v"+VER);
+const VER="2.65";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -74,6 +74,7 @@ async function play(id,r=run){
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
  if(n.call&&!st["cal_"+id]){const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
+ if(n.lk&&!st["lkw_"+id]){st["lkw_"+id]=1;try{if(n.lk.t){clkSet(n.lk.t);$("clk").textContent=n.lk.t}}catch(e){}await lockWake(n.lk);if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){STATS.msgs++;
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
@@ -481,6 +482,12 @@ async function introH(cb){
 }
 
 /* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
+async /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
+async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
+ o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>💬</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span></div><div class="lkHint">Appuie pour déverrouiller</div>';
+ app.append(o);
+ try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
+ await new Promise(res=>{o.onclick=()=>{try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();res()},420)}})}
 async function awayOv(lines){
  const app=$("app");const o=document.createElement("div");o.id="awayOv";
  o.innerHTML='<div class="awIn"></div><button class="awGo"></button>';
@@ -530,14 +537,17 @@ async function scrOv(n){
  let map=null,resFn=null;
  const applyEf=ef=>{for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k]};
  if(spec.k==="helios"){
+  const dn=spec.st==="done";
   const hm9=spec.ts?String(spec.ts).replace("h",":"):"";
   o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
-  +'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>'
-  +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>2,1 Go</small></div>'
-  +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>1,4 Go</small></div>'
-  +'<div class="scRow"><i>📄</i><span>Documents</span><small>0,7 Go</small></div>'
-  +'<div class="scRow"><i>🔐</i><span>Espace chiffré</span><small>taille inconnue</small></div>'
-  +'<p class="scNote">Le téléphone est posé sur ta table. Premier écran, première question.</p>'
+  +(dn?'<p class="scSub">Migration terminée — 4 fichiers rapatriés<br>06 51 09 43 87 · Espace « N. A. » synchronisé</p>'
+      :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>')
+  +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>'+(dn?'✓ 2,1 Go':'2,1 Go')+'</small></div>'
+  +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>'+(dn?'✓ 1,4 Go':'1,4 Go')+'</small></div>'
+  +'<div class="scRow"><i>📄</i><span>Documents</span><small>'+(dn?'✓ 0,7 Go':'0,7 Go')+'</small></div>'
+  +'<div class="scRow"><i>🔐</i><span>Espace chiffré</span><small>'+(dn?'4 fichiers · verrouillés':'taille inconnue')+'</small></div>'
+  +(dn?'<p class="scNote">Les données de N. A. sont dans ton téléphone. Elles attendent.</p>'
+      :'<p class="scNote">Le téléphone est posé sur ta table. Premier écran, première question.</p>')
   +'</div>'}
  else if(spec.k==="files"){
   map=spec.map||{};
