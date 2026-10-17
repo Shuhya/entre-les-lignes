@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.71";console.log("Entre les lignes · v"+VER);
+const VER="2.72";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -80,7 +80,7 @@ async function play(id,r=run){
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
   else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([x],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
- if(n.endc){await proCards(["Fin du chapitre",n.endc],{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",n.endc||""],1)}
+ if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars[0]||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
  clkPlan(n);
  if(n.e)return fin(n.e);
@@ -306,7 +306,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11f:"I",h11:"I",h3a:"I",h3b:"I",h3c:"I",h3l:"I",h3l1:"I",h3l2:"I",h3l3:"I",h9f2:"I",h9z:"I"};
+const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h9e:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11f:"I",h11:"I",h3a:"I",h3b:"I",h3c:"I",h3l:"I",h3l1:"I",h3l2:"I",h3l3:"I",h9f2:"I",h9z:"I"};
 let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
@@ -387,13 +387,13 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
   R(s.avou,"Cora sait que tu n\u2019es pas Nils. Elle t\u2019a appelé pour t\u2019expliquer les règles.");
   R(s.pov,"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »");
   R(s.prm,"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu\u2019à C. »");
-  R(true,"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. La clé est introuvable.");
+  R(true,"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même.");
   R(s.mig,"Tu as tout migré : les fichiers de Nils sont maintenant dans ton téléphone.");
   R((s.trst||0)>=2,"Cora te fait confiance — pour l\u2019instant.");
   R(s.mentir,"Tu as menti à Cora en improvisant. Elle t\u2019a repéré en quatre minutes.");
   R(s.pol,"Tu as annoncé à Cora que tu irais à la police municipale. Elle t\u2019a aiguillé vers le commandant Riffaud — en te demandant de ne jamais citer son nom.");
   h+='<b>Où tu en es</b>';
-  const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
+  const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.max(0,Math.min(100,v*33))+'%"></i></div>'};
   bar(s.int||0,"Discrétion");bar(s.pov||0,"Preuves du réseau");bar(s.prm||0,"Preuves du meurtre");
  }}
  h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
@@ -487,7 +487,7 @@ async function introH(cb){
 /* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>'+((s&&s.ic)||"💬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span></div><div class="lkHint">Appuie pour déverrouiller</div>';
+ o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>'+((s&&s.ic)||"💬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span><b class="lkBadge">1</b></div><div class="lkHint">Appuie pour déverrouiller</div>';
  const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
  await new Promise(res=>{o.onclick=()=>{try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{var d=document.getElementById("lkDim");if(d)d.remove()}catch(e){}res()},420)}})}
@@ -631,7 +631,7 @@ function infoOv(){
  }
  const nb2=document.createElement("button");nb2.className="finStat";nb2.style.cursor="pointer";nb2.style.width="100%";nb2.innerHTML="\uD83D\uDCDD Notes de l\u2019enqu\u00EAte — qui est qui, ce que tu sais, o\u00F9 tu en es";nb2.onclick=()=>{o.remove();if(typeof notesOv==="function")notesOv(false)};c.append(nb2);
  const g=document.createElement("div");g.className="infoGuide";
- g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, tes fins trouv\u00E9es, et tes notes d'enqu\u00EAte.</p><p><b>\uD83D\uDDC2 Apps</b> (dans certaines histoires) : bascule entre SMS, WhatsApp, Notes et Fichiers.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
+ g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, tes fins trouv\u00E9es, et tes notes d'enqu\u00EAte.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
  c.append(g);
  const cb=document.createElement("button");cb.className="bk";cb.innerHTML="<h3>\u2039 Retour</h3><p>Revenir \u00E0 la conversation</p>";cb.onclick=()=>{o.remove()};c.append(cb);
  o.append(c);document.body.append(o);addBack(c);
