@@ -248,14 +248,18 @@ function rNodes(){
     <div class="etlRow"><button class="etlBtn sm" id="etlNew">＋ Nouveau</button><button class="etlBtn sm dgr" id="etlDelNode">Supprimer</button></div></div>
    <div id="etlEd">${rEditor()}</div></div>`}
 function firstText(n){const m=(n.m||[]).find(x=>Array.isArray(x)&&x[1]);return m?m[1]:(n.e?"Fin":JSON.stringify(n).slice(0,40))}
-const MTYPES=[["h","h · l'inconnu écrit"],["n","n · narration"],["s","s · aparté/toi"],["m","m · pièce jointe"],["x","x · séparateur"]];
+const mtypes=n=>{const snd=(n&&n.nm)||(STORIES[0]&&STORIES[0].n)||"inconnu";
+ return [["h","h · "+snd+" écrit"],["n","n · narration"],["s","s · aparté/toi"],["m","m · pièce jointe"],["x","x · séparateur"]]};
+const MTYPES=mtypes(null);
 function rEditor(){
   const n=S[CUR];if(!n)return `<div class="etlCard"><h3>Aucun nœud</h3><p class="hint">Sélectionne un nœud à gauche ou crées-en un.</p></div>`;
-  const msgs=(n.m||[]).map((x,i)=>`<div class="etlItem"><div class="top"><select class="etlIn mt" style="flex:1" data-i="${i}">${MTYPES.map(([v,l])=>`<option value="${v}" ${x[0]===v?"selected":""}>${l}</option>`).join("")}</select><button class="etlBtn sm" data-mv="${i}">↑</button><button class="etlBtn sm" data-mv="${i}">↓</button><button class="etlBtn sm dgr" data-mdel="${i}">✕</button></div><textarea class="etlTa" data-mtext="${i}">${esc(x[1]||"")}</textarea></div>`).join("");
+  const msgs=(n.m||[]).map((x,i)=>`<div class="etlItem"><div class="top"><select class="etlIn mt" style="flex:1" data-i="${i}">${mtypes(n).map(([v,l])=>`<option value="${v}" ${x[0]===v?"selected":""}>${l}</option>`).join("")}</select><button class="etlBtn sm" data-mv="${i}">↑</button><button class="etlBtn sm" data-mv="${i}">↓</button><button class="etlBtn sm dgr" data-mdel="${i}">✕</button></div><textarea class="etlTa" data-mtext="${i}">${esc(x[1]||"")}</textarea></div>`).join("");
   const chs=(n.c||[]).map((c,i)=>`<div class="etlItem"><div class="top"><input class="etlIn" data-ctext="${i}" value="${esc(c[0]||"")}" placeholder="Texte du choix" style="flex:1"><input class="etlIn" data-ctgt="${i}" value="${esc(c[1]||"")}" list="etlIds" placeholder="nœud cible" style="width:110px"><input class="etlIn" data-ceff="${i}" value="${esc(JSON.stringify(c[2]||{}))}" placeholder='{"t":1}' style="width:110px;font-family:ui-monospace"><button class="etlBtn sm dgr" data-cdel="${i}">✕</button></div></div>`).join("");
   return `<div class="etlCard"><h3 style="display:flex;gap:8px;align-items:center">Nœud <span class="k" style="font:13px ui-monospace;background:#0a0f1a;border:1px solid #253048;border-radius:6px;padding:2px 8px">${CUR}</span><span class="etlTag ${n.e||n.k?"warn":""}">${n.e||n.k?"fin":""}</span></h3>
    <datalist id="etlIds">${nodeIds().map(k=>`<option value="${k}">`).join("")}</datalist>
    <label class="etlL">Décor (w)</label><input class="etlIn" id="etlW" value="${esc(n.w||"")}" list="etlKeys" style="width:220px"><datalist id="etlKeys">${Object.keys(IMG).map(k=>`<option value="${k}">`).join("")}</datalist>
+   <div class="etlSplit"><div><label class="etlL">App — SMS, WhatsApp, Fichiers…</label><input class="etlIn" id="etlApp" value="${esc(n.app||"")}" placeholder="(aucune)" style="width:100%"></div>
+   <div><label class="etlL">Expéditeur (nm) — qui écrit les h</label><input class="etlIn" id="etlNm" value="${esc(n.nm||"")}" placeholder="(contact de l'histoire)" style="width:100%"></div></div>
    <label class="etlL">Messages</label>${msgs}<div class="etlRow"><button class="etlBtn sm" id="etlAddM">＋ Message</button></div>
    <label class="etlL">Choix</label>${chs||`<p class="hint" style="margin:4px 0">Aucun choix (fin de nœud ou suite automatique).</p>`}<div class="etlRow"><button class="etlBtn sm" id="etlAddC">＋ Choix</button></div>
    <div class="etlSplit"><div><label class="etlL">Suite auto (x)</label><input class="etlIn" id="etlX" value="${esc(n.x||"")}" list="etlIds" style="width:100%"></div>
@@ -264,7 +268,7 @@ function rEditor(){
    <div id="etlEndBox" style="${n.e||n.k?"":"display:none"}"><label class="etlL">Titre de la fin</label><input class="etlIn" id="etlETitle" value="${esc(Array.isArray(n.e)?n.e[0]:(n.k||""))}" style="width:100%"><label class="etlL">Texte de la fin</label><textarea class="etlTa" id="etlEText" style="min-height:70px">${esc(Array.isArray(n.e)?n.e[1]:"")}</textarea></div>
    <label class="etlL">JSON expert — tout le nœud (call, fx, vw, j…)</label>
    <textarea class="etlTa" id="etlJson" style="min-height:150px">${esc(JSON.stringify(n,null,2))}</textarea>
-   <div class="etlRow" style="margin-top:12px"><button class="etlBtn pri" id="etlSaveForm">✓ Enregistrer le formulaire</button><button class="etlBtn" id="etlSaveJson">Enregistrer le JSON expert</button><button class="etlBtn" id="etlPrev">▶ Tester ce nœud</button></div>
+   <div class="etlRow" style="margin-top:12px"><button class="etlBtn pri" id="etlSaveForm">✓ Enregistrer le formulaire</button><button class="etlBtn" id="etlSaveJson">Enregistrer le JSON expert</button><button class="etlBtn" id="etlPrev">▶ Tester dans le téléphone</button></div>
    <div class="etlMsg" id="etlEMsg"></div></div>`}
 
 /* ---------- histoires & chapitres ---------- */
@@ -428,12 +432,19 @@ function bindTab(){
   if(q("#etlW"))q("#etlW").oninput=e=>{e.target.value.trim()?S[CUR].w=e.target.value.trim():delete S[CUR].w;touch()};
   if(q("#etlX"))q("#etlX").oninput=e=>{e.target.value.trim()?S[CUR].x=e.target.value.trim():delete S[CUR].x;touch()};
   if(q("#etlH"))q("#etlH").oninput=e=>{e.target.value.trim()?S[CUR].h=e.target.value.trim():delete S[CUR].h;touch()};
+  if(q("#etlApp"))q("#etlApp").oninput=e=>{e.target.value.trim()?S[CUR].app=e.target.value.trim():delete S[CUR].app;touch();lastCheck=null};
+  if(q("#etlNm"))q("#etlNm").oninput=e=>{e.target.value.trim()?S[CUR].nm=e.target.value.trim():delete S[CUR].nm;touch();lastCheck=null};
   if(q("#etlIsEnd"))q("#etlIsEnd").onchange=e=>{const n=S[CUR];if(e.target.checked){if(!n.e&&!n.k)n.k="Fin sans titre"}else{delete n.e;delete n.k}touch();lastCheck=null;render()};
   if(q("#etlETitle"))q("#etlETitle").oninput=e=>{const n=S[CUR];if(Array.isArray(n.e)){n.e[0]=e.target.value}else{n.e=[e.target.value,q("#etlEText").value];delete n.k}touch()};
   if(q("#etlEText"))q("#etlEText").oninput=e=>{const n=S[CUR];if(Array.isArray(n.e))n.e[1]=e.target.value;else{n.e=[q("#etlETitle").value,e.target.value];delete n.k}touch()};
   if(q("#etlSaveJson"))q("#etlSaveJson").onclick=()=>{try{const n=JSON.parse(q("#etlJson").value);S[CUR]=n;touch();lastCheck=null;msg("Nœud "+CUR+" remplacé (JSON expert).")}catch(e){msg("JSON invalide : "+e.message,true)}};
   if(q("#etlSaveForm"))q("#etlSaveForm").onclick=()=>{touch();lastCheck=null;msg("Formulaire enregistré en mémoire.")};
-  if(q("#etlPrev"))q("#etlPrev").onclick=()=>{if(!CUR||!S[CUR])return;close();$("chat").innerHTML="";$("ch").innerHTML="";document.body.classList.add("play");$("mn").classList.remove("on");run++;st=st||{t:0,l:0,r:0,v:0,e:""};play(CUR)};
+  if(q("#etlPrev"))q("#etlPrev").onclick=()=>{if(!CUR||!S[CUR])return;close();$("chat").innerHTML="";$("ch").innerHTML="";document.body.classList.add("play");$("mn").classList.remove("on");run++;st=st||{t:0,l:0,r:0,v:0,e:""};
+   const bp=document.createElement("button");bp.id="etlBack";bp.textContent="🛠 Revenir à l'atelier";
+   bp.style.cssText="position:fixed;top:64px;right:14px;z-index:9997;padding:9px 14px;border-radius:12px;border:1px solid #ffd16659;background:#0a1424ee;color:#ffd166d9;font:13px system-ui;cursor:pointer;box-shadow:0 6px 24px #000a";
+   bp.onclick=()=>{bp.remove();open()};document.body.append(bp);
+   setTimeout(()=>{if(bp.isConnected)bp.remove()},120000);
+   play(CUR)};
   /* histoires */
   qa("[data-story]").forEach(b=>b.onclick=()=>{ST_I=+b.dataset.story;CH_I=0;render()});
   if(q("#etlNewStory"))q("#etlNewStory").onclick=()=>{const id=prompt("Identifiant de l'histoire ? (ex. w)");if(!id)return;STORIES.push({id,n:"Contact",num:"06 00 00 00 00",t:"Nouvelle histoire",d:"",ch:[["Chapitre 1",Object.keys(S)[0]||"-"]]});ST_I=STORIES.length-1;touch();render()};
