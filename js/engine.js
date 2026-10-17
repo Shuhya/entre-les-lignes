@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.70";console.log("Entre les lignes · v"+VER);
+const VER="2.71";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -66,6 +66,7 @@ async function play(id,r=run){
  if(n.pro&&!PROD)await proCards(n.pro);
  if(n.out)await awayOv(n.out);
  if(n.tel){const T=n.tel;await new Promise(q=>telOv(T,q))}
+ if(n.lk&&!st["lkw_"+id]){st["lkw_"+id]=1;try{if(n.lk.t){clkSet(n.lk.t);$("clk").textContent=n.lk.t}}catch(e){}await lockWake(n.lk);if(r!=run)return}
  if(n.app){const tA=n.app,tN=n.nm||"",oC=CAPP,oN=CNM,ck=oC+"|"+oN,nk=tA+"|"+tN;
   if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};if(n.noS){applyApp(n)}else await appSwitch(n)}
   else if(tN!==oN)APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};
@@ -74,7 +75,6 @@ async function play(id,r=run){
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
  if(n.call&&!st["cal_"+id]){const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
- if(n.lk&&!st["lkw_"+id]){st["lkw_"+id]=1;try{if(n.lk.t){clkSet(n.lk.t);$("clk").textContent=n.lk.t}}catch(e){}await lockWake(n.lk);if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){STATS.msgs++;
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
@@ -444,7 +444,7 @@ async function introH(cb){
   let rxShown=false,nextB=null;
   const reactThen=()=>{if(done)return;if(rxShown){finish();return}rxShown=true;reactOv("C'est quoi ce bordel…? Le téléphone est maudit, ou quoi ?","Reprendre le téléphone",finish)};
   const showNext=()=>{if(done||nextB)return;nextB=document.createElement("button");nextB.className="lkNext";nextB.textContent="Suivant \u203a";nextB.onclick=e=>{e.stopPropagation();reactThen()};o.append(nextB)};
-  const clk=()=>{try{const d=new Date();q(".lkClock").textContent=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}catch(x){}};
+  const T0=new Date(2057,9,18,21,52,0);const clk=()=>{try{T0.setSeconds(T0.getSeconds()+3);q(".lkClock").textContent=T0.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=T0.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}catch(x){}};
   clk();const tick=setInterval(()=>{done?clearInterval(tick):clk()},1000);
   const glitch=()=>{
     o.classList.add("unlocked");
@@ -475,7 +475,7 @@ async function introH(cb){
       const show=Math.min(lines.length-1,Math.floor(t/430));
       ctx.font="12px ui-monospace,Consolas,monospace";ctx.textAlign="left";
       for(let k=0;k<=show;k++){ctx.fillStyle=k===show?"#ffd166":"#7fe0a2";ctx.fillText("> "+lines[k],14,H-64-(show-k)*18)}
-      if(p>=1){showNext();return}
+      if(p>=0.55)showNext();
       requestAnimationFrame(step)};
     requestAnimationFrame(step)};
   q(".lkGo").onclick=x=>{x.stopPropagation();if(done)return;
@@ -488,28 +488,26 @@ async function introH(cb){
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
  o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>'+((s&&s.ic)||"💬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span></div><div class="lkHint">Appuie pour déverrouiller</div>';
- app.append(o);
- try{app.classList.add("etlDim")}catch(e){}
+ const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
- await new Promise(res=>{o.onclick=()=>{try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{$("app").classList.remove("etlDim")}catch(e){}res()},420)}})}
+ await new Promise(res=>{o.onclick=()=>{try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{var d=document.getElementById("lkDim");if(d)d.remove()}catch(e){}res()},420)}})}
 async function awayOv(lines,LB){
- const app=$("app");const o=document.createElement("div");o.id="awayOv";
+ const app=$("app");
+ const o=document.createElement("div");o.id="awayOv";
  o.innerHTML='<div class="awIn"></div><button class="awGo"></button>';
  app.append(o);
  try{hit(150,1.4,.14,"lowpass",.015,.5)}catch(e){}
  const inn=o.querySelector(".awIn"),btn=o.querySelector(".awGo");
- await sl(620);
- let i=0,done=false;
+ await sl(520);
+ let done=false;
  await new Promise(res=>{
   const close=()=>{if(done)return;done=true;o.classList.add("off");setTimeout(()=>{o.remove();res()},620)};
-  const show=()=>{inn.replaceChildren();const p=document.createElement("p");p.textContent=lines[i];
-   try{const q=lines[i].match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm}}catch(e){}
-   inn.append(p);requestAnimationFrame(()=>p.classList.add("on"));
-   btn.style.visibility="visible";btn.textContent=i>=lines.length-1?"Reprendre le t\u00E9l\u00E9phone":"Continuer"};
-  const next=()=>{if(done)return;if(i<lines.length-1){i++;try{hit(660,.05,.08)}catch(e){}show()}else close()};
-  btn.onclick=e=>{e.stopPropagation();next()};
-  o.onclick=()=>next();
-  show()})}
+  lines.forEach((L,i2)=>{const p=document.createElement("p");p.textContent=L;
+   try{const q=String(L).match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm}}catch(e){}
+   setTimeout(()=>{inn.append(p);requestAnimationFrame(()=>requestAnimationFrame(()=>p.classList.add("on")))},i2*650)});
+  btn.style.visibility="visible";btn.textContent=LB||"Reprendre le t\u00E9l\u00E9phone";
+  btn.onclick=e=>{e.stopPropagation();try{hit(660,.05,.08)}catch(e2){}close()};
+  o.onclick=()=>{try{hit(660,.05,.08)}catch(e2){}close()}})}
 /* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
 async function heliosTransfer(o){
  const btns=o.querySelector(".scBtns");btns.innerHTML="";
@@ -734,7 +732,7 @@ add=function(c,x){
 /* ---- horloge glissante (v2.51) : hissée au top-level — play() top-level utilise clkSet/clkPlan, elles NE DOIVENT PAS rester dans l'IIFE sauvegarde (cf bug STATS v2.50) ---- */
 /* ---- horloge glissante : le temps du récit avance entre les messages ---- */
 const CLK={h:null,m:0},CLKBASE={h:null,m:0};let CLKMAX=null;
-function clkSet(hm){const q=hm.split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null}
+function clkSet(hm){const q=String(hm).replace("h",":").split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null}
 function clkNow(){return CLK.h==null?null:String(CLK.h).padStart(2,"0")+":"+String(CLK.m).padStart(2,"0")}
 /* borne : l'horloge ne dérive JAMAIS au-delà du prochain horodatage scénarisé (ni +30 min sans repère) */
 function clkScan(id,cand){const n2=S[id];if(!n2)return;for(const[w,x]of n2.m||[]){const q=String(w==="n"?x:"").match(/(\d{1,2})h(\d{2})/);if(q){cand.push({h:+q[1],m:+q[2]});return}}}

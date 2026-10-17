@@ -507,3 +507,11 @@ body.pc .bk .bkLock{right:24px}
 #app.etlDim{filter:brightness(.06) saturate(.6)}
 #scrOv .scRow.read{opacity:.62}
 #scrOv .scRow.read small{color:#7fe0a2}
+
+/* ---- v2.71 : Suivant soft bas-droite, voile dédié sous l'écran verrouillé, texte élargi ---- */
+.lkNext{position:absolute;z-index:3;bottom:calc(16px + env(safe-area-inset-bottom,0px));right:16px;left:auto;transform:none;padding:9px 18px;border-radius:999px;border:1px solid #ffffff24;background:#ffffff0f;color:#ffffffd6;font:500 12.5px system-ui;letter-spacing:.5px;cursor:pointer;backdrop-filter:blur(6px)}
+#lkDim{position:absolute;inset:0;background:#02040a;z-index:69;pointer-events:none;animation:fo .45s}
+.proOv{padding:18px}
+.proCard p{max-width:min(560px,88vw)}
+#awayOv .awIn p{max-width:min(560px,86vw);padding:6px 18px}
+.rxOv .rxP{max-width:min(560px,86vw)}
