@@ -2,8 +2,8 @@
 const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],M=x=>["m",x],K=()=>["x",""];
 const S={
 h1:{w:"appart",pro:["Numéro attribué",
-"Vaubris, 2057. Il y a six jours, ton numéro a fuité : il circulait sur des forums, des inconnus appelaient la nuit. Tu as porté plainte. Ce soir, tu as payé pour repartir de zéro — un numéro neuf, dans un téléphone neuf. « Réattribution sécurisée », a dit le vendeur.",
-"Il a oublié une case. Ce numéro aurait dû rester gelé pour toujours. Parce qu'avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
+"Vaubris, 2057. Il y a six jours, ton numéro a fuité : il traînait sur des forums, des inconnus appelaient la nuit. Tu as porté plainte. Ce soir, tu as payé pour tout changer : un numéro neuf, dans un téléphone neuf. « Tout est remis à neuf », a dit le vendeur.",
+"Il a oublié une case. Ce numéro aurait dû rester bloqué pour toujours. Parce qu'avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
 scr:{k:"helios",ts:"21h58"},
 c:[["Suivre la migration, le téléphone à la main. Ta vie, tes photos — tu veux la voir revenir, ligne par ligne.","h2",{mig:1}],["La laisser faire seule, écran posé face contre la table. Tu regarderas plus tard — ou jamais.","h2",{mig:0}]]},
 h2:{w:"appart",app:"WhatsApp",nm:"Yasmine",m:[N("22h04. La migration tourne. En sortant de la boutique, tu avais donné le numéro à la seule personne qui en avait vraiment besoin. Ou du moins, c’est ce que tu croyais."),N("Le téléphone se met à vibrer. Une vraie notification. La première."),H("Alors ?? il marche ?? dis oui"),H("J'ai relu les commentaires sous ton ancien numéro. des gens se le passaient comme une blague. j'ai pleuré dans le tram")],

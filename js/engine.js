@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.58";console.log("Entre les lignes · v"+VER);
+const VER="2.59";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -146,6 +146,7 @@ async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
  await new Promise(done=>{
   const end=()=>{o.remove();done()};
   const skip=document.createElement("button");skip.className="proSkip";skip.textContent="Passer \u203a";skip.onclick=e=>{e.stopPropagation();end()};o.append(skip);
+  const sb=document.createElement("div");sb.className="proSbar";try{const d=new Date();sb.innerHTML='<span>'+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})+'</span><i>5G</i><i>78%</i>'}catch(e){}
   let timer=null,typing=false;
   const finish=el=>{clearTimeout(timer);timer=null;typing=false;if(el&&el.dataset.full!==undefined){el.textContent=el.dataset.full;el.classList.remove("tw")}};
   const type=(el,txt,fin)=>{typing=true;el.classList.add("tw");el.textContent="";let i2=0;el.dataset.full=txt;
@@ -164,7 +165,7 @@ async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
    cd.addEventListener("pointerdown",ev=>{ev.preventDefault();
     if(typing){finish(t);if(titleEl)finish(titleEl);b.hidden=false;return}
     cd.remove();if(i+1<pars.length)show(i+1);else end()});
-   o.replaceChildren(skip,cd);
+   o.replaceChildren(skip,sb,cd);
    const goPar=()=>type(t,pars[i],()=>{b.hidden=false});
    if(titleEl)type(titleEl,P[0],()=>goPar());else goPar()};
   show(0)})}
@@ -435,8 +436,9 @@ async function introH(cb){
   let W,H;const fit=()=>{W=cv.width=app.clientWidth||innerWidth;H=cv.height=app.clientHeight||innerHeight};fit();
   let done=false;
   const finish=()=>{if(done)return;done=true;o.classList.add("off");setTimeout(()=>{o.remove()},720);try{cb&&cb()}catch(x){}};
-  let rxShown=false;
-  const reactThen=()=>{if(done)return;if(rxShown){finish();return}rxShown=true;reactOv("C'est quoi ce bordel…? Le numéro est maudit, ou quoi ?","Reprendre le téléphone",finish)};
+  let rxShown=false,nextB=null;
+  const reactThen=()=>{if(done)return;if(rxShown){finish();return}rxShown=true;reactOv("C'est quoi ce bordel…? Le téléphone est maudit, ou quoi ?","Reprendre le téléphone",finish)};
+  const showNext=()=>{if(done||nextB)return;nextB=document.createElement("button");nextB.className="lkNext";nextB.textContent="Suivant \u203a";nextB.onclick=e=>{e.stopPropagation();reactThen()};o.append(nextB)};
   const clk=()=>{try{const d=new Date();q(".lkClock").textContent=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}catch(x){}};
   clk();const tick=setInterval(()=>{done?clearInterval(tick):clk()},1000);
   const glitch=()=>{
@@ -468,7 +470,7 @@ async function introH(cb){
       const show=Math.min(lines.length-1,Math.floor(t/430));
       ctx.font="12px ui-monospace,Consolas,monospace";ctx.textAlign="left";
       for(let k=0;k<=show;k++){ctx.fillStyle=k===show?"#ffd166":"#7fe0a2";ctx.fillText("> "+lines[k],14,H-64-(show-k)*18)}
-      if(p>=1){ctx.fillStyle="rgba(255,255,255,.85)";ctx.fillRect(0,0,W,H);setTimeout(reactThen,220);return}
+      if(p>=1){showNext();return}
       requestAnimationFrame(step)};
     requestAnimationFrame(step)};
   q(".lkGo").onclick=x=>{x.stopPropagation();if(done)return;
@@ -496,6 +498,29 @@ async function awayOv(lines){
   btn.onclick=e=>{e.stopPropagation();next()};
   o.onclick=()=>next();
   show()})}
+/* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
+async function heliosTransfer(o){
+ const btns=o.querySelector(".scBtns");btns.innerHTML="";
+ const items=[["Photos & vidéos","2,1 Go"],["Sauvegardes de messages","1,4 Go"],["Documents","0,7 Go"]];
+ const box=document.createElement("div");box.className="scProg";
+ box.innerHTML='<p class="scStat">Transfert des données…</p><div class="scTrack"><i></i></div><div class="scList"></div>';
+ btns.append(box);
+ const bar=box.querySelector(".scTrack i"),list=box.querySelector(".scList");
+ const per=1400;
+ for(let k=0;k<items.length;k++){
+  const li=document.createElement("div");li.className="scLi";
+  li.innerHTML='<span>'+items[k][0]+'</span><small>0 %</small>';list.append(li);
+  const sm=li.querySelector("small");
+  await new Promise(res=>{const t0=performance.now();const tick=()=>{const pr=Math.min(1,(performance.now()-t0)/per);sm.textContent=Math.round(pr*100)+" %";if(pr>=1){res();return}requestAnimationFrame(tick)};tick()});
+  sm.textContent="✓ "+items[k][1];
+  bar.style.width=Math.round((k+1)/items.length*100)+"%";
+  try{beep(880,.04,.05)}catch(e){}
+ }
+ const li=document.createElement("div");li.className="scLi dim";
+ li.innerHTML='<span>Espace chiffré</span><small>en attente</small>';list.append(li);
+ box.querySelector(".scStat").textContent="Transfert terminé — 4,2 Go récupérés";
+ try{hit(660,.06,.08);setTimeout(()=>hit(990,.08,.1),90)}catch(e){}
+ await sl(900)}
 /* ---- écran contextuel IN-TÉLÉPHONE (v2.53) : interface dédiée au contexte (ex. HÉLIOS), à la façon du lock screen ---- */
 async function scrOv(n){
  try{if(st["scr_"+(nodeNow||"")])return false}catch(e){}
@@ -504,8 +529,9 @@ async function scrOv(n){
  let map=null,resFn=null;
  const applyEf=ef=>{for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k]};
  if(spec.k==="helios"){
-  o.innerHTML='<div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
-  +'<p class="scSub">Espace cloud associé au numéro<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>'
+  const hm9=spec.ts?String(spec.ts).replace("h",":"):"";
+  o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
+  +'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>'
   +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>2,1 Go</small></div>'
   +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>1,4 Go</small></div>'
   +'<div class="scRow"><i>📄</i><span>Documents</span><small>0,7 Go</small></div>'
@@ -549,7 +575,8 @@ async function scrOv(n){
     applyEf(ef);
     try{st["scr_"+(nodeNow||"")]=1}catch(x){}
     try{hit(660,.05,.08);setTimeout(()=>hit(990,.07,.1),70)}catch(x){}
-    res();
+    if(spec.k==="helios"&&ef&&ef.mig===1)await heliosTransfer(o);
+    resFn();
     o.classList.add("off");setTimeout(()=>o.remove(),520);
     await sl(300);play(nx,run)};
    btns.append(b)});

@@ -466,3 +466,18 @@ body.pc .bk .bkLock{right:24px}
 .proOv.rxOv{background:#05070d}
 .rxOv .rxP{font:italic 400 16.5px/1.9 Georgia,serif;color:#f2ead8;margin:0 auto;max-width:320px;min-height:60px}
 .rxOv .proCard{border-color:#ffffff1c}
+
+/* ---- v2.59 : prologue façon interface, Suivant du hack, transfert HÉLIOS ---- */
+.proSbar{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 22px;font:600 12px system-ui;color:#ffffff9e;z-index:3;pointer-events:none}
+.proSbar i{font-style:normal;font-size:10.5px;letter-spacing:.5px}
+.lkNext{position:absolute;z-index:2;bottom:16%;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:22px;border:1px solid #ffffff2e;background:#ffffff14;color:#fffee9;font:500 13.5px system-ui;cursor:pointer;backdrop-filter:blur(4px)}
+.lkNext:hover{background:#ffffff26}
+#scrOv .scSbar{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 20px;font:600 12px system-ui;color:#9fb4d8;pointer-events:none}
+#scrOv .scSbar i{font-style:normal;font-size:10.5px}
+#scrOv .scProg{display:flex;flex-direction:column;gap:10px}
+#scrOv .scStat{font:400 13px system-ui;color:#ffd166;margin:0;text-align:center}
+#scrOv .scTrack{height:6px;border-radius:3px;background:#ffffff14;overflow:hidden}
+#scrOv .scTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd166,#ffb347);transition:width .3s}
+#scrOv .scLi{display:flex;justify-content:space-between;font:400 12.5px system-ui;color:#dbe7f8;padding:2px 2px}
+#scrOv .scLi small{color:#9fb4d8}
+#scrOv .scLi.dim{opacity:.6}
