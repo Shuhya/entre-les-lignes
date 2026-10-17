@@ -460,3 +460,9 @@ body.pc .bk .bkLock{right:24px}
 #scrOv .scRow.go{cursor:pointer}
 #scrOv .scRow.go:hover{background:#ffffff10;border-color:#ffd16645}
 #scrOv .scRow.dim{opacity:.55}
+
+/* ---- v2.55 : prologue/réaction DANS le téléphone, fond opaque instantané (fin du flash d'interface) ---- */
+.proOv{position:absolute;inset:0;z-index:52;background:#070a12;padding:26px;animation:none}
+.proOv.rxOv{background:#05070d}
+.rxOv .rxP{font:italic 400 16.5px/1.9 Georgia,serif;color:#f2ead8;margin:0 auto;max-width:320px;min-height:60px}
+.rxOv .proCard{border-color:#ffffff1c}

@@ -2,8 +2,8 @@
 const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],M=x=>["m",x],K=()=>["x",""];
 const S={
 h1:{w:"appart",pro:["Numéro attribué",
-"Vaubris, octobre 2057. Trois quais de port, une cathédrale de béton, quatre cent mille habitants. Ta ville depuis toujours. Il y a six jours, ton téléphone a été piraté. Ton numéro a circulé sur des forums qu'aucun moteur de recherche n'avoue indexer. Des inconnus ont appelé, la nuit, aux bonnes heures pour faire peur. Tu as porté plainte, changé tes mots de passe, dormi avec la lumière.",
-"Ce soir, tu as payé pour ce que l'opérateur appelle une « réattribution sécurisée ». « Norme EID-2054, a dit le vendeur en tapant sa séquence. Ce numéro a été libéré par l'inventaire national. Il est à vous. » Il a omis une case. Une seule. Quelque part, ce numéro aurait dû rester gelé pour toujours."],
+"Vaubris, 2057. Il y a six jours, ton numéro a été piraté. Ce soir, tu en as payé un autre — « réattribution sécurisée », a dit le vendeur, avant de te tendre un téléphone neuf.",
+"Il a oublié une case. Ce numéro aurait dû rester gelé pour toujours. Parce qu'avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
 scr:{k:"helios",ts:"21h58"},
 c:[["Tout rapatrier. Ta vie, tes photos — tu veux la retrouver dans ce téléphone neuf.","h2",{mig:1}],["Laisser en arrière-plan. Tu regarderas ce qu'il y a dedans plus tard — ou jamais.","h2",{mig:0}]]},
 h2:{w:"appart",app:"WhatsApp",nm:"Yasmine",m:[N("22h04. La migration tourne en arrière-plan. En sortant de la boutique, tu avais donné le numéro à la seule personne qui en avait vraiment besoin. Ou du moins, c’est ce que tu croyais."),N("Le téléphone se met à vibrer. Une vraie notification. La première."),H("Alors ?? il marche ?? dis oui"),H("J'ai relu les commentaires sous ton ancien numéro. des gens se le passaient comme une blague. j'ai pleuré dans le tram")],

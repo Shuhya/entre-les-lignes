@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.54";console.log("Entre les lignes · v"+VER);
+const VER="2.55";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -142,7 +142,7 @@ function vwOv(n){
  }}
 
 async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
- const o=document.createElement("div");o.className="proOv";document.body.append(o);
+ const o=document.createElement("div");o.className="proOv";$("app").append(o);
  await new Promise(done=>{
   const end=()=>{o.remove();done()};
   const skip=document.createElement("button");skip.className="proSkip";skip.textContent="Passer \u203a";skip.onclick=e=>{e.stopPropagation();end()};o.append(skip);
@@ -404,6 +404,22 @@ function start(){run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true
  document.body.classList.add("play");$("mn").classList.remove("on");
  if(SS.id==="h"&&!SC&&!(window.__ghost&&window.__ghost())&&typeof introH==="function")introH(()=>play(SS.ch[SC][1]));
  else play(SS.ch[SC][1])}
+/* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
+function reactOv(txt,btnLabel,done){
+ const o=document.createElement("div");o.className="proOv rxOv";
+ o.innerHTML='<div class="proCard"><div class="proK">Toi</div><p class="rxP"></p><div class="proDots"><i class="on"></i></div><button class="proBtn" hidden>'+btnLabel+'</button></div>';
+ $("app").append(o);
+ const p=o.querySelector(".rxP"),b=o.querySelector(".proBtn");
+ let i=0,typing=true,timer=null;
+ const end=()=>{clearTimeout(timer);typing=false;p.textContent=txt;p.classList.remove("tw");b.hidden=false};
+ const step=()=>{if(!typing){end();return}p.textContent=txt.slice(0,++i);
+  if(i>=txt.length){typing=false;p.classList.remove("tw");b.hidden=false;return}
+  timer=setTimeout(step,Math.max(10,30/SPD))};
+ p.classList.add("tw");step();
+ const go=()=>{try{hit(660,.05,.08)}catch(x){}o.remove();done&&done()};
+ b.onclick=e=>{e.stopPropagation();go()};
+ o.onclick=()=>{if(typing)end();else go()};
+}
 /* ---- intro chapitre 1 : écran noir -> déverrouillage -> freeze hack (canvas 2D) ---- */
 async function introH(cb){
   if(S.h1&&S.h1.pro){await proCards(S.h1.pro);PROD=1}
@@ -419,6 +435,8 @@ async function introH(cb){
   let W,H;const fit=()=>{W=cv.width=app.clientWidth||innerWidth;H=cv.height=app.clientHeight||innerHeight};fit();
   let done=false;
   const finish=()=>{if(done)return;done=true;o.classList.add("off");setTimeout(()=>{o.remove()},720);try{cb&&cb()}catch(x){}};
+  let rxShown=false;
+  const reactThen=()=>{if(done)return;if(rxShown){finish();return}rxShown=true;reactOv("C'est quoi ce bordel…? Le numéro est maudit, ou quoi ?","Reprendre le téléphone",finish)};
   const clk=()=>{try{const d=new Date();q(".lkClock").textContent=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}catch(x){}};
   clk();const tick=setInterval(()=>{done?clearInterval(tick):clk()},1000);
   const glitch=()=>{
@@ -450,13 +468,13 @@ async function introH(cb){
       const show=Math.min(lines.length-1,Math.floor(t/430));
       ctx.font="12px ui-monospace,Consolas,monospace";ctx.textAlign="left";
       for(let k=0;k<=show;k++){ctx.fillStyle=k===show?"#ffd166":"#7fe0a2";ctx.fillText("> "+lines[k],14,H-64-(show-k)*18)}
-      if(p>=1){ctx.fillStyle="rgba(255,255,255,.85)";ctx.fillRect(0,0,W,H);setTimeout(finish,170);return}
+      if(p>=1){ctx.fillStyle="rgba(255,255,255,.85)";ctx.fillRect(0,0,W,H);setTimeout(reactThen,220);return}
       requestAnimationFrame(step)};
     requestAnimationFrame(step)};
   q(".lkGo").onclick=x=>{x.stopPropagation();if(done)return;
     try{unlock();hit(660,.07,.14);setTimeout(()=>hit(990,.09,.14),70)}catch(e){}
-    if(RM)setTimeout(finish,250);else glitch()};
-  o.onclick=()=>{if(done)return;if(o.classList.contains("unlocked"))finish()};
+    if(RM)setTimeout(reactThen,250);else glitch()};
+  o.onclick=()=>{if(done)return;if(o.classList.contains("unlocked"))reactThen()};
 }
 
 /* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
