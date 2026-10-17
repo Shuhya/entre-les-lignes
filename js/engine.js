@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.65";console.log("Entre les lignes · v"+VER);
+const VER="2.66";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -935,7 +935,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
   $('chat').scrollTop=1e9}
  function edRefresh(){if(nodeNow&&S[nodeNow])edRender(nodeNow);else updateRail()}
  /* ================= éditeurs ================= */
- const MT=[['h','Message re\u00E7u'],['m','Message envoy\u00E9'],['n','Narration'],['s','Info syst\u00E8me'],['x','R\u00E9v\u00E9ler le pr\u00E9nom']];
+ const MT=[['h','Message re\u00E7u'],['m','Message envoy\u00E9'],['n','Narration'],['s','Info syst\u00E8me'],['p','Photo / MMS'],['x','R\u00E9v\u00E9ler le pr\u00E9nom']];
  function msgEditor(id,idx,el){const n=S[id];if(!n||!n.m||!n.m[idx])return;const cur=n.m[idx];
   const p=openPop('<b>Message '+(idx+1)+' / '+n.m.length+' \u2014 sc\u00E8ne <span class="mono">'+id+'</span></b>'
    +'<label>Type</label><select id="pmT">'+MT.map(m=>'<option value="'+m[0]+'"'+(m[0]===cur[0]?' selected':'')+'>'+m[1]+'</option>').join('')+'</select>'
