@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.37";console.log("Entre les lignes · v"+VER);
+const VER="2.38";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -177,15 +177,6 @@ function transferOv(){
  const ld=document.createElement("button");ld.className="trBtn ld";ld.textContent="\u21BB Charger ce code";
  ld.onclick=()=>loadCode(ta2.value.trim());
  c.append(ld);
- const sep2=document.createElement("div");sep2.className="trSep";sep2.textContent="ou, dans le cloud :";c.append(sep2);
- const pat=document.createElement("input");pat.type="password";pat.className="trTa";pat.placeholder="Jeton GitHub (gist) \u2014 stock\u00E9 sur cet appareil";
- try{pat.value=localStorage.getItem("etl_gist_pat")||""}catch(e){}
- c.append(pat);
- const up=document.createElement("button");up.className="trBtn";up.textContent="\u2601\uFE0F Envoyer ma partie sur mon Gist";
- const dn=document.createElement("button");dn.className="trBtn ld";dn.textContent="\u2601\uFE0F R\u00E9cup\u00E9rer depuis le cloud";
- const gistId=()=>{try{return localStorage.getItem("etl_gist")||""}catch(e){return ""}};
- async function gh(method,body){const r=await fetch("https://api.github.com/gists"+(method==="GET"&&gistId()?"/"+gistId():""),{method,headers:{Authorization:"Bearer "+pat.value.trim(),Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
-  const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.message||("HTTP "+r.status));return j}
  const fs2=document.createElement("button");fs2.className="trBtn";fs2.textContent="\uD83D\uDCBE Exporter un fichier de sauvegarde";
  fs2.onclick=()=>{const blob=new Blob([code],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="entre-les-lignes-partie.txt";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
  c.append(fs2);
@@ -194,23 +185,6 @@ function transferOv(){
  const fd=document.createElement("button");fd.className="trBtn ld";fd.textContent="\uD83D\uDCC2 Charger un fichier de sauvegarde";
  fd.onclick=()=>fi.click();
  c.append(fd);c.append(fi);
- up.onclick=async()=>{const tok=pat.value.trim();if(!tok){toast("Entre ton jeton GitHub pour le cloud.");return}
-  try{localStorage.setItem("etl_gist_pat",tok)}catch(e){}
-  up.textContent="\u23F3 Envoi\u2026";
-  try{const code2=code;/* code courant de la session */
-   if(gistId()){await gh("PATCH",{files:{"entre-les-lignes.txt":{content:code2}}})}
-   else{const g=await gh("POST",{description:"Entre les lignes \u2014 sauvegarde",public:false,files:{"entre-les-lignes.txt":{content:code2}}});try{localStorage.setItem("etl_gist",g.id)}catch(e){}}
-   up.textContent="\u2713 Partie envoy\u00E9e"}
-  catch(e){up.textContent="\u2716 "+String(e.message).slice(0,40)}};
- dn.onclick=async()=>{if(!gistId()){toast("Aucun Gist connu sur cet appareil \u2014 envoie d'abord la partie.");return}
-  const tok=pat.value.trim()||(()=>{try{return localStorage.getItem("etl_gist_pat")||""}catch(e){return ""}})();
-  if(!tok){toast("Entre ton jeton GitHub.");return}
-  dn.textContent="\u23F3 R\u00E9cup\u00E9ration\u2026";
-  try{const g=await fetch("https://api.github.com/gists/"+gistId(),{headers:{Authorization:"Bearer "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());
-   const f=g.files&&g.files["entre-les-lignes.txt"];if(!f)throw Error("Gist vide");
-   loadCode(f.content)}
-  catch(e){dn.textContent="\u2716 "+String(e.message).slice(0,40)}};
- c.append(up);c.append(dn);
  function loadCode(txt){try{const d=JSON.parse(decodeURIComponent(escape(atob(txt.trim()))));
    Object.keys(d).forEach(k=>{try{localStorage.setItem(k,d[k])}catch(e){}});
    o.remove();toast("Partie charg\u00E9e \u2014 rechargement\u2026");setTimeout(()=>location.reload(),900)}

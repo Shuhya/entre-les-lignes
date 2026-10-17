@@ -182,7 +182,7 @@ label.etlL{display:block;font-size:11.5px;color:#7d8aa5;text-transform:uppercase
 </style>`}
 
 /* ---------- UI : coquille ---------- */
-const NAV=[["dash","▦","Tableau de bord"],["nodes","💬","Dialogues"],["stories","📖","Histoires & chapitres"],["ends","🏁","Fins"],["media","🖼","Médias"],["check","✓","Validation"],["push","▲","Publication"]];
+const NAV=[["dash","▦","Tableau de bord"],["nodes","💬","Dialogues"],["stories","📖","Histoires & chapitres"],["ends","🏁","Fins"],["media","🖼","Médias"],["check","✓","Validation"],["cloud","☁","Sauvegarde cloud"],["push","▲","Publication"]];
 function shell(){return `
 <aside class="etlSide">
  <div class="etlLogo">🖋 <span>Atel<b>ier</b></span></div>
@@ -211,6 +211,7 @@ function render(){
   if(TAB==="ends")B.innerHTML=rEnds();
   if(TAB==="media")B.innerHTML=rMedia();
   if(TAB==="check")B.innerHTML=rCheck();
+  if(TAB==="cloud")B.innerHTML=rCloud();
   if(TAB==="push")B.innerHTML=rPush();
   bindTab();
 }
@@ -302,6 +303,21 @@ function rCheck(){
    ${r.errs.map(e=>`<div class="etlItem" style="border-color:#3a1420"><span class="etlTag err">erreur</span> ${esc(e)}</div>`).join("")}
    ${r.warns.map(e=>`<div class="etlItem" style="border-color:#332710"><span class="etlTag warn">alerte</span> ${esc(e)}</div>`).join("")}
    ${!r.errs.length&&!r.warns.length?'<div class="etlItem" style="border-color:#12301d"><span class="etlTag ok">ok</span> Rien à signaler.</div>':""}</div>`}
+
+/* ---------- sauvegarde cloud (admin) ---------- */
+function gistKeys(k){return k==="etl_resume_v4"||/^pg/.test(k)||/^fe/.test(k)||/^etl_name_/.test(k)||/^etl_part_/.test(k)||k==="etl_hint"||k==="etl_emoji"||k==="etl_tts"}
+function gistCode(){let d={};try{Object.keys(localStorage).filter(gistKeys).forEach(k=>d[k]=localStorage.getItem(k))}catch(e){}
+ return btoa(unescape(encodeURIComponent(JSON.stringify(d))))}
+function rCloud(){
+ const gid=(()=>{try{return localStorage.getItem("etl_gist")||""}catch(e){return ""}})();
+ return `<div class="etlCard"><h3>Sauvegarde cloud (GitHub Gist privé)</h3>
+  <p class="hint">Réservé à l'administration : envoie la sauvegarde de partie (localStorage) dans un Gist privé pour la récupérer sur un autre appareil. Le joueur, lui, dispose du code copier/coller et du fichier de sauvegarde dans le jeu.</p>
+  <label class="etlL">Jeton GitHub (PAT — permission « Gists »)</label>
+  <div class="etlRow"><input class="etlIn" type="password" id="gcPat" placeholder="github_pat_… ou ghp_…" value="${esc((()=>{try{return localStorage.getItem("etl_gist_pat")||""}catch(e){return ""}})())}" style="flex:1;min-width:260px"><label style="font-size:12px;color:#7d8aa5;display:flex;gap:6px;align-items:center"><input type="checkbox" id="gcSave" checked> retenir</label></div>
+  <label class="etlL">Gist utilisé</label>
+  <p class="etlRow" style="margin:2px 0 12px"><span class="k" style="font:12px ui-monospace;background:#0a0f1a;border:1px solid #253048;border-radius:6px;padding:3px 8px">${gid||"aucun — créé au premier envoi"}</span></p>
+  <div class="etlRow"><button class="etlBtn pri" id="gcUp">☁️ Envoyer la sauvegarde de partie</button><button class="etlBtn" id="gcDn">⤓ Récupérer depuis le cloud</button></div>
+  <div class="etlLog" id="gcLog" style="margin-top:12px">Prêt.</div></div>`}
 
 /* ---------- publication ---------- */
 function rPush(){
@@ -433,6 +449,34 @@ function bindTab(){
   if(q("#etlImgSave"))q("#etlImgSave").onclick=()=>{touch();q("#etlIMsg").textContent="Décors enregistrés en mémoire — publiés dans js/assets.js."};
   /* validation */
   if(q("#etlRecheck"))q("#etlRecheck").onclick=()=>{lastCheck=validate();render()};
+  /* cloud */
+  if(q("#gcUp")){
+    const log=t=>{const L=q("#gcLog");if(L){L.textContent+="\n"+t;L.scrollTop=L.scrollHeight}};
+    const gh=async(method,body,gid)=>{const tok=q("#gcPat").value.trim();if(!tok)throw Error("Jeton manquant.");
+      const r=await fetch("https://api.github.com/gists"+(gid?"/"+gid:""),{method,headers:{Authorization:"Bearer "+tok,Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
+      const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.message||("HTTP "+r.status));return j};
+    q("#gcUp").onclick=async()=>{
+      const btn=q("#gcUp");btn.disabled=true;btn.textContent="⏳ Envoi…";q("#gcLog").textContent="";
+      try{
+        if(q("#gcSave").checked)try{localStorage.setItem("etl_gist_pat",q("#gcPat").value.trim())}catch(e){}
+        const code=gistCode();let gid="";try{gid=localStorage.getItem("etl_gist")||""}catch(e){}
+        if(gid){await gh("PATCH",{files:{"entre-les-lignes.txt":{content:code}}},gid);log("✓ Gist mis à jour ("+gid+")")}
+        else{const g=await gh("POST",{description:"Entre les lignes — sauvegarde",public:false,files:{"entre-les-lignes.txt":{content:code}}});try{localStorage.setItem("etl_gist",g.id)}catch(e){}log("✓ Gist créé : "+g.id)}
+        log("Sauvegarde envoyée ("+Math.round(code.length/1024*10)/10+" Ko).");}
+      catch(e){log("✋ "+e.message)}
+      btn.disabled=false;btn.textContent="☁️ Envoyer la sauvegarde de partie"};
+    q("#gcDn").onclick=async()=>{
+      const btn=q("#gcDn");btn.disabled=true;btn.textContent="⏳ Récupération…";q("#gcLog").textContent="";
+      try{
+        let gid="";try{gid=localStorage.getItem("etl_gist")||""}catch(e){}
+        if(!gid)throw Error("Aucun Gist connu sur cet appareil.");
+        const g=await gh("GET",null,gid);const f=g.files&&g.files["entre-les-lignes.txt"];if(!f)throw Error("Gist vide.");
+        const d=JSON.parse(decodeURIComponent(escape(atob(f.content.trim()))));
+        Object.keys(d).forEach(k=>{try{localStorage.setItem(k,d[k])}catch(e){}});
+        log("✓ Sauvegarde récupérée ("+Object.keys(d).length+" clés) — rechargement…");
+        setTimeout(()=>location.reload(),900);}
+      catch(e){log("✋ "+e.message);btn.disabled=false;btn.textContent="⤓ Récupérer depuis le cloud"}};
+  }
   /* publication */
   if(q("#etlGoCheck2"))q("#etlGoCheck2").onclick=()=>{lastCheck=validate();TAB="check";render()};
   if(q("#etlDo"))q("#etlDo").onclick=publish;
