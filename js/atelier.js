@@ -118,7 +118,10 @@ function toggle(){W?close():open()}
 /* remplace l'ancien mini-panneau adm() : Alt+1510 et 7 taps ouvrent le studio */
 try{adm=on=>{if(on===false)close();else toggle()}}catch(e){}
 
-/* bouton flottant permanent (sous le voile 403, z<9999) */
+/* bouton flottant permanent (sous le voile 403, z<9999) — styles injectés dès le chargement pour qu'il soit visible AVANT la première ouverture du studio */
+const FABCSS=document.createElement("style");
+FABCSS.textContent='#etlFab{position:fixed;right:14px;bottom:14px;z-index:9998;width:46px;height:46px;border-radius:50%;border:1px solid #ffd16659;background:#0a1424ee;color:#ffd166d9;font-size:19px;cursor:pointer;box-shadow:0 6px 24px #000a}#etlFab.dirty span{position:absolute;top:3px;right:3px;width:10px;height:10px;border-radius:50%;background:#ff5470;box-shadow:0 0 8px #ff5470}';
+document.head.append(FABCSS);
 const FAB=document.createElement("button");
 FAB.id="etlFab";FAB.title="Ouvrir l'atelier";FAB.innerHTML="🛠<span></span>";
 FAB.onclick=()=>open();
