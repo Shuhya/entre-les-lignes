@@ -2,7 +2,7 @@
 const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],M=x=>["m",x],K=()=>["x",""];
 const S={
 h1:{w:"appart",pro:["Numéro attribué",
-"Vaubris, 2057. Il y a six jours, ton numéro a été piraté. Ce soir, tu en as payé un autre — « réattribution sécurisée », a dit le vendeur, avant de te tendre un téléphone neuf.",
+"Vaubris, 2057. Il y a six jours, on a piraté ta ligne — pas juste ton numéro : ton téléphone, tout ce qui vivait dedans. Ce soir, tu as payé pour repartir de zéro : un numéro neuf, sur un téléphone neuf. « Réattribution sécurisée », a dit le vendeur.",
 "Il a oublié une case. Ce numéro aurait dû rester gelé pour toujours. Parce qu'avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
 scr:{k:"helios",ts:"21h58"},
 c:[["Tout rapatrier. Ta vie, tes photos — tu veux la retrouver dans ce téléphone neuf.","h2",{mig:1}],["Laisser en arrière-plan. Tu regarderas ce qu'il y a dedans plus tard — ou jamais.","h2",{mig:0}]]},
