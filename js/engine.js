@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.63";console.log("Entre les lignes · v"+VER);
+const VER="2.64";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -73,6 +73,7 @@ async function play(id,r=run){
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
  if(n.call&&!st["cal_"+id]){const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
+ if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){STATS.msgs++;
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
@@ -141,7 +142,7 @@ function vwOv(n){
   fxBack(o,"✕ Refermer",function(){o.remove()});
  }}
 
-async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
+async function proCards(P,opts){const pars=P.slice(1);if(!pars.length)return;const LAB=(opts&&opts.label)||"Prologue",LB=(opts&&opts.lastBtn)||"Reprendre le t\u00E9l\u00E9phone";
  const o=document.createElement("div");o.className="proOv";$("app").append(o);
  await new Promise(done=>{
   const end=()=>{o.remove();done()};
@@ -156,11 +157,11 @@ async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
     timer=setTimeout(step,Math.max(10,27/SPD))};
    step()};
   const show=i=>{const cd=document.createElement("div");cd.className="proCard";
-   const k=document.createElement("div");k.className="proK";k.textContent="Prologue \u00B7 "+(i+1)+" / "+pars.length;cd.append(k);
+   const k=document.createElement("div");k.className="proK";k.textContent=LAB+" \u00B7 "+(i+1)+" / "+pars.length;cd.append(k);
    let titleEl=null;if(i===0){titleEl=document.createElement("h2");cd.append(titleEl)}
    const t=document.createElement("p");cd.append(t);
    const d=document.createElement("div");d.className="proDots";pars.forEach((_,j)=>{const e=document.createElement("i");if(j===i)e.className="on";d.append(e)});cd.append(d);
-   const b=document.createElement("button");b.className="proBtn";b.hidden=true;b.textContent=i===pars.length-1?"Reprendre le t\u00E9l\u00E9phone":"Continuer";
+   const b=document.createElement("button");b.className="proBtn";b.hidden=true;b.textContent=i===pars.length-1?LB:"Continuer";
    cd.append(b);
    cd.addEventListener("pointerdown",ev=>{ev.preventDefault();
     if(typing){finish(t);if(titleEl)finish(titleEl);b.hidden=false;return}
