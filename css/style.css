@@ -495,3 +495,15 @@ body.pc .bk .bkLock{right:24px}
 #lkWake .lkHint{margin-top:38px;font-size:12px;opacity:.55;animation:lkwk 2.2s ease infinite alternate}
 @keyframes lkwk{from{opacity:.3}to{opacity:.85}}
 #lkWake.on{transition:opacity .4s;opacity:0;pointer-events:none}
+
+/* ---- v2.70 : mode histoire unifié — même UI que les moments hors SMS, texte plus lisible ---- */
+.proOv{background:radial-gradient(140% 100% at 50% 42%,#0e1522 0%,#07090f 58%,#040406 100%)}
+.proCard{border:0;background:none;padding:36px 32px 30px}
+.proCard h2{font:400 27px Georgia,serif;max-width:420px}
+.proCard p{font:400 18px/1.95 Georgia,serif;color:#f1eee3;max-width:430px}
+.rxOv .rxP{font:italic 400 18px/1.9 Georgia,serif;max-width:430px;color:#f2ead8}
+#awayOv .awIn p{font-size:18px;color:#f2eee1;max-width:430px}
+#app{transition:filter .5s ease}
+#app.etlDim{filter:brightness(.06) saturate(.6)}
+#scrOv .scRow.read{opacity:.62}
+#scrOv .scRow.read small{color:#7fe0a2}

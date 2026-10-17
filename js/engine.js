@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.69";console.log("Entre les lignes · v"+VER);
+const VER="2.70";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -67,7 +67,7 @@ async function play(id,r=run){
  if(n.out)await awayOv(n.out);
  if(n.tel){const T=n.tel;await new Promise(q=>telOv(T,q))}
  if(n.app){const tA=n.app,tN=n.nm||"",oC=CAPP,oN=CNM,ck=oC+"|"+oN,nk=tA+"|"+tN;
-  if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};await appSwitch(n)}
+  if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};if(n.noS){applyApp(n)}else await appSwitch(n)}
   else if(tN!==oN)APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};
   applyApp(n);
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
@@ -78,8 +78,9 @@ async function play(id,r=run){
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){STATS.msgs++;
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([x],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
+ if(n.endc){await proCards(["Fin du chapitre",n.endc],{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",n.endc||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
  clkPlan(n);
  if(n.e)return fin(n.e);
@@ -138,7 +139,7 @@ function vwOv(n){
   btn.onclick=async function(){if(played)return;played=true;btn.textContent="▮▮ Lecture en cours";btn.disabled=true;
    const total=47,dur=13000,t0=Date.now();
    const tick=setInterval(function(){if(!o.isConnected){clearInterval(tick);return}const p=Math.min(1,(Date.now()-t0)/dur);bar.style.width=(p*100)+"%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:"+String(Math.floor(p*total)).padStart(2,"0")+" sur 0:47"},120);
-   for(const ln of lines){const p=document.createElement("p");p.className="vwL "+(ln[0]||"q");p.textContent=ln[1];tx.append(p);await sl(dur/lines.length)}
+   for(const ln of lines){const p=document.createElement("p");p.className="vwL "+(ln[0]||"q");p.textContent=ln[1];tx.append(p);try{if(ln[0]!=="i")callSpeak(ln[1],"Nils")}catch(e2){}await sl(dur/lines.length)}
    clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 — fin de l\u2019enregistrement";btn.textContent="▶ Écouté"};
   fxBack(o,"✕ Refermer",function(){o.remove()});
  }}
@@ -237,15 +238,16 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  const stopV=()=>{if(vo){try{vo.pause();vo.currentTime=0}catch(e){}vo=null}};
  $("app").append(o);
  beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),110);
- let i=0;
+ let q=lines.slice();
  const put=L=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
- const next=()=>{if(i>=lines.length){inChoice=false;hint.hidden=true;eb.hidden=false;return}
-  const L=lines[i++];
+ const next=()=>{if(!q.length){inChoice=false;hint.hidden=true;eb.hidden=false;return}
+  const L=q.shift();
   if(L[0]===2&&Array.isArray(L[1])){
    const bx=document.createElement("div");bx.className="calCh";
    inChoice=true;eb.hidden=false;hint.hidden=false;
-   L[1].forEach(opt=>{const b=document.createElement("button");b.textContent=opt;
-    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,opt]);tx();setTimeout(next,700/SPD)};bx.append(b)});
+   L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;
+    const b=document.createElement("button");b.textContent=lab;
+    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab]);tx();if(ex&&ex.length)q.unshift(...ex);setTimeout(next,700/SPD)};bx.append(b)});
    tr.append(bx);tr.scrollTop=1e9;return}
   put(L);
   if(L[0]===1){rx();callSpeak(L[1],nm)}
@@ -285,11 +287,12 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
  o.append(c);document.body.append(o);
  try{save()}catch(e){}}
-function fin([t,x]){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[t];
+function fin([t,x],skip){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[t];
  try{localStorage.setItem("pg"+SS.id,JSON.stringify(PG));k=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!k.includes(t)){k.push(t);localStorage.setItem("fe"+SS.id,JSON.stringify(k))}}catch(e){}
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.6),i*160));
  const nx=(SS.ch[SC+1]||[])[1],ok=!!S[nx],r=run;
  setTimeout(()=>{if(r!=run)return;
+  if(skip){endScreen(t,x,k);return}
  const cb=$("ch");cb.innerHTML="";
  const bb=document.createElement("button");bb.className="finB";
  bb.textContent=ok?"\u25B8 J'ai tout lu \u2014 chapitre suivant":"\u25B8 J'ai tout lu \u2014 bilan de l'histoire";
@@ -303,7 +306,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11c:"I",h11:"I"};
+const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11f:"I",h11:"I",h3a:"I",h3b:"I",h3c:"I",h3l:"I",h3l1:"I",h3l2:"I",h3l3:"I",h9f2:"I",h9z:"I"};
 let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
@@ -484,11 +487,12 @@ async function introH(cb){
 /* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>💬</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span></div><div class="lkHint">Appuie pour déverrouiller</div>';
+ o.innerHTML='<div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkNotif"><i>'+((s&&s.ic)||"💬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span></div><div class="lkHint">Appuie pour déverrouiller</div>';
  app.append(o);
+ try{app.classList.add("etlDim")}catch(e){}
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
- await new Promise(res=>{o.onclick=()=>{try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();res()},420)}})}
-async function awayOv(lines){
+ await new Promise(res=>{o.onclick=()=>{try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{$("app").classList.remove("etlDim")}catch(e){}res()},420)}})}
+async function awayOv(lines,LB){
  const app=$("app");const o=document.createElement("div");o.id="awayOv";
  o.innerHTML='<div class="awIn"></div><button class="awGo"></button>';
  app.append(o);
@@ -526,12 +530,12 @@ async function heliosTransfer(o){
  }
  const li=document.createElement("div");li.className="scLi dim";
  li.innerHTML='<span>Espace chiffré</span><small>en attente</small>';list.append(li);
- box.querySelector(".scStat").textContent="Transfert terminé — 4,2 Go récupérés";
+ box.querySelector(".scStat").textContent="Transfert terminé : 4,2 Go récupérés";
  try{hit(660,.06,.08);setTimeout(()=>hit(990,.08,.1),90)}catch(e){}
  await sl(900)}
 /* ---- écran contextuel IN-TÉLÉPHONE (v2.53) : interface dédiée au contexte (ex. HÉLIOS), à la façon du lock screen ---- */
 async function scrOv(n){
- try{if(st["scr_"+(nodeNow||"")])return false}catch(e){}
+ try{if(st["scr_"+(nodeNow||"")]&&!n.scrf)return false}catch(e){}
  const spec=n.scr||{};
  const app=$("app");const o=document.createElement("div");o.id="scrOv";
  let map=null,resFn=null;
@@ -559,11 +563,13 @@ async function scrOv(n){
   body.append(sub);
   (n.fx||[]).forEach(r=>{
    const ic=r[0],nm=r[1],ds=r[2],tgt=map[nm];
-   const rw=document.createElement("div");rw.className="scRow "+(tgt?"go":"dim");
-   rw.innerHTML='<i>'+ic+'</i><span>'+nm+'</span><small>'+ds+'</small>';
+   const opd=st["op_"+nm];
+   const rw=document.createElement("div");rw.className="scRow "+(tgt?"go":"dim")+(opd?" read":"");
+   rw.innerHTML='<i>'+ic+'</i><span>'+nm+'</span><small>'+(opd?"✓ lu · ":"")+ds+'</small>';
    if(tgt)rw.onclick=async ev=>{ev.stopPropagation();if(o.dataset.done)return;o.dataset.done=1;
     const ch=(n.c||[]).find(cc=>cc&&cc[1]===tgt);
     if(ch)applyEf(ch[2]);
+    try{st["op_"+r[1]]=1}catch(x2){}
     try{st["scr_"+(nodeNow||"")]=1}catch(x){}
     try{hit(660,.05,.08);setTimeout(()=>hit(990,.07,.1),70)}catch(x){}
     try{resFn&&resFn()}catch(x){}
@@ -571,7 +577,7 @@ async function scrOv(n){
     await sl(300);play(tgt,run)};
    body.append(rw)});
   const note=document.createElement("p");note.className="scNote";
-  note.textContent="Quatre fichiers qui ne sont pas à toi — maintenant dans ton téléphone.";
+  note.textContent="Quatre fichiers qui ne sont pas à toi, maintenant dans ton téléphone.";
   body.append(note);
   o.append(head);o.append(body)}
  const btns=document.createElement("div");btns.className="scBtns";o.append(btns);
@@ -579,7 +585,8 @@ async function scrOv(n){
  if(spec.ts){const q=String(spec.ts).match(/^(\d{1,2})h(\d{2})$/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}}
  try{beep(520,.06,.05)}catch(e){}
  await new Promise(res=>{resFn=res;
-  const visible=(n.c||[]).filter(c=>!(map&&map[c[1]]));
+  const mapped=map?Object.values(map):[];
+  const visible=(n.c||[]).filter(c=>!mapped.includes(c[1]));
   visible.forEach(([t,nx,ef])=>{
    const b=document.createElement("button");b.className="scBtn";b.textContent=unq(t);
    b.onclick=async ev=>{ev.stopPropagation();if(o.dataset.done)return;o.dataset.done=1;

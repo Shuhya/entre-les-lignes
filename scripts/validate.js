@@ -17,7 +17,7 @@ const ctx=vm.createContext({console});
 const {S,STORIES}=vm.runInContext(fs.readFileSync('js/story.js','utf8')+';({S:S,STORIES:STORIES})',ctx);
 step(Object.keys(S).length>0,Object.keys(S).length+' nœuds, '+STORIES.length+' histoire(s)');
 const states=[{},{piege:1},{piege:1,avou:1},{piege:1,mentir:1},{piege:1,trst:1},{trst:2},{mentir:1},
-  {piege:1,int:1,pov:2,prm:2},{avou:1,mentir:1,trst:1,int:3,pov:2,prm:2},{int:3,pov:2,prm:2,t:5}];
+  {piege:1,int:1,pov:2,prm:2},{avou:1,mentir:1,trst:1,int:3,pov:2,prm:2},{int:3,pov:2,prm:2,t:5},{r:1},{r:2},{r:3},{f:1},{f:2},{f:3}];
 let broken=[],seen=new Set(),q=[];
 STORIES.forEach(s=>(s.ch||[]).forEach(c=>{if(c[1]!=='-'&&S[c[1]])q.push(c[1])}));
 const push=(t,f)=>{if(t&&t!=='-'){if(!(t in S))broken.push(f+'→'+t);else q.push(t)}};

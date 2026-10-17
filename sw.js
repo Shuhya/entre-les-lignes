@@ -13,7 +13,8 @@ const PRE = [
   "./assets/img/menu.jpg", "./assets/img/vaubris.jpg", "./assets/img/quai9.jpg", "./assets/img/appart.jpg",
   "./assets/img/av-c.jpg", "./assets/img/av-j.jpg", "./assets/img/av-n.jpg",
   "./assets/img/av-cora.jpg", "./assets/img/av-yasmine.jpg",
-  "./assets/audio/pluie.mp3"
+  "./assets/audio/pluie.mp3",
+  "./assets/img/echantillon.jpg"
 ];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.concat(PRE)).catch(()=>{})).then(() => self.skipWaiting()));

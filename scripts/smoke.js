@@ -90,9 +90,9 @@ const T=ctx.__T;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const first=s=>qa(doc.body,s)[0]||null;
 
-/* Choix par nœud — ROUTE=a piège/MMS/h8p/h11p ; ROUTE=b honnête/trst élevé/h8/h11w */
-const CHO_A={h1:1,h2:0,h3:0,h3y:0,h4:2,h6:0,h7h:0,h9:0,h9a:0,h9b:0,h9a2:0,h9y:0,h10:1};
-const CHO_B={h1:1,h2:0,h3:0,h3y:0,h4:1,h6:0,h7h:0,h9:0,h9a:0,h9b:0,h9a2:0,h9y:0,h10:1};
+/* Choix par nœud — ROUTE=a piège/MMS/h8p/h11p ; ROUTE=b honnête/trst élevé/h8/h11w (+h9z bonne nuit) */
+const CHO_A={h1:1,h2:0,h3a:0,h3l1:0,h3y:0,h4:2,h6:0,h7h:0,h9:0,h9a:0,h9b:0,h10:1,h9y:0};
+const CHO_B={h1:1,h2:1,h3b:1,h3l2:0,h3y:0,h4:1,h6:0,h7h:0,h9:1,h9y:1,h9z:0,h10:1};
 const CHO=ROUTE==="b"?CHO_B:CHO_A;
 const EXPECT_END=ROUTE==="b"?"h11w":"h11p";
 const seen={mms:false,nodes:new Set()};
@@ -112,8 +112,12 @@ async function drive(){
   el=first(".notif");if(el){el.click();await sleep(60);continue}
   el=first("#calOv");if(el){const chs=qa(el,".calCh button");if(chs.length){chs[0].click();await sleep(60);continue}
    const eb=first(".calEnd",el);if(eb&&!eb.hidden){eb.click();await sleep(60);continue}}
-  const scb=qa(doc.body,".scBtn");if(scb.length&&first("#scrOv")){const i=node==="h1"?1:0;(scb[i]||scb[0]).click();await sleep(80);continue}
-  el=first("#scrOv .scRow.go");if(el){el.click();await sleep(80);continue}
+  const scr=first("#scrOv");
+  if(scr){
+   const rows=qa(scr,".scRow").filter(r=>/go/.test(r.className)&&!/✓ lu/.test(r.textContent));
+   if(rows.length){rows[0].click();await sleep(80);continue}
+   const scb=qa(scr,".scBtn");if(scb.length){const i2=node==="h1"?1:0;(scb[i2]||scb[0]).click();await sleep(80);continue}
+  }
   const ch=byId.ch;const btns=ch?ch.children.filter(x=>x.tagName==="BUTTON"&&!/finB/.test(x.className||"")):[];
   if(btns.length){const idx=(node&&CHO[node]!==undefined)?CHO[node]:0;btns[idx].click();await sleep(80);continue}
   if(first("#endOv"))break;
