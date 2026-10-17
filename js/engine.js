@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.28";console.log("Entre les lignes · v"+VER);
+const VER="2.29";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -403,7 +403,8 @@ $("clk").parentNode.addEventListener("click",()=>{const n=Date.now();tp=tp.filte
   else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
   else toast("Ouvre une histoire puis 7 taps sur l\u2019horloge pour l\u2019\u00E9diter.")}});
 /* ---- boutons et démarrage ---- */
-$("set").onclick=()=>{$("vol").hidden=!$("vol").hidden};
+$("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
+document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&!vv.contains(e.target)&&!$("set").contains(e.target))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
  up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};$("apps").onclick=()=>appHome();
@@ -468,7 +469,7 @@ add=function(c,x){
  const KEY='etl_resume_v4';let restoring=false,GHOST=false,path=[],seenPro={};nodeNow=null;
  function save(){try{if(GHOST||!SS||!st||!SK)return;localStorage.setItem(KEY,JSON.stringify({story:SS.id,chapter:SC,node:nodeNow,state:st,chat:$('chat').innerHTML,at:Date.now(),path:path.slice(),apph:APPH,thr:THR,papp:PAPP,pnm:PNM}))}catch(e){}}
  const oldPlay=play;
- play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);const v=await oldPlay(id,r);save();return v};
+ play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);save();const v=await oldPlay(id,r);save();return v};
  const oldFin=fin;fin=function(v){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  const oldMenu=menu;
@@ -566,7 +567,9 @@ add=function(c,x){
    row(c,'\u2039 Retour','',menu);show(c)}
   else goList()};
  function resume(v){const story=STORIES.find(x=>x.id===v.story);if(!story)return;SS=story;SC=Math.min(v.chapter||0,story.ch.length-1);try{PG=JSON.parse(localStorage.getItem('pg'+SS.id))||{c:1,s:[]}}catch(e){PG={c:1,s:[]}}st=v.state||{t:0,l:0,r:0,v:0,e:''};run++;SK=1;document.body.classList.add('play');$('mn').classList.remove('on');const nmd=!!((v.state&&v.state.named)||SC>0||localStorage.getItem('etl_name_'+SS.id)===SS.n);$('nm').textContent=nmd?SS.n:SS.num;setAv(nmd?SS.n[0]:"\u{1F464}");$('chat').innerHTML=v.chat||'';$('ch').innerHTML='';$('ov').hidden=true;$('vol').hidden=true;unlock();nodeNow=v.node;path=v.path?v.path.slice():[v.node];APPH=v.apph||{};THR=v.thr||{};PAPP=v.papp||null;PNM=v.pnm||'';
-  const n=S[v.node];if(n&&n.c)n.c.forEach(([label,next,effect,rmsg])=>{const b=document.createElement('button');b.textContent=label;b.onclick=()=>{ $('ch').innerHTML='';if(rmsg==='!')add('n',label);else add('m',rmsg||label);for(const k in effect)st[k]=['t','care','agency','practical'].includes(k)?(st[k]||0)+effect[k]:effect[k];save();play(next)};$('ch').append(b)});save()
+  const n=S[v.node];if(n&&n.c)n.c.forEach(([label,next,effect,rmsg])=>{const b=document.createElement('button');b.textContent=label;b.onclick=()=>{ $('ch').innerHTML='';if(rmsg==='!')add('n',label);else add('m',rmsg||label);for(const k in effect)st[k]=['t','care','agency','practical'].includes(k)?(st[k]||0)+effect[k]:effect[k];save();play(next)};$('ch').append(b)});
+ else{if(path[path.length-1]===v.node)path.pop();setTimeout(()=>play(v.node),120)}
+ save()
  }
  const oldAdm=adm;
  /* ================= MODE ADMIN v4 : simulateur éditable en place ================= */
