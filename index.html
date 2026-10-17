@@ -52,7 +52,7 @@ body{font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff;back
 </div>
 <div class="foot">Entre les lignes · un jeu narratif de Dylan Gaucher</div>
 <script>
-if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+if("serviceWorker" in navigator){var __etlHad=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",function(){if(__etlHad&&!window.__etlRl){window.__etlRl=1;location.reload()}});addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
 </body>
 </html>
