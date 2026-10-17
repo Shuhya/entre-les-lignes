@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.36";console.log("Entre les lignes · v"+VER);
+const VER="2.37";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -69,8 +69,9 @@ async function play(id,r=run){
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){STATS.msgs++;
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
+ clkPlan(n);
  if(n.e)return fin(n.e);
  if(n.x)return play(n.x,r);if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
  const c=$("ch");c.innerHTML="";
@@ -185,6 +186,14 @@ function transferOv(){
  const gistId=()=>{try{return localStorage.getItem("etl_gist")||""}catch(e){return ""}};
  async function gh(method,body){const r=await fetch("https://api.github.com/gists"+(method==="GET"&&gistId()?"/"+gistId():""),{method,headers:{Authorization:"Bearer "+pat.value.trim(),Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
   const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.message||("HTTP "+r.status));return j}
+ const fs2=document.createElement("button");fs2.className="trBtn";fs2.textContent="\uD83D\uDCBE Exporter un fichier de sauvegarde";
+ fs2.onclick=()=>{const blob=new Blob([code],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="entre-les-lignes-partie.txt";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
+ c.append(fs2);
+ const fi=document.createElement("input");fi.type="file";fi.accept=".txt,.json";fi.style.display="none";
+ fi.onchange=()=>{const f=fi.files&&fi.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>loadCode(String(rd.result));rd.readAsText(f)};
+ const fd=document.createElement("button");fd.className="trBtn ld";fd.textContent="\uD83D\uDCC2 Charger un fichier de sauvegarde";
+ fd.onclick=()=>fi.click();
+ c.append(fd);c.append(fi);
  up.onclick=async()=>{const tok=pat.value.trim();if(!tok){toast("Entre ton jeton GitHub pour le cloud.");return}
   try{localStorage.setItem("etl_gist_pat",tok)}catch(e){}
   up.textContent="\u23F3 Envoi\u2026";
@@ -613,10 +622,29 @@ let statsMark=Date.now();
 function statsTick(){STATS.t+=Math.round((Date.now()-statsMark)/1000);statsMark=Date.now();try{localStorage.setItem("etl_stats",JSON.stringify(STATS))}catch(e){}}
 function fmtT(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?h+" h "+String(m).padStart(2,"0"):(m?m+" min":"moins d'une minute")}
 /* ---- horloge glissante : le temps du récit avance entre les messages ---- */
-const CLK={h:null,m:0};
-function clkSet(hm){const q=hm.split(":");CLK.h=+q[0];CLK.m=+q[1]}
+const CLK={h:null,m:0},CLKBASE={h:null,m:0};let CLKMAX=null;
+function clkSet(hm){const q=hm.split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null}
 function clkNow(){return CLK.h==null?null:String(CLK.h).padStart(2,"0")+":"+String(CLK.m).padStart(2,"0")}
-setInterval(()=>{if(!SK||CLK.h==null)return;CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
+/* borne : l'horloge ne dérive JAMAIS au-delà du prochain horodatage scénarisé (ni +30 min sans repère) */
+function clkScan(id,cand){const n2=S[id];if(!n2)return;for(const[w,x]of n2.m||[]){const q=String(w==="n"?x:"").match(/(\d{1,2})h(\d{2})/);if(q){cand.push({h:+q[1],m:+q[2]});return}}}
+function clkPlan(n){CLKMAX=null;if(CLK.h==null||!n)return;
+ const cur=CLK.h*60+CLK.m,seen=new Set(),q=[];
+ /* BFS borné : le PREMIER horodatage le long de chaque chemin est le seul contraignant */
+ const push=(id,dp)=>{if(id&&S[id]&&!seen.has(id)&&dp<=6){seen.add(id);q.push({id,dp})}};
+ (n.c||[]).forEach(ch=>ch&&push(ch[1],1));if(n.x)push(n.x,1);if(n.h)push(n.h,1);
+ if(n.j){try{push(n.j(st),1)}catch(e){}try{const s2=JSON.parse(JSON.stringify(st));s2.piege=s2.piege?0:1;push(n.j(s2),1)}catch(e){}}
+ while(q.length){
+  const it=q.shift(),n2=S[it.id];let hasT=null;
+  for(const[w,x]of n2.m||[]){const q2=String(w==="n"?x:"").match(/^(\d{1,2})h(\d{2})/);if(q2){hasT={h:+q2[1],m:+q2[2]};break}}
+  if(hasT){const v=hasT.h*60+hasT.m;if(v>cur&&(!CLKMAX||v<CLKMAX.h*60+CLKMAX.m))CLKMAX=hasT;continue} /* temps trouvé : chemin stoppé là */
+  (n2.c||[]).forEach(ch=>ch&&push(ch[1],it.dp+1));if(n2.x)push(n2.x,it.dp+1);if(n2.h)push(n2.h,it.dp+1);
+  if(n2.j){try{push(n2.j(st),it.dp+1)}catch(e){}}
+ }}
+setInterval(()=>{if(!SK||CLK.h==null)return;
+ const cur=CLK.h*60+CLK.m,base=CLKBASE.h*60+CLKBASE.m;
+ if(CLKMAX){if(cur>=CLKMAX.h*60+CLKMAX.m-1)return}          /* stoppe juste avant le prochain horodatage */
+ else if(cur-base>=30)return;                                  /* dérive max 30 min sans repère */
+ CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
  function save(){statsTick();try{if(GHOST||!SS||!st||!SK)return;localStorage.setItem(KEY,JSON.stringify({story:SS.id,chapter:SC,node:nodeNow,state:st,chat:$('chat').innerHTML,at:Date.now(),path:path.slice(),apph:APPH,thr:THR,papp:PAPP,pnm:PNM}))}catch(e){}}
  const oldPlay=play;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);save();const v=await oldPlay(id,r);save();return v};
