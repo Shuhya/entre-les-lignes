@@ -104,7 +104,8 @@ function validate(){
 }
 
 /* ---------- ouverture / fermeture ---------- */
-function close(){if(W){W.remove();W=null}}
+function exitPrev(){const b=document.getElementById("etlPrevOff");if(b)b.remove();document.body.classList.remove("etlPrev");document.body.classList.remove("play");try{const c=document.getElementById("chat");if(c)c.innerHTML="";const h=document.getElementById("ch");if(h)h.innerHTML=""}catch(e){}}
+function close(){if(W){W.remove();W=null}exitPrev()}
 function open(){
   if(W){W.remove()}
   W=document.createElement("div");W.id="etlStudio";
@@ -182,6 +183,23 @@ label.etlL{display:block;font-size:11.5px;color:#7d8aa5;text-transform:uppercase
 .etlLog{background:#070b12;border:1px solid #1d2434;border-radius:10px;padding:12px;font:12px/1.7 ui-monospace,Consolas,monospace;color:#9fb4d8;max-height:260px;overflow-y:auto;white-space:pre-wrap}
 .etlSplit{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:860px){.etlSide{width:60px;padding:10px 6px}.etlLogo{font-size:0;padding:4px 0 10px}.etlNav button span.lbl,.etlSide .foot{display:none}.etlCols,.etlSplit{grid-template-columns:1fr}}
+.etlGal{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.gItem{background:#0d1220;border:1px solid #1d2434;border-radius:12px;overflow:hidden}
+.gItem .gImg{width:100%;height:132px;object-fit:cover;display:block;background:#0a0f1a;cursor:zoom-in}
+.gItem .gImg.ko{opacity:.18}
+.gItem .gTop{display:flex;align-items:center;padding:8px 10px 0}
+.gItem .gUrl{width:calc(100% - 20px);margin:8px 10px 10px;font-size:11.5px;padding:5px 8px}
+.gItem.gAdd{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;color:#7d8aa5;font-size:12.5px;cursor:pointer;border-style:dashed;min-height:200px}
+.gItem.gAdd:hover{color:#ffd166;border-color:#ffd16659}
+#etlBig{position:fixed;inset:0;z-index:99999;background:#000000e0;display:none;align-items:center;justify-content:center;cursor:zoom-out;padding:24px}
+#etlBig.on{display:flex}
+#etlBig img{max-width:94vw;max-height:92vh;border-radius:10px;box-shadow:0 20px 80px #000}
+body.etlPrev{display:block}
+body.etlPrev #app{position:fixed;top:50%;right:24px;transform:translateY(-50%);height:min(800px,92vh);width:min(382px,42vw);z-index:99980}
+body.etlPrev #etlStudio{right:calc(min(382px,42vw) + 52px)}
+body.etlPrev .etlCols,body.etlPrev .etlSplit{grid-template-columns:1fr}
+#etlPrevOff{position:fixed;top:16px;right:24px;z-index:99985;padding:9px 14px;border-radius:12px;border:1px solid #ffd16659;background:#0a1424ee;color:#ffd166d9;font:13px system-ui;cursor:pointer;box-shadow:0 6px 24px #000a}
+@media (max-width:900px){body.etlPrev #etlStudio{display:none}body.etlPrev #app{width:min(400px,94vw);right:50%;transform:translate(50%,-50%)}}
 </style>`}
 
 /* ---------- UI : coquille ---------- */
@@ -234,15 +252,16 @@ function rDash(){
   ${draft&&draft!==snapshot()&&draft!==snapS?`<div class="etlCard" style="border-color:#8a6a1f"><h3>📼 Brouillon local trouvé</h3><p class="hint">Une sauvegarde de travail différente existe sur cet appareil.</p><div class="etlRow"><button class="etlBtn pri" id="etlRestore">Restaurer le brouillon</button><button class="etlBtn dgr" id="etlDropDraft">L'ignorer</button></div></div>`:""}
   <div class="etlCard"><h3>Actions</h3><p class="hint">Tout se passe dans ce navigateur jusqu'à la publication.</p>
    <div class="etlRow"><button class="etlBtn pri" id="etlGoNodes">✎ Éditer les dialogues</button><button class="etlBtn" id="etlGoCheck">✓ Valider le projet</button><button class="etlBtn" id="etlGoPush">▲ Publier sur GitHub</button></div></div>
-  <div class="etlCard"><h3>Histoires</h3><div class="etlList">${STORIES.map((s,i)=>`<button data-go="stories"><span class="k">${s.id}</span> <b>${esc(s.t)}</b> — ${esc(s.n)} · ${Object.keys(S).length?countStory(s):0} nœuds vus</button>`).join("")}</div></div>`}
+  <div class="etlCard"><h3>Histoires</h3><div class="etlList">${STORIES.map((s,i)=>`<button data-go="stories"><span class="k">H${i+1}</span> <b>${esc(s.t)}</b> — ${esc(s.n)} · ${Object.keys(S).length?countStory(s):0} nœuds vus</button>`).join("")}</div></div>`}
 
 /* ---------- dialogues (nœuds) ---------- */
 let NODE_FILTER="";
-function nodeIds(){return Object.keys(S).sort()}
+const natCmp=(x,y)=>x.localeCompare(y,undefined,{numeric:true,sensitivity:"base"});
+function nodeIds(){return Object.keys(S).sort(natCmp)}
 function rNodes(){
   const ids=nodeIds().filter(k=>k.toLowerCase().includes(NODE_FILTER.toLowerCase()));
   return `<div class="etlCols">
-   <div class="etlCard"><h3>Nœuds</h3><p class="hint">${nodeIds().length} nœuds au total</p>
+   <div class="etlCard"><h3>Nœuds</h3><p class="hint">${nodeIds().length} nœuds · dans l'ordre du récit</p>
     <input class="etlIn" id="etlNF" placeholder="filtrer…" value="${esc(NODE_FILTER)}" style="width:100%">
     <div class="etlList" id="etlNL">${ids.map(k=>`<button data-node="${k}" class="${CUR===k?"on":""}"><span class="k">${k}</span>${S[k].e||S[k].k?"🏁 ":""}${esc(firstText(S[k]).slice(0,42))}</button>`).join("")}</div>
     <div class="etlRow"><button class="etlBtn sm" id="etlNew">＋ Nouveau</button><button class="etlBtn sm dgr" id="etlDelNode">Supprimer</button></div></div>
@@ -275,9 +294,9 @@ function rEditor(){
 let ST_I=0,CH_I=0;
 function rStories(){
   const st=STORIES[ST_I]||STORIES[0];
-  return `<div class="etlCols"><div class="etlCard"><h3>Histoires</h3><div class="etlList">${STORIES.map((s,i)=>`<button data-story="${i}" class="${i===ST_I?"on":""}"><span class="k">${s.id}</span><b>${esc(s.t)}</b> — ${esc(s.n)}</button>`).join("")}</div>
+  return `<div class="etlCols"><div class="etlCard"><h3>Histoires</h3><p class="hint">H1 = histoire 1 · ses nœuds portent son préfixe (h1, h2…).</p><div class="etlList">${STORIES.map((s,i)=>`<button data-story="${i}" class="${i===ST_I?"on":""}"><span class="k">H${i+1}</span><b>${esc(s.t)}</b> — ${esc(s.n)}</button>`).join("")}</div>
    <div class="etlRow" style="margin-top:10px"><button class="etlBtn sm" id="etlNewStory">＋ Nouvelle histoire</button></div></div>
-  <div class="etlCard"><h3>« ${esc(st.t)} »</h3><p class="hint">id ${st.id} · ${esc(st.num)}</p>
+  <div class="etlCard"><h3>« ${esc(st.t)} »</h3><p class="hint">Histoire ${ST_I+1} · préfixe des nœuds : « ${st.id} » · ${esc(st.num)}</p>
    <label class="etlL">Titre</label><input class="etlIn" id="etlSTitle" value="${esc(st.t)}" style="width:100%">
    <label class="etlL">Contact (nom affiché)</label><input class="etlIn" id="etlSName" value="${esc(st.n)}" style="width:100%">
    <label class="etlL">Numéro</label><input class="etlIn" id="etlSNum" value="${esc(st.num||"")}" style="width:100%">
@@ -290,16 +309,19 @@ function rStories(){
 
 /* ---------- fins ---------- */
 function rEnds(){
-  const ends=Object.keys(S).filter(k=>S[k].e||S[k].k);
+  const ends=Object.keys(S).filter(k=>S[k].e||S[k].k).sort(natCmp);
   return `<div class="etlCard"><h3>Fins détectées (${ends.length})</h3><p class="hint">Un nœud avec e:[titre, texte] ou k. Clique pour l'éditer.</p>
   <div class="etlList">${ends.map(k=>`<button data-end="${k}"><span class="k">${k}</span><b>${esc(Array.isArray(S[k].e)?S[k].e[0]:(S[k].k||"Fin"))}</b><span style="color:#7d8aa5">${esc((Array.isArray(S[k].e)?S[k].e[1]:"").slice(0,60))}</span></button>`).join("")||"Aucune fin explicite."}</div></div>`}
 
 /* ---------- médias ---------- */
 function rMedia(){
-  return `<div class="etlCard"><h3>Décors (IMG)</h3><p class="hint">Clés utilisables dans le champ w d'un nœud. URL relative au site ou data:URI.</p>
-  ${Object.keys(IMG).map(k=>`<div class="etlRow"><span class="k" style="font:12px ui-monospace;background:#0a0f1a;border:1px solid #253048;border-radius:6px;padding:3px 8px;min-width:86px">${k}</span><input class="etlIn" data-img="${k}" value="${esc(IMG[k])}" style="flex:1;min-width:220px"><img src="${esc(IMG[k])}" style="width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid #253048" loading="lazy" onerror="this.style.opacity=.2"></div>`).join("")}
-  <div class="etlRow"><input class="etlIn" id="etlImgK" placeholder="nouvelle clé" style="width:140px"><input class="etlIn" id="etlImgV" placeholder="assets/img/….jpg ou data:image/…" style="flex:1;min-width:220px"><button class="etlBtn sm" id="etlImgAdd">＋ Ajouter</button></div>
-  <div class="etlRow" style="margin-top:12px"><button class="etlBtn pri" id="etlImgSave">✓ Enregistrer les décors</button><span class="hint" style="margin:0">⚠ publishées dans js/assets.js</span></div><div class="etlMsg" id="etlIMsg"></div></div>`}
+  const ks=Object.keys(IMG).sort(natCmp);
+  return `<div class="etlCard"><h3>Galerie des décors (${ks.length})</h3><p class="hint">Toute la galerie du projet. Clique une vignette pour l'agrandir ; l'URL se modifie sous chaque image. Clé utilisable dans le champ w d'un nœud.</p>
+  <div class="etlGal">${ks.map(k=>`<div class="gItem"><img class="gImg" src="${esc(IMG[k])}" loading="lazy" onerror="this.classList.add('ko')"><div class="gTop"><span class="k">${k}</span></div><input class="etlIn gUrl" data-img="${k}" value="${esc(IMG[k])}" placeholder="assets/img/….jpg"></div>`).join("")}
+  <div class="gItem gAdd" id="etlGalAdd"><div style="font-size:24px">＋</div>Nouveau décor</div></div>
+  <div class="etlRow" style="margin-top:14px"><input class="etlIn" id="etlImgK" placeholder="nouvelle clé" style="width:140px"><input class="etlIn" id="etlImgV" placeholder="assets/img/….jpg ou data:image/…" style="flex:1;min-width:220px"><button class="etlBtn sm" id="etlImgAdd">＋ Ajouter</button></div>
+  <div class="etlRow" style="margin-top:12px"><button class="etlBtn pri" id="etlImgSave">✓ Enregistrer les décors</button><span class="hint" style="margin:0">⚠ publishées dans js/assets.js</span></div><div class="etlMsg" id="etlIMsg"></div></div>
+  <div id="etlBig"><img alt=""></div>`}
 
 /* ---------- validation ---------- */
 function rCheck(){
@@ -439,12 +461,15 @@ function bindTab(){
   if(q("#etlEText"))q("#etlEText").oninput=e=>{const n=S[CUR];if(Array.isArray(n.e))n.e[1]=e.target.value;else{n.e=[q("#etlETitle").value,e.target.value];delete n.k}touch()};
   if(q("#etlSaveJson"))q("#etlSaveJson").onclick=()=>{try{const n=JSON.parse(q("#etlJson").value);S[CUR]=n;touch();lastCheck=null;msg("Nœud "+CUR+" remplacé (JSON expert).")}catch(e){msg("JSON invalide : "+e.message,true)}};
   if(q("#etlSaveForm"))q("#etlSaveForm").onclick=()=>{touch();lastCheck=null;msg("Formulaire enregistré en mémoire.")};
-  if(q("#etlPrev"))q("#etlPrev").onclick=()=>{if(!CUR||!S[CUR])return;close();$("chat").innerHTML="";$("ch").innerHTML="";document.body.classList.add("play");$("mn").classList.remove("on");run++;st=st||{t:0,l:0,r:0,v:0,e:""};
-   const bp=document.createElement("button");bp.id="etlBack";bp.textContent="🛠 Revenir à l'atelier";
-   bp.style.cssText="position:fixed;top:64px;right:14px;z-index:9997;padding:9px 14px;border-radius:12px;border:1px solid #ffd16659;background:#0a1424ee;color:#ffd166d9;font:13px system-ui;cursor:pointer;box-shadow:0 6px 24px #000a";
-   bp.onclick=()=>{bp.remove();open()};document.body.append(bp);
-   setTimeout(()=>{if(bp.isConnected)bp.remove()},120000);
-   play(CUR)};
+  if(q("#etlPrev"))q("#etlPrev").onclick=()=>{if(!CUR||!S[CUR])return;
+   if(!document.body.classList.contains("etlPrev")){
+     document.body.classList.add("etlPrev");
+     const bp=document.createElement("button");bp.id="etlPrevOff";bp.textContent="✕ Quitter l'aperçu";
+     bp.onclick=()=>exitPrev();document.body.append(bp);
+     run++;st=st||{t:0,l:0,r:0,v:0,e:""};
+   }
+   document.body.classList.add("play");$("mn").classList.remove("on");
+   $("chat").innerHTML="";$("ch").innerHTML="";play(CUR)};
   /* histoires */
   qa("[data-story]").forEach(b=>b.onclick=()=>{ST_I=+b.dataset.story;CH_I=0;render()});
   if(q("#etlNewStory"))q("#etlNewStory").onclick=()=>{const id=prompt("Identifiant de l'histoire ? (ex. w)");if(!id)return;STORIES.push({id,n:"Contact",num:"06 00 00 00 00",t:"Nouvelle histoire",d:"",ch:[["Chapitre 1",Object.keys(S)[0]||"-"]]});ST_I=STORIES.length-1;touch();render()};
@@ -459,6 +484,9 @@ function bindTab(){
   qa("[data-end]").forEach(b=>b.onclick=()=>{CUR=b.dataset.end;TAB="nodes";render()});
   /* médias */
   qa("[data-img]").forEach(t=>t.oninput=()=>{IMG[t.dataset.img]=t.value;touch()});
+  qa(".gImg").forEach(im=>im.onclick=()=>{const b=$id("etlBig");if(!b)return;b.querySelector("img").src=im.src;b.classList.add("on")});
+  if(q("#etlBig"))q("#etlBig").onclick=()=>{q("#etlBig").classList.remove("on")};
+  if(q("#etlGalAdd"))q("#etlGalAdd").onclick=()=>{const k=q("#etlImgK");if(k){k.scrollIntoView({block:"center"});k.focus()}};
   if(q("#etlImgAdd"))q("#etlImgAdd").onclick=()=>{const k=q("#etlImgK").value.trim(),v=q("#etlImgV").value.trim();if(!k||!v)return;IMG[k]=v;touch();render()};
   if(q("#etlImgSave"))q("#etlImgSave").onclick=()=>{touch();q("#etlIMsg").textContent="Décors enregistrés en mémoire — publiés dans js/assets.js."};
   /* validation */

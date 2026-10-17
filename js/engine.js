@@ -1,4 +1,4 @@
-const DEF_AV={'':AVF1,m:AVF2,k:AVM1,z:AVF3};
+const DEF_AV={'':AVF1,m:AVF2,k:AVM1,h:AVF3};
 let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},ADM=0,ADS="",kb="",tp=[],nodeNow=null,EDIT=0;
 const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
 /* ---- audio ---- */
@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.45";console.log("Entre les lignes · v"+VER);
+const VER="2.46";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -50,9 +50,9 @@ const nodeBackgrounds=(()=>{try{return JSON.parse(localStorage.getItem("etl_node
 function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0003,#0006),url("+u+")":"";amb(k)}
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
- if(SS&&(SS.id==="o"||SS.id==="z")&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
- CHP=(SS&&(SS.id==="o"||SS.id==="z")&&PART[id])?PART[id]:"";
- if(SS&&(SS.id==="o"||SS.id==="z")&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
+ if(SS&&(SS.id==="o"||SS.id==="h")&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
+ CHP=(SS&&(SS.id==="o"||SS.id==="h")&&PART[id])?PART[id]:"";
+ if(SS&&(SS.id==="o"||SS.id==="h")&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
  if(ADM&&$("a6"))$("a6").textContent=id;
  if(n.j)return play(n.j(st),r);
@@ -256,14 +256,14 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const o=document.createElement("div");o.id="endOv";
  const c=document.createElement("div");c.className="card";
  const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
- const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 "+(SS.id==="z"?"Partie I":"fin de l'enqu\u00EAte");c.append(sub);
+ const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 "+(SS.id==="h"?"Partie I":"fin de l'enqu\u00EAte");c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
  const ds=document.createElement("div");ds.className="endDossier";
  ds.innerHTML="<span>\u23F1 "+fmtT(STATS.t)+" de lecture</span><span>\uD83D\uDCAC "+STATS.msgs+" messages lus</span><span>\uD83D\uDCDA "+(STATS.runs||1)+" passage"+(STATS.runs>1?"s":"")+"</span>";
  c.append(ds);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
- bar(st.int,SS.id==="z"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
+ bar(st.int,SS.id==="h"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
  const fd=document.createElement("div");fd.className="endFins";const fl=document.createElement("b");fl.textContent="Fins découvertes — "+seen.length+" / "+tot;fd.append(fl);
  const list=document.createElement("div");list.className="endFinsList";
  endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
@@ -292,7 +292,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={z1:"I",z2:"I",z3:"I",z4:"I",z5a:"I",z5b:"I",z5c:"I",z6:"I",z7q:"I",z7m:"I",z7m2:"I",z7h:"I",z8b:"I",z8a:"I",z8:"I",z8p:"I",z8h:"I",z8ph:"I",z9:"I",z9a:"I",z9a2:"I",z9b:"I",z9c:"I",z10:"I",z9y:"I",z11b:"I",z11c:"I",z11r:"I",z11p:"I",z11:"I"};
+const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11:"I"};
 let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
@@ -362,9 +362,9 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
- if(!SC||(SS.id!=="o"&&SS.id!=="z"))h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
+ if(!SC||(SS.id!=="o"&&SS.id!=="h"))h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
- if(SS.id==="z"){
+ if(SS.id==="h"){
   h+='<b>Qui est qui</b><div class="ntR">Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.</div><div class="ntR">Nils Aveline — l\u2019ancien propriétaire du numéro. Agent d\u2019une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.</div><div class="ntR">Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.</div><div class="ntR">Yasmine — ta meilleure amie depuis l\u2019enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l\u2019appeler au premier détail bizarre.</div><div class="ntR">Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.</div><div class="ntR">Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.</div>';
   h+='<b>Ce que tu sais</b>';
   const R=(v,t)=>{if(v)h+='<div class="ntR">'+t+'</div>'};
@@ -439,7 +439,7 @@ function infoOv(){
  const o=document.createElement("div");o.className="rsOv";
  const c=document.createElement("div");c.className="card";
  const h2=document.createElement("h2");h2.textContent=SS?SS.t:"Progression";c.append(h2);
- if(SS&&(SS.id==="o"||SS.id==="z")){
+ if(SS&&(SS.id==="o"||SS.id==="h")){
   let pn=0;try{pn=+localStorage.getItem("etl_part_"+SS.id)||0}catch(e){}
   const rom=["","I","II","III","IV","V","VI"][Math.max(pn,({I:1,II:2,III:3,IV:4,V:5,VI:6})[CHP]||0)]||"I";
   const fs=document.createElement("div");fs.className="finStat";fs.innerHTML="Partie <b>"+rom+" / VI</b> \u00B7 chapitre en cours";c.append(fs);
@@ -469,7 +469,7 @@ function homeIntro(){
   $("mn").classList.remove("on");amb(null);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
- const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=!(s.id==="o"||s.id==="z");const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
+ const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=!(s.id==="o"||s.id==="h");const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
  row(c,"Smiley dans les messages : "+(emojiMode?"activés":"désactivés"),"Activer ou désactiver les emojis selon ton ton de lecture",()=>{emojiMode=!emojiMode;localStorage.setItem("etl_emoji",emojiMode?"on":"off");menu()});const vr=row(c,"Affichage : "+(PC?"PC":"Téléphone"),"Touche pour changer",()=>{setView(!PC);vr.children[0].textContent="Affichage : "+(PC?"PC":"Téléphone")});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
@@ -590,12 +590,12 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
   const c=card('Choisis une histoire');
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   STORIES.forEach((s,i)=>{
-   const locked=!(s.id==='o'||s.id==='z');
+   const locked=!(s.id==='o'||s.id==='h');
    const b=document.createElement('button');b.className='bk'+(locked?' lock':' open');if(locked)b.disabled=true;
    let foot=locked?'En pause \u2014 bient\u00F4t':'Ouvrir le livre \u203a';
    if(!locked){let P=null;try{P=JSON.parse(localStorage.getItem('pg'+s.id))}catch(e){}
     const tot=endsOf(s),got=feN(s);const g=Math.min(got,tot);const fs=g+' fin'+(g>1?'s':'')+' trouv\u00E9e'+(g>1?'s':'');
-    if(s.id==='o'||s.id==='z'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_'+s.id)||1)}catch(e){};
+    if(s.id==='o'||s.id==='h'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_'+s.id)||1)}catch(e){};
      foot='Partie '+RN[pp]+' / VI \u00B7 '+fs}
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
@@ -651,7 +651,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
    s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(ADM||i===0||i<P.c);
     const b=row(c,(i+1)+'. '+h[0]+(ok?'':w?' \u00B7 verrouill\u00E9':' \u00B7 bient\u00F4t'),'',()=>{SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()},!ok);
     if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};b.after(rb)}});
-   if(s.id==='o'||s.id==='z'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
+   if(s.id==='o'||s.id==='h'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
    row(c,'\u2039 Retour','',menu);show(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
