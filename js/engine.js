@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.53";console.log("Entre les lignes · v"+VER);
+const VER="2.54";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -65,7 +65,6 @@ async function play(id,r=run){
  if(n.w){scene(n.w,id);try{const sm=JSON.parse(localStorage.getItem("etl_node_sounds")||"{}");if(sm[id])amb(sm[id]);else if(AUTOAMB[n.w])amb(AUTOAMB[n.w])}catch(e){}}
  if(n.pro&&!PROD)await proCards(n.pro);
  if(n.out)await awayOv(n.out);
- if(n.scr){const sc=await scrOv(n);if(sc)return}
  if(n.tel){const T=n.tel;await new Promise(q=>telOv(T,q))}
  if(n.app){const tA=n.app,tN=n.nm||"",oC=CAPP,oN=CNM,ck=oC+"|"+oN,nk=tA+"|"+tN;
   if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};await appSwitch(n)}
@@ -79,6 +78,7 @@ async function play(id,r=run){
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
   else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
+ if(n.scr){const sc=await scrOv(n);if(sc)return}
  clkPlan(n);
  if(n.e)return fin(n.e);
  if(n.x)return play(n.x,r);if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
@@ -483,9 +483,10 @@ async function scrOv(n){
  try{if(st["scr_"+(nodeNow||"")])return false}catch(e){}
  const spec=n.scr||{};
  const app=$("app");const o=document.createElement("div");o.id="scrOv";
- let html="";
+ let map=null,resFn=null;
+ const applyEf=ef=>{for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k]};
  if(spec.k==="helios"){
-  html='<div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
+  o.innerHTML='<div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
   +'<p class="scSub">Espace cloud associé au numéro<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>'
   +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>2,1 Go</small></div>'
   +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>1,4 Go</small></div>'
@@ -493,24 +494,49 @@ async function scrOv(n){
   +'<div class="scRow"><i>🔐</i><span>Espace chiffré</span><small>taille inconnue</small></div>'
   +'<p class="scNote">Le téléphone est posé sur ta table. Premier écran, première question.</p>'
   +'</div>'}
- o.innerHTML=html+'<div class="scBtns"></div>';
+ else if(spec.k==="files"){
+  map=spec.map||{};
+  const head=document.createElement("div");head.className="scHead";
+  head.innerHTML='<span class="scIc">📂</span><b>Archive « N. A. »</b>';
+  const body=document.createElement("div");body.className="scBody";
+  const sub=document.createElement("p");sub.className="scSub";
+  sub.innerHTML="4 éléments rapatriés du cloud de N. A.<br>La migration s'est terminée pendant l'appel.";
+  body.append(sub);
+  (n.fx||[]).forEach(r=>{
+   const ic=r[0],nm=r[1],ds=r[2],tgt=map[nm];
+   const rw=document.createElement("div");rw.className="scRow "+(tgt?"go":"dim");
+   rw.innerHTML='<i>'+ic+'</i><span>'+nm+'</span><small>'+ds+'</small>';
+   if(tgt)rw.onclick=async ev=>{ev.stopPropagation();if(o.dataset.done)return;o.dataset.done=1;
+    const ch=(n.c||[]).find(cc=>cc&&cc[1]===tgt);
+    if(ch)applyEf(ch[2]);
+    try{st["scr_"+(nodeNow||"")]=1}catch(x){}
+    try{hit(660,.05,.08);setTimeout(()=>hit(990,.07,.1),70)}catch(x){}
+    try{resFn&&resFn()}catch(x){}
+    o.classList.add("off");setTimeout(()=>o.remove(),520);
+    await sl(300);play(tgt,run)};
+   body.append(rw)});
+  const note=document.createElement("p");note.className="scNote";
+  note.textContent="Quatre fichiers qui ne sont pas à toi — maintenant dans ton téléphone.";
+  body.append(note);
+  o.append(head);o.append(body)}
+ const btns=document.createElement("div");btns.className="scBtns";o.append(btns);
  app.append(o);
  if(spec.ts){const q=String(spec.ts).match(/^(\d{1,2})h(\d{2})$/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}}
  try{beep(520,.06,.05)}catch(e){}
- await new Promise(res=>{
-  const btns=o.querySelector(".scBtns");
-  (n.c||[]).forEach(([t,nx,ef])=>{
+ await new Promise(res=>{resFn=res;
+  const visible=(n.c||[]).filter(c=>!(map&&map[c[1]]));
+  visible.forEach(([t,nx,ef])=>{
    const b=document.createElement("button");b.className="scBtn";b.textContent=unq(t);
-   b.onclick=async ev=>{ev.stopPropagation();
-    for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];
+   b.onclick=async ev=>{ev.stopPropagation();if(o.dataset.done)return;o.dataset.done=1;
+    applyEf(ef);
     try{st["scr_"+(nodeNow||"")]=1}catch(x){}
     try{hit(660,.05,.08);setTimeout(()=>hit(990,.07,.1),70)}catch(x){}
     res();
     o.classList.add("off");setTimeout(()=>o.remove(),520);
     await sl(300);play(nx,run)};
    btns.append(b)});
-  if(!(n.c||[]).length){const b=document.createElement("button");b.className="scBtn";b.textContent="Continuer";
-   b.onclick=()=>{try{st["scr_"+(nodeNow||"")]=1}catch(x){}res();o.classList.add("off");setTimeout(()=>o.remove(),520)};btns.append(b)}
+  if(!visible.length){const b=document.createElement("button");b.className="scBtn";b.textContent="Continuer";
+   b.onclick=ev=>{ev.stopPropagation();if(o.dataset.done)return;o.dataset.done=1;try{st["scr_"+(nodeNow||"")]=1}catch(x){}res();o.classList.add("off");setTimeout(()=>o.remove(),520)};btns.append(b)}
  });
  return true}
 /* ---- menus ---- */

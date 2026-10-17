@@ -455,3 +455,8 @@ body.pc .bk .bkLock{right:24px}
 #scrOv .scBtns{padding:14px 20px 22px;display:flex;flex-direction:column;gap:10px}
 #scrOv .scBtn{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #ffd16645;background:#ffd1660f;color:#fffee9;font:500 13.5px/1.5 system-ui;cursor:pointer;text-align:center}
 #scrOv .scBtn:hover{background:#ffd1661e;border-color:#ffd1667a}
+
+/* v2.54 : rows cliquables / grises de l'explorateur */
+#scrOv .scRow.go{cursor:pointer}
+#scrOv .scRow.go:hover{background:#ffffff10;border-color:#ffd16645}
+#scrOv .scRow.dim{opacity:.55}
