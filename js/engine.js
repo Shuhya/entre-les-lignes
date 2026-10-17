@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.38";console.log("Entre les lignes · v"+VER);
+const VER="2.39";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -127,7 +127,7 @@ function vwOv(n){
   let played=false;
   btn.onclick=async function(){if(played)return;played=true;btn.textContent="▮▮ Lecture en cours";btn.disabled=true;
    const total=47,dur=13000,t0=Date.now();
-   const tick=setInterval(function(){const p=Math.min(1,(Date.now()-t0)/dur);bar.style.width=(p*100)+"%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:"+String(Math.floor(p*total)).padStart(2,"0")+" sur 0:47"},120);
+   const tick=setInterval(function(){if(!o.isConnected){clearInterval(tick);return}const p=Math.min(1,(Date.now()-t0)/dur);bar.style.width=(p*100)+"%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:"+String(Math.floor(p*total)).padStart(2,"0")+" sur 0:47"},120);
    for(const ln of lines){const p=document.createElement("p");p.className="vwL "+(ln[0]||"q");p.textContent=ln[1];tx.append(p);await sl(dur/lines.length)}
    clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 — fin de l\u2019enregistrement";btn.textContent="▶ Écouté"};
   fxBack(o,"✕ Refermer",function(){o.remove()});
@@ -189,7 +189,6 @@ function transferOv(){
    Object.keys(d).forEach(k=>{try{localStorage.setItem(k,d[k])}catch(e){}});
    o.remove();toast("Partie charg\u00E9e \u2014 rechargement\u2026");setTimeout(()=>location.reload(),900)}
   catch(e){toast("Code invalide \u2014 v\u00E9rifie le collage.")}}
- c.append(ld);
  const b=document.createElement("button");b.className="bk";b.innerHTML="<h3>\u2039 Retour</h3><p>Annuler</p>";b.onclick=()=>o.remove();c.append(b);
  o.append(c);document.body.append(o);addBack(c);
  o.addEventListener("click",e=>{if(e.target===o)o.remove()});
@@ -478,41 +477,7 @@ function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.i
  s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(ADM||i===0||i<P.c);row(c,(i+1)+". "+h[0]+(ok?"":w?" · verrouillé":" · bientôt"),"",()=>{SC=i;$("nm").textContent=s.n;$("av").textContent=s.n[0];start()},!ok)});
  row(c,"‹ Retour","",menu);show(c)}
 /* ---- admin ---- */
-function adm(on){
- ADM=on;let p=$("adm");if(p)p.remove();if(!on)return;
- p=document.createElement("div");p.id="adm";
- p.style.cssText="position:fixed;z-index:99999;inset:2vh 2vw;overflow:auto;background:#101722;color:#eef5ff;padding:16px;border:1px solid #57769a;border-radius:12px;box-shadow:0 10px 70px #000;font:14px system-ui";
- p.innerHTML=`<header style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="margin:0;flex:1">Atelier narratif · ADMIN</h2><button id="a4">Fermer</button></header><p>Modifications locales. Export JSON conseillé avant toute grosse modification.</p><nav style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button data-tab="edit">Dialogues</button><button data-tab="chap">Chapitres</button><button data-tab="ends">Toutes les fins</button><button data-tab="media">Images & sons</button><button data-tab="io">Import / export</button><button id="a3">Retour au jeu</button></nav>
- <section id="tab-edit"><div style="display:grid;grid-template-columns:minmax(180px,1fr) minmax(250px,2fr);gap:12px"><div><label>Rechercher un nœud</label><input id="aeSearch" placeholder="filtrer…" style="width:100%"><select id="aeNodes" size="16" style="width:100%"></select><button id="aeNew">Nouveau nœud</button></div><div><label>Identifiant</label><input id="aeId" style="width:100%"><label>Contenu du nœud (JSON)</label><textarea id="aeJson" style="width:100%;height:300px;background:#07111d;color:#fff"></textarea><button id="aeSave">Enregistrer le dialogue</button><button id="aePreview">Prévisualiser ce nœud</button><p id="aeMsg"></p></div></div></section>
- <section id="tab-chap" hidden><label>Histoire</label><select id="acStory"></select><div style="display:grid;grid-template-columns:1fr 2fr;gap:12px"><select id="acList" size="12"></select><div><label>Titre</label><input id="acTitle" style="width:100%"><label>Nœud de départ</label><input id="acStart" style="width:100%"><button id="acSave">Enregistrer chapitre</button><button id="acAdd">Ajouter chapitre</button><p>Le chapitre N est accessible uniquement après la fin du chapitre N−1 (sauf dans l'atelier admin).</p></div></div></section>
- <section id="tab-ends" hidden><h3>Fins détectées dans les histoires</h3><p>Chaque fin mène au nœud contenant <code>e:[titre, texte]</code> ou <code>k</code>. Clique sur une fin pour ouvrir son nœud dans l'éditeur.</p><div id="aeEnds"></div></section>
- <section id="tab-media" hidden><h3>Bibliothèque de scènes</h3><p>Une scène peut être associée à un nœud avec le champ <code>w</code>. Les champs <code>m</code> décrivent les messages ; <code>e</code> marque une fin.</p><label>Nœud</label><select id="amNode" style="width:100%"></select><label>Clé de scène / ambiance</label><input id="amScene" placeholder="pluie, gare, nuit…" style="width:100%"><label>URL image (facultatif)</label><input id="amImage" placeholder="data:image/... ou URL" style="width:100%"><button id="amSave">Associer au nœud</button><div id="amList"></div></section>
- <section id="tab-io" hidden><button id="aeExport">Exporter JSON complet</button><button id="aeImport">Importer JSON</button><textarea id="aeIO" style="width:100%;height:250px;background:#07111d;color:white"></textarea><p>Le JSON contient les nœuds, chapitres et images. Conserve une copie externe.</p></section>`;
- document.body.append(p);
- const $a=id=>p.querySelector("#"+id);
- p.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{p.querySelectorAll("section[id^=tab-]").forEach(x=>x.hidden=true);$a("tab-"+b.dataset.tab).hidden=false});
- $a("a4").onclick=()=>adm(false);$a("a3").onclick=()=>{adm(false);menu()};
- const nodes=$a("aeNodes"), amNode=$a("amNode");
- function fillNodes(filter=""){nodes.innerHTML="";amNode.innerHTML="";Object.keys(S).sort().filter(k=>k.toLowerCase().includes(filter.toLowerCase())).forEach(k=>{let o=new Option(k,k);nodes.add(o);amNode.add(new Option(k,k))})}
- function editNode(id){if(!S[id])return;$a("aeId").value=id;$a("aeJson").value=JSON.stringify(S[id],null,2);amNode.value=id;$a("aeMsg").textContent=""}
- fillNodes();nodes.onchange=()=>editNode(nodes.value);amNode.onchange=()=>editNode(amNode.value);if(nodeNow&&S[nodeNow])nodes.value=nodeNow;else nodes.selectedIndex=0;editNode(nodes.value);
- $a("aeSearch").oninput=()=>fillNodes($a("aeSearch").value);
- $a("aeSave").onclick=()=>{try{const id=$a("aeId").value.trim();if(!id)throw Error("Identifiant requis");const n=JSON.parse($a("aeJson").value);S[id]=n;try{window.persistNode&&window.persistNode(id)}catch(e){}fillNodes($a("aeSearch").value);nodes.value=id;editNode(id);$a("aeMsg").textContent="Dialogue enregistré en mémoire. Pense à exporter pour le conserver."}catch(e){$a("aeMsg").textContent="Erreur : "+e.message}};
- $a("aeNew").onclick=()=>{const id=prompt("Identifiant unique du nouveau nœud ?");if(!id||S[id])return;S[id]={m:[N("Nouvelle scène.")],c:[]};fillNodes();nodes.value=id;editNode(id)};
- $a("aePreview").onclick=()=>{const id=$a("aeId").value.trim();if(!S[id])return;$("chat").innerHTML="";$("ch").innerHTML="";document.body.classList.add("play");$("mn").classList.remove("on");run++;st=st||{t:0,l:0,r:0,v:0,e:""};adm(false);play(id)};
- STORIES.forEach((x,i)=>$a("acStory").add(new Option(x.n+" — "+x.t,String(i))));
- function chapters(){const stt=STORIES[+$a("acStory").value];$a("acList").innerHTML="";stt.ch.forEach((ch,i)=>$a("acList").add(new Option((i+1)+". "+ch[0]+" → "+ch[1],String(i))));if(stt.ch.length)$a("acList").selectedIndex=0;loadChap()}
- function loadChap(){const ch=STORIES[+$a("acStory").value].ch[+$a("acList").value]||[];$a("acTitle").value=ch[0]||"";$a("acStart").value=ch[1]||""}
- $a("acStory").onchange=chapters;$a("acList").onchange=loadChap;chapters();
- $a("acSave").onclick=()=>{const stt=STORIES[+$a("acStory").value],i=+$a("acList").value,id=$a("acStart").value.trim();if(!S[id])return alert("Le nœud de départ n'existe pas.");stt.ch[i]=[$a("acTitle").value,id];chapters();$a("acList").value=String(i);loadChap()};
- $a("acAdd").onclick=()=>{const title=prompt("Titre du chapitre ?");if(!title)return;const id=prompt("Identifiant du nœud de départ (crée-le dans Dialogues avant)");if(!S[id])return alert("Ce nœud n'existe pas.");STORIES[+$a("acStory").value].ch.push([title,id]);chapters()};
- function endings(){const box=$a("aeEnds");box.innerHTML="";let count=0;for(const id of Object.keys(S)){const n=S[id];if(n.e||n.k){count++;const title=Array.isArray(n.e)?n.e[0]:(n.k||"Fin sans titre");const b=document.createElement("button");b.style.cssText="display:block;width:100%;text-align:left;margin:5px 0;padding:10px";b.textContent=title+" · nœud "+id+" · "+(Array.isArray(n.e)?n.e[1]:"");b.onclick=()=>{$a("tab-ends").hidden=true;$a("tab-edit").hidden=false;nodes.value=id;editNode(id)};box.append(b)}}if(!count)box.textContent="Aucune fin explicite détectée."}
- endings();
- $a("amSave").onclick=()=>{const id=amNode.value,key=$a("amScene").value.trim();try{const n=JSON.parse($a("aeJson").value);if(key)n.w=key;S[id]=n;$a("aeJson").value=JSON.stringify(n,null,2);const url=$a("amImage").value.trim();if(url&&key)IMG[key]=url;$a("aeMsg").textContent="Scène associée. Exporte le projet pour conserver les changements."}catch(e){alert("JSON invalide dans l'éditeur")}};
- $a("amList").innerHTML="<p>Clés d'images : "+Object.keys(IMG).join(", ")+"</p>";
- $a("aeExport").onclick=()=>$a("aeIO").value=JSON.stringify({S,STORIES,IMG},null,2);
- $a("aeImport").onclick=()=>{try{const d=JSON.parse($a("aeIO").value);Object.assign(S,d.S||{});if(d.IMG)Object.assign(IMG,d.IMG);if(d.STORIES)STORIES.splice(0,STORIES.length,...d.STORIES);fillNodes();chapters();endings();alert("Import effectué.")}catch(e){alert("JSON invalide : "+e.message)}};
-}
+function adm(on){ADM=on;const p=$("adm");if(p)p.remove();}
 function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
 addEventListener("keydown",e=>{if(typeof ETL_ATELIER==="undefined"||!e.altKey)return;const c=(e.code||"").replace(/^(Digit|Numpad)/,"");if(/^\d$/.test(c)){kb=(kb+c).slice(-4);if(kb=="1510"){e.preventDefault();kb="";
   if(EDIT){adm(false)}
@@ -719,7 +684,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
    row(c,'\u2039 Retour','',menu);show(c)}
   else goList()};
  function resume(v){const story=STORIES.find(x=>x.id===v.story);if(!story)return;SS=story;SC=Math.min(v.chapter||0,story.ch.length-1);try{PG=JSON.parse(localStorage.getItem('pg'+SS.id))||{c:1,s:[]}}catch(e){PG={c:1,s:[]}}st=v.state||{t:0,l:0,r:0,v:0,e:''};run++;SK=1;document.body.classList.add('play');$('mn').classList.remove('on');const nmd=!!((v.state&&v.state.named)||SC>0||localStorage.getItem('etl_name_'+SS.id)===SS.n);$('nm').textContent=nmd?SS.n:SS.num;setAv(nmd?SS.n[0]:"\u{1F464}");$('chat').innerHTML=v.chat||'';$('ch').innerHTML='';$('ov').hidden=true;$('vol').hidden=true;unlock();nodeNow=v.node;path=v.path?v.path.slice():[v.node];APPH=v.apph||{};THR=v.thr||{};PAPP=v.papp||null;PNM=v.pnm||'';
-  const n=S[v.node];if(n&&n.c)n.c.forEach(([label,next,effect,rmsg])=>{const b=document.createElement('button');b.textContent=label;b.onclick=()=>{ $('ch').innerHTML='';if(rmsg==='!')add('n',label);else add('m',rmsg||label);for(const k in effect)st[k]=['t','care','agency','practical'].includes(k)?(st[k]||0)+effect[k]:effect[k];save();play(next)};$('ch').append(b)});
+  const n=S[v.node];if(n&&n.c)n.c.forEach(([label,next,effect,rmsg])=>{const b=document.createElement('button');b.textContent=unq(label);b.onclick=()=>{ $('ch').innerHTML='';$('fl').textContent='Envoyer un message';if(rmsg==='!')add('n',emojiClean(unq(label)));else{tx();add('m',emojiClean(rmsg?unq(rmsg):unq(label)))}for(const k in effect)st[k]=['t','care','agency','practical'].includes(k)?(st[k]||0)+effect[k]:effect[k];save();play(next)};$('ch').append(b)});
  else{if(path[path.length-1]===v.node)path.pop();setTimeout(()=>play(v.node),120)}
  save()
  }
@@ -1098,7 +1063,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
   const ov=clone.querySelector('#ov');if(ov)ov.setAttribute('hidden','');
   const mn=clone.querySelector('#mn');if(mn)mn.classList.remove('on');
   if(clone.querySelector('#in'))clone.querySelector('#in').classList.remove('out');
-  else{const d=document.createElement('div');d.id='in';d.innerHTML='<button class="vwb" id="sbi">=</button><button class="vwb" id="vw2"></button><div id="bgi"></div><div class="tx"><h1>Entre les lignes</h1><p class="lead">Des histoires qui se lisent en messages \u2014 et dont tu \u00E9cris la suite.</p><p>L\u00E9o a disparu. Il ne reste que son dernier message, un groupe WhatsApp qui s\u2019agite, des notes d\u2019enqu\u00EAte \u00E0 recouper. \u00C0 toi de lire ce qui se cache entre les lignes : douter, questionner, prot\u00E9ger \u2014 ou taire.</p><p class="metaL">Enqu\u00EAte en 6 chapitres \u00B7 8 fins possibles \u00B7 chaque r\u00E9ponse compte</p><button id="go">Commencer \u203A</button></div>';body.append(d);const sb2=d.querySelector('#sbi');if(sb2)sb2.onclick=togSnd;setV()}
+  else{const d=document.createElement('div');d.id='in';d.innerHTML='<button class="vwb" id="sbi">=</button><button class="vwb" id="vw2"></button><div id="bgi"></div><div class="tx"><h1>Entre les lignes</h1><p class="lead">Des histoires qui se lisent en messages \u2014 et dont tu \u00E9cris la suite.</p><p>Un t\u00E9l\u00E9phone vibre. Des messages arrivent, des conversations s\u2019ouvrent \u2014 et quelque part derri\u00E8re l\u2019\u00E9cran, quelqu\u2019un attend une r\u00E9ponse. La tienne. Chaque mot que tu tapes rapproche de la v\u00E9rit\u00E9\u2026 ou la fait taire pour toujours.</p><p class="metaL">Des conversations \u00E0 lire \u00B7 des choix \u00E0 porter \u00B7 chaque r\u00E9ponse compte</p><button id="go">Commencer \u203A</button></div>';body.append(d);const sb2=d.querySelector('#sbi');if(sb2)sb2.onclick=togSnd;setV()}
   const js='(function(){try{var D='+JSON.stringify(data).replace(/</g,'\\u003c')+';var rv=function(o){if(o&&typeof o==="object"){for(var k in o){if(k==="j"&&typeof o[k]==="string"){try{o[k]=new Function("return ("+o[k]+")")()}catch(e){}}else{rv(o[k])}}}return o};D=rv(D);for(var k in D.nodes)S[k]=D.nodes[k];for(var k in D.imgs)IMG[k]=D.imgs[k];for(var i=0;i<D.stories.length;i++)STORIES[i]=D.stories[i];STORIES.length=D.stories.length;if(D.bg&&typeof nodeBackgrounds==="object"){for(var k in D.bg)nodeBackgrounds[k]=D.bg[k]}if(D.snd){try{localStorage.setItem("etl_node_sounds",JSON.stringify(D.snd))}catch(e){}}}catch(e){}})();';
   const sc=document.createElement('script');sc.id='etlBaked';sc.textContent=js;body.append(sc);
   const html='<!DOCTYPE html>\n'+clone.outerHTML;
