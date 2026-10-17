@@ -31,7 +31,7 @@ step(orph.length===0,orph.length?'orphelins : '+orph.join(', '):'0 orphelin');
 /* 3. mojibake */
 console.log('— Encodage');
 let mo=0;
-['js/story.js','js/engine.js','js/atelier.js'].forEach(f=>{
+['js/story.js','js/engine.js','js/atelier.js'].filter(f=>fs.existsSync(f)).forEach(f=>{
   const t=fs.readFileSync(f,'utf8');
   const n=(t.match(/[\uFFFD\u0080-\u009F]/g)||[]).length; mo+=n; if(n)console.log('    '+f+' : '+n);});
 step(mo===0,mo===0?'0 mojibake':mo+' mojibake');
