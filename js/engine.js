@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.31";console.log("Entre les lignes · v"+VER);
+const VER="2.32";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -134,13 +134,55 @@ function vwOv(n){
 
 async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
  const o=document.createElement("div");o.className="proOv";document.body.append(o);
- await new Promise(done=>{const show=i=>{const cd=document.createElement("div");cd.className="proCard";
-  const k=document.createElement("div");k.className="proK";k.textContent="Prologue \u00B7 "+(i+1)+" / "+pars.length;cd.append(k);
-  if(i===0){const h=document.createElement("h2");h.textContent=P[0];cd.append(h)}
-  const t=document.createElement("p");t.textContent=pars[i];cd.append(t);
-  const d=document.createElement("div");d.className="proDots";pars.forEach((_,j)=>{const e=document.createElement("i");if(j===i)e.className="on";d.append(e)});cd.append(d);
-  const b=document.createElement("button");b.className="proBtn";b.textContent=i===pars.length-1?"Reprendre le t\u00E9l\u00E9phone":"Continuer";
-  b.onclick=()=>{cd.remove();if(i+1<pars.length)show(i+1);else{o.remove();done()}};cd.append(b);o.replaceChildren(cd)};show(0)})}
+ await new Promise(done=>{
+  const end=()=>{o.remove();done()};
+  const skip=document.createElement("button");skip.className="proSkip";skip.textContent="Passer \u203a";skip.onclick=e=>{e.stopPropagation();end()};o.append(skip);
+  let timer=null,typing=false;
+  const finish=el=>{clearTimeout(timer);timer=null;typing=false;if(el&&el.dataset.full!==undefined){el.textContent=el.dataset.full;el.classList.remove("tw")}};
+  const type=(el,txt,fin)=>{typing=true;el.classList.add("tw");el.textContent="";let i2=0;el.dataset.full=txt;
+   const step=()=>{if(!typing){el.textContent=el.dataset.full;el.classList.remove("tw");fin&&fin();return}
+    el.textContent=txt.slice(0,++i2);if(i2%3===0)beep(R(2100,2600),.014,.016,"square");
+    if(i2>=txt.length){typing=false;el.classList.remove("tw");fin&&fin();return}
+    timer=setTimeout(step,Math.max(8,16/SPD))};
+   step()};
+  const show=i=>{const cd=document.createElement("div");cd.className="proCard";
+   const k=document.createElement("div");k.className="proK";k.textContent="Prologue \u00B7 "+(i+1)+" / "+pars.length;cd.append(k);
+   let titleEl=null;if(i===0){titleEl=document.createElement("h2");cd.append(titleEl)}
+   const t=document.createElement("p");cd.append(t);
+   const d=document.createElement("div");d.className="proDots";pars.forEach((_,j)=>{const e=document.createElement("i");if(j===i)e.className="on";d.append(e)});cd.append(d);
+   const b=document.createElement("button");b.className="proBtn";b.hidden=true;b.textContent=i===pars.length-1?"Reprendre le t\u00E9l\u00E9phone":"Continuer";
+   cd.append(b);
+   cd.addEventListener("pointerdown",ev=>{ev.preventDefault();
+    if(typing){finish(t);if(titleEl)finish(titleEl);b.hidden=false;return}
+    cd.remove();if(i+1<pars.length)show(i+1);else end()});
+   o.replaceChildren(skip,cd);
+   const goPar=()=>type(t,pars[i],()=>{b.hidden=false});
+   if(titleEl)type(titleEl,P[0],()=>goPar());else goPar()};
+  show(0)})}
+function transferOv(){
+ const KEYS=k=>k==="etl_resume_v4"||/^pg/.test(k)||/^fe/.test(k)||/^etl_name_/.test(k)||/^etl_part_/.test(k)||k==="etl_hint"||k==="etl_emoji"||k==="etl_tts";
+ let data={};try{Object.keys(localStorage).filter(KEYS).forEach(k=>data[k]=localStorage.getItem(k))}catch(e){}
+ const code=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+ const o=document.createElement("div");o.className="rsOv";
+ const c=document.createElement("div");c.className="card";
+ const h=document.createElement("h2");h.textContent="Transf\u00E9rer ma partie";c.append(h);
+ const p1=document.createElement("p");p1.className="trP";p1.textContent="Copie ce code, puis colle-le sur ton autre appareil (R\u00E9glages \u2192 Transf\u00E9rer).";c.append(p1);
+ const ta=document.createElement("textarea");ta.className="trTa";ta.readOnly=true;ta.value=code;ta.onclick=()=>{ta.select()};c.append(ta);
+ const cp=document.createElement("button");cp.className="trBtn";cp.textContent="\u29B9 Copier le code";
+ cp.onclick=()=>{try{navigator.clipboard.writeText(code);cp.textContent="\u2713 Copi\u00E9"}catch(e){ta.select();cp.textContent="S\u00E9lectionne et copie manuellement"}};
+ c.append(cp);
+ const sep=document.createElement("div");sep.className="trSep";sep.textContent="ou, sur cet appareil :";c.append(sep);
+ const ta2=document.createElement("textarea");ta2.className="trTa";ta2.placeholder="Colle un code de partie ici";c.append(ta2);
+ const ld=document.createElement("button");ld.className="trBtn ld";ld.textContent="\u21BB Charger ce code";
+ ld.onclick=()=>{try{const d=JSON.parse(decodeURIComponent(escape(atob(ta2.value.trim()))));
+   Object.keys(d).forEach(k=>{try{localStorage.setItem(k,d[k])}catch(e){}});
+   o.remove();toast("Partie charg\u00E9e \u2014 rechargement\u2026");setTimeout(()=>location.reload(),900)}
+  catch(e){toast("Code invalide \u2014 v\u00E9rifie le collage.")}};
+ c.append(ld);
+ const b=document.createElement("button");b.className="bk";b.innerHTML="<h3>\u2039 Retour</h3><p>Annuler</p>";b.onclick=()=>o.remove();c.append(b);
+ o.append(c);document.body.append(o);addBack(c);
+ o.addEventListener("click",e=>{if(e.target===o)o.remove()});
+}
 function ov(t,x,b,f,b2,f2){$("ot").textContent=t;$("ox").textContent=x;$("ob").textContent=b;$("ob").onclick=()=>{$("ov").hidden=true;f()};$("ob2").hidden=!b2;if(b2){$("ob2").textContent=b2;$("ob2").onclick=()=>{$("ov").hidden=true;f2()}}$("ov").hidden=false}
 function telOv(T,done){const o=document.createElement("div");o.id="telOv";
  const ph=document.createElement("div");ph.className="lsp";
@@ -457,12 +499,12 @@ function adm(on){
  $a("aeImport").onclick=()=>{try{const d=JSON.parse($a("aeIO").value);Object.assign(S,d.S||{});if(d.IMG)Object.assign(IMG,d.IMG);if(d.STORIES)STORIES.splice(0,STORIES.length,...d.STORIES);fillNodes();chapters();endings();alert("Import effectué.")}catch(e){alert("JSON invalide : "+e.message)}};
 }
 function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
-addEventListener("keydown",e=>{if(!e.altKey)return;const c=(e.code||"").replace(/^(Digit|Numpad)/,"");if(/^\d$/.test(c)){kb=(kb+c).slice(-4);if(kb=="1510"){e.preventDefault();kb="";
+addEventListener("keydown",e=>{if(typeof ETL_ATELIER==="undefined"||!e.altKey)return;const c=(e.code||"").replace(/^(Digit|Numpad)/,"");if(/^\d$/.test(c)){kb=(kb+c).slice(-4);if(kb=="1510"){e.preventDefault();kb="";
   if(EDIT){adm(false)}
   else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
   else toast("Ouvre une histoire puis retape Alt+1510 pour l\u2019\u00E9diter.")}}});
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();infoOv()});
-$("clk").parentNode.addEventListener("click",()=>{const n=Date.now();tp=tp.filter(t=>n-t<3000);tp.push(n);if(tp.length>=7){tp=[];
+$("clk").parentNode.addEventListener("click",()=>{if(typeof ETL_ATELIER==="undefined")return;const n=Date.now();tp=tp.filter(t=>n-t<3000);tp.push(n);if(tp.length>=7){tp=[];
   if(EDIT)adm(false);
   else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
   else toast("Ouvre une histoire puis 7 taps sur l\u2019horloge pour l\u2019\u00E9diter.")}});
@@ -471,7 +513,8 @@ $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&!vv.contains(e.target)&&!$("set").contains(e.target))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
- up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};$("apps").onclick=()=>appHome();
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
+{const tr=$("trB");if(tr)tr.onclick=()=>{$("vol").hidden=true;transferOv()};}$("apps").onclick=()=>appHome();
 {const w=$("vw2");if(w)w.onclick=()=>setView(!PC)}
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
 $("bk").onclick=()=>{const no=document.getElementById("notesOv");
@@ -481,9 +524,10 @@ $("bk").onclick=()=>{const no=document.getElementById("notesOv");
  const ho=document.getElementById("appHome");if(ho){ho.remove();applyApp(hdrOf(CAPP,CNM));return}
  menu()};$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
 function setView(p){PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE=$("vw");if(vwE)vwE.textContent=PC?"📱":"🖥️";{const v2=$("vw2");if(v2)v2.textContent=PC?"📱 Mode téléphone":"🖥️ Mode PC"}try{localStorage.setItem("view",PC)}catch(e){}}
-{const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?(matchMedia("(min-width:900px) and (hover:hover)").matches?1:0):+v)}catch(e){setView(0)}
+{const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?0:+v)}catch(e){setView(0)}
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
 if($("go")){$("go").onclick=startFromIntro;$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
+if(typeof ETL_ATELIER!=="undefined")setTimeout(()=>toast("Atelier : ouvre une histoire, puis Alt+1510 ou 7 taps sur l'horloge pour l'\u00E9diter."),1200);
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK&&!ADM)amb(null)}},{once:true});
 (async()=>{const im=$("bgi");if(!im)return;const ld=new Promise(res=>{const t=new Image();t.onload=t.onerror=res;t.src=IMG.menu});im.style.backgroundImage='url('+IMG.menu+')';try{await Promise.race([ld,sl(2500)])}catch(e){}
  requestAnimationFrame(()=>$("in").classList.add("on"));

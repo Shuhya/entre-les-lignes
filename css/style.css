@@ -400,3 +400,15 @@ body.pc .bk .bkLock{right:24px}
 #endOv #ob:hover{background:#ffd16626}
 #endOv #ob2{width:100%;margin-top:8px;padding:12px;border-radius:999px;border:1px solid #ffffff2e;background:transparent;color:#ffffffc0;font:inherit;font-size:14px;cursor:pointer}
 #endOv #ob2:hover{border-color:#ffffff55;color:#fff}
+/* ---- prologue machine a ecrire ---- */
+.proSkip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:5;background:none;border:0;color:#ffffff8f;font:inherit;font-size:13px;letter-spacing:.5px;cursor:pointer;padding:6px 8px}
+.proSkip:hover{color:#fff}
+.proCard h2.tw:after,.proCard p.tw:after{content:"\258D";color:#ffd166;margin-left:2px;animation:caretB 1s steps(1) infinite}
+@keyframes caretB{50%{opacity:0}}
+/* ---- transfert de partie ---- */
+.trP{font-size:13px;color:#cfe0f5;line-height:1.6;margin:0 0 12px;text-align:left}
+.trTa{width:100%;box-sizing:border-box;height:84px;background:#0a1424;border:1px solid #2c4a73;border-radius:10px;color:#dbe7f8;font:12px ui-monospace,monospace;padding:8px;margin:6px 0;resize:none}
+.trBtn{display:block;width:100%;margin:8px 0;padding:11px 14px;border-radius:999px;border:1px solid #ffd16655;background:#1a1408c9;color:#ffd166;font:inherit;font-size:14px;cursor:pointer}
+.trBtn:hover{background:#2a200fc9}
+.trBtn.ld{border-color:#3e91ff66;background:#12233dc9;color:#9fd0ff}
+.trSep{font-size:11.5px;color:#8fa5c5;text-align:center;margin:14px 0 4px;letter-spacing:.5px}

@@ -31,7 +31,7 @@ assert "fetch(" in new_rb, "rainBuf fetch introuvable"
 engine = engine.replace(new_rb, old_rb)
 
 single = read("jeu.html")
-single = re.sub(r'<link rel="stylesheet" href="css/style.css(\?v=[^"]*)?">', "<style>\n%s\n</style>" % read("css/style.css"), single)
+single = re.sub(r'<link rel="stylesheet" href="css/style.css(\?v=[^"]*)?">', lambda m: "<style>\n%s\n</style>" % read("css/style.css"), single)
 single = re.sub(r'<script src="js/assets.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % assets, single)
 single = re.sub(r'<script src="js/story.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % read("js/story.js"), single)
 single = re.sub(r'<script src="js/engine.js(\?v=[^"]*)?"></script>', lambda m: "<script>\n%s\n</script>" % engine, single)
