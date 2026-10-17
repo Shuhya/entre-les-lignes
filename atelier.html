@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr"><head>
-<link rel="stylesheet" href="css/style.css?v=2.32"><meta charset="utf-8">
+<link rel="stylesheet" href="css/style.css?v=2.33"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atelier — Entre les lignes</title>
 <meta name="description" content="Des histoires qui se lisent en messages — et dont tu écris la suite. Deux enquêtes jouables, des fins multiples : chaque réponse compte.">
@@ -11,7 +11,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0a0d16">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1424'/%3E%3Cpath d='M14 18h36v20H30l-9 9v-9h-7z' fill='%23ffd166'/%3E%3Ccircle cx='24' cy='28' r='2.6' fill='%230a1424'/%3E%3Ccircle cx='33' cy='28' r='2.6' fill='%230a1424'/%3E%3Ccircle cx='42' cy='28' r='2.6' fill='%230a1424'/%3E%3C/svg%3E">
-</head>
+<style>
+.atGate{position:fixed;inset:0;z-index:9999;background:radial-gradient(120% 90% at 50% 0%,#15161d 0%,#0a0b10 55%,#050508 100%);display:flex;align-items:center;justify-content:center;text-align:center;padding:26px;transition:opacity .6s}
+.atGate.off{opacity:0;pointer-events:none}
+.atGate .gIn{max-width:340px}
+.atGate .g403{font:400 74px Georgia,serif;color:#ffffff14;letter-spacing:6px;line-height:1}
+.atGate h1{font:400 21px Georgia,serif;color:#fffee9;margin:14px 0 10px;letter-spacing:.4px}
+.atGate p{font-size:13.5px;line-height:1.7;color:#ffffff70;margin:0}
+.atGate .gRule{width:34px;height:1px;background:#ffd16666;margin:20px auto}
+</style></head>
 <body>
 <div id="app">
 <div class="sbar"><span id="clk"></span><button id="infoB" aria-label="Progression de l'histoire"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><line x1="12" y1="10.8" x2="12" y2="17"/><circle cx="12" cy="7.4" r="0.5" fill="currentColor" stroke="none"/></svg></button><i><span>5G</span><span><svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="0.8"/><rect x="9" y="3" width="3" height="9" rx="0.8"/><rect x="13.5" y="0" width="3" height="12" rx="0.8"/></svg></span><span>78%</span><span class="bt"></span></i></div>
@@ -23,8 +31,15 @@
 <div class="nav"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.2"/></svg></span><span id="nb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></span></div></div>
 <div id="ov" hidden><div class="card"><h1 id="ot"></h1><p id="ox"></p><button id="ob"></button><button id="ob2" hidden></button></div></div>
 <div id="mn"></div>
-<script src="js/assets.js?v=2.32"></script>
-<script src="js/story.js?v=2.32"></script>
+<script src="js/assets.js?v=2.33"></script>
+<script src="js/story.js?v=2.33"></script>
 <script>const ETL_ATELIER=1;</script>
-<script src="js/engine.js?v=2.32"></script>
+<script src="js/engine.js?v=2.33"></script>
+<div class="atGate" id="atGate"><div class="gIn"><div class="g403">403</div><h1>Accès refusé</h1><div class="gRule"></div><p>Cette page est réservée. Si tu sais pourquoi tu es là, tu sais aussi quoi faire.</p></div></div>
+<script>
+(function(){var K=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"],i=0;
+document.addEventListener("keydown",function(e){var k=K[i]===e.key?e.key:(e.key.length===1?e.key.toLowerCase():e.key);
+ if(k===K[i]){i++;if(i===K.length){i=0;var g=document.getElementById("atGate");g.classList.add("off");setTimeout(function(){g.remove()},700);}}
+ else i=(K[0]===k)?1:0;});})();
+</script>
 </body></html>
