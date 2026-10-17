@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.52";console.log("Entre les lignes · v"+VER);
+const VER="2.53";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -65,6 +65,7 @@ async function play(id,r=run){
  if(n.w){scene(n.w,id);try{const sm=JSON.parse(localStorage.getItem("etl_node_sounds")||"{}");if(sm[id])amb(sm[id]);else if(AUTOAMB[n.w])amb(AUTOAMB[n.w])}catch(e){}}
  if(n.pro&&!PROD)await proCards(n.pro);
  if(n.out)await awayOv(n.out);
+ if(n.scr){const sc=await scrOv(n);if(sc)return}
  if(n.tel){const T=n.tel;await new Promise(q=>telOv(T,q))}
  if(n.app){const tA=n.app,tN=n.nm||"",oC=CAPP,oN=CNM,ck=oC+"|"+oN,nk=tA+"|"+tN;
   if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};await appSwitch(n)}
@@ -477,6 +478,41 @@ async function awayOv(lines){
   btn.onclick=e=>{e.stopPropagation();next()};
   o.onclick=()=>next();
   show()})}
+/* ---- écran contextuel IN-TÉLÉPHONE (v2.53) : interface dédiée au contexte (ex. HÉLIOS), à la façon du lock screen ---- */
+async function scrOv(n){
+ try{if(st["scr_"+(nodeNow||"")])return false}catch(e){}
+ const spec=n.scr||{};
+ const app=$("app");const o=document.createElement("div");o.id="scrOv";
+ let html="";
+ if(spec.k==="helios"){
+  html='<div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
+  +'<p class="scSub">Espace cloud associé au numéro<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>'
+  +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>2,1 Go</small></div>'
+  +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>1,4 Go</small></div>'
+  +'<div class="scRow"><i>📄</i><span>Documents</span><small>0,7 Go</small></div>'
+  +'<div class="scRow"><i>🔐</i><span>Espace chiffré</span><small>taille inconnue</small></div>'
+  +'<p class="scNote">Le téléphone est posé sur ta table. Premier écran, première question.</p>'
+  +'</div>'}
+ o.innerHTML=html+'<div class="scBtns"></div>';
+ app.append(o);
+ if(spec.ts){const q=String(spec.ts).match(/^(\d{1,2})h(\d{2})$/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}}
+ try{beep(520,.06,.05)}catch(e){}
+ await new Promise(res=>{
+  const btns=o.querySelector(".scBtns");
+  (n.c||[]).forEach(([t,nx,ef])=>{
+   const b=document.createElement("button");b.className="scBtn";b.textContent=unq(t);
+   b.onclick=async ev=>{ev.stopPropagation();
+    for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];
+    try{st["scr_"+(nodeNow||"")]=1}catch(x){}
+    try{hit(660,.05,.08);setTimeout(()=>hit(990,.07,.1),70)}catch(x){}
+    res();
+    o.classList.add("off");setTimeout(()=>o.remove(),520);
+    await sl(300);play(nx,run)};
+   btns.append(b)});
+  if(!(n.c||[]).length){const b=document.createElement("button");b.className="scBtn";b.textContent="Continuer";
+   b.onclick=()=>{try{st["scr_"+(nodeNow||"")]=1}catch(x){}res();o.classList.add("off");setTimeout(()=>o.remove(),520)};btns.append(b)}
+ });
+ return true}
 /* ---- menus ---- */
 const ck=()=>{if(SK)return;$("clk").textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})};ck();setInterval(ck,30000);
 function card(h){const c=document.createElement("div");c.className="card";const e=document.createElement("h2");e.textContent=h;c.append(e);return c}
