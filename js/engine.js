@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.30";console.log("Entre les lignes · v"+VER);
+const VER="2.31";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -65,7 +65,7 @@ async function play(id,r=run){
   applyApp(n);
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
- if(n.call&&!st["cal_"+id]){await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1}
+ if(n.call&&!st["cal_"+id]){const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x]of n.m||[]){
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));if(SS&&SS.n==="Lou"&&/(je m'appelle lou|moi c'est lou|je suis lou)/i.test(x)){$("nm").textContent="Lou";localStorage.setItem("etl_name_m","Lou");setAv("L");st.named=true}if(SS&&SS.n==="Inès"&&/(je m'appelle in[eè]s|moi c'est in[eè]s|je suis in[eè]s)/i.test(x)){$("nm").textContent="Inès";localStorage.setItem("etl_name_","Inès");setAv("I");st.named=true}if(SS&&SS.n==="Eliott"&&/(je m'appelle eliott|moi c'est eliott|je suis eliott)/i.test(x)){$("nm").textContent="Eliott";localStorage.setItem("etl_name_k","Eliott");setAv("E");st.named=true}await sl(350)}
@@ -168,24 +168,27 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  const tb=document.createElement("div");const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub;tb.append(ne,se);
  hd.append(av,tb);o.append(hd);
  const tr=document.createElement("div");tr.className="calTr";o.append(tr);
+ const hint=document.createElement("div");hint.className="calHint";hint.textContent="\u26A0 Raccrocher est possible \u2014 mais ce ne sera pas sans cons\u00E9quences.";hint.hidden=true;o.append(hint);
  const eb=document.createElement("button");eb.className="calEnd";eb.innerHTML='<i>\u{1F4DE}</i><small>Raccrocher</small>';eb.hidden=true;o.append(eb);
+ let inChoice=false;
  const stopV=()=>{if(vo){try{vo.pause();vo.currentTime=0}catch(e){}vo=null}};
  $("app").append(o);
  beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),110);
  let i=0;
  const put=L=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
- const next=()=>{if(i>=lines.length){eb.hidden=false;return}
+ const next=()=>{if(i>=lines.length){inChoice=false;hint.hidden=true;eb.hidden=false;return}
   const L=lines[i++];
   if(L[0]===2&&Array.isArray(L[1])){
    const bx=document.createElement("div");bx.className="calCh";
+   inChoice=true;eb.hidden=false;hint.hidden=false;
    L[1].forEach(opt=>{const b=document.createElement("button");b.textContent=opt;
-    b.onclick=()=>{bx.remove();put([2,opt]);tx();setTimeout(next,700/SPD)};bx.append(b)});
+    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,opt]);tx();setTimeout(next,700/SPD)};bx.append(b)});
    tr.append(bx);tr.scrollTop=1e9;return}
   put(L);
   if(L[0]===1){rx();callSpeak(L[1],nm)}
   setTimeout(next,Math.min(4200,1300+L[1].length*38)/SPD)};
  setTimeout(next,700/SPD);
- eb.onclick=()=>{callSpeakStop();o.remove();stopV();done()}}
+ eb.onclick=()=>{callSpeakStop();o.remove();stopV();done(inChoice?"hangup":undefined)}}
 function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
  const FL=["jea","aveu","malik","bloq"];
  while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
@@ -200,8 +203,8 @@ function endsTotal(s){return endsList(s).length}
 function endScreen(t,x,seen){const tot=endsTotal(SS);
  const o=document.createElement("div");o.id="endOv";
  const c=document.createElement("div");c.className="card";
- const h=document.createElement("h2");h.textContent=t;c.append(h);
- const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t;c.append(sub);
+ const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
+ const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 "+(SS.id==="z"?"Partie I":"fin de l'enqu\u00EAte");c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
@@ -220,7 +223,12 @@ function fin([t,x]){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.m
  try{localStorage.setItem("pg"+SS.id,JSON.stringify(PG));k=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!k.includes(t)){k.push(t);localStorage.setItem("fe"+SS.id,JSON.stringify(k))}}catch(e){}
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.6),i*160));
  const nx=(SS.ch[SC+1]||[])[1],ok=!!S[nx],r=run;
- setTimeout(()=>{if(r!=run)return;if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)},1800)}
+ setTimeout(()=>{if(r!=run)return;
+ const cb=$("ch");cb.innerHTML="";
+ const bb=document.createElement("button");bb.className="finB";
+ bb.textContent=ok?"\u25B8 J'ai tout lu \u2014 chapitre suivant":"\u25B8 J'ai tout lu \u2014 bilan de l'histoire";
+ bb.onclick=()=>{if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)};
+ cb.append(bb);$("fl").textContent="\u2014 fin de ce segment \u2014";$("chat").scrollTop=1e9},900)}
 function addH(x){const d=add("h",x);
  if(CGP&&CGP.length>1){const i=x.indexOf(" : ");if(i>1&&i<22&&CGP.indexOf(x.slice(0,i))>=0){
   const nm=x.slice(0,i),ph=avOf(nm),av=document.createElement("span");

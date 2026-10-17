@@ -376,3 +376,27 @@ body.pc .bk .bkLock{right:24px}
 .wavTx .vwL{margin:0 0 8px;font-size:14px;line-height:1.65;color:#dbe7f8}
 .wavTx .vwL.i{color:#8fa5c5;font-style:italic;font-size:12.5px;margin-top:12px}
 .fxImg{flex:1;width:100%;background:#0a0f1e center/cover no-repeat;display:flex;align-items:flex-end;min-height:200px}.fxImg span{display:block;width:100%;padding:12px 16px;background:linear-gradient(#0000,#000c);font-size:12.5px;color:#dbe7f8;line-height:1.6}
+/* ---- appel : avertissement raccrocher pendant choix ---- */
+.calHint{flex:none;margin:2px 16px 0;padding:9px 14px;border:1px solid #ffd16640;border-radius:12px;background:#1a1408a8;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#ffd166;font-size:12px;line-height:1.5;text-align:center;animation:fo .4s}
+/* ---- bouton "J'ai tout lu" ---- */
+.finB{width:100%;padding:13px 16px;border-radius:999px;border:1px solid #ffd16655;background:#1a1408c9;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#ffd166;font:inherit;font-size:14.5px;cursor:pointer;transition:.2s;animation:fo .5s}
+.finB:hover{background:#2a200fc9;border-color:#ffd16699;transform:translateY(-1px)}
+/* ---- popups de fin alignés au style global (flou plein fond, pas de carré bleu) ---- */
+#ov{position:fixed;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:rgba(6,10,20,.48);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);color:#fff;padding:24px;animation:fo .6s}
+#ov .card{max-width:460px;text-align:left;max-height:min(80vh,740px);overflow-y:auto;background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+#ov .card h1{font:400 clamp(26px,6vw,36px)/1.15 'Palatino Linotype','Iowan Old Style','Book Antiqua',Palatino,Georgia,serif;letter-spacing:.4px;margin:0 0 14px}
+#ov .card p{white-space:pre-line;color:#ffffffd9;line-height:1.7;font-size:15px;margin:0 0 6px}
+#ov .card #ob{width:100%;margin-top:22px;padding:13px 16px;border-radius:999px;border:1px solid #ffd16666;background:#ffd16614;color:#ffd166;font:inherit;font-size:15px;cursor:pointer;transition:.2s}
+#ov .card #ob:hover{background:#ffd16626;transform:translateY(-1px)}
+#ov .card #ob2{width:100%;margin-top:8px;padding:12px;border-radius:999px;border:1px solid #ffffff2e;background:transparent;color:#ffffffc0;font:inherit;font-size:14px;cursor:pointer}
+#ov .card #ob2:hover{border-color:#ffffff55;color:#fff}
+#endOv .card{position:relative;width:100%;max-width:460px;background:transparent;border:0;box-shadow:none;padding:8px 4px;backdrop-filter:none;-webkit-backdrop-filter:none}
+#endOv .endH{font:400 clamp(26px,6vw,36px)/1.15 'Palatino Linotype','Iowan Old Style','Book Antiqua',Palatino,Georgia,serif;letter-spacing:.4px;margin:0 0 8px}
+#endOv .endSub{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#ffd166c4;margin-bottom:16px}
+#endOv .endTxt{white-space:pre-line;color:#ffffffd9;line-height:1.7;font-size:15px;margin:0 0 18px}
+#endOv .endStats{border-top:1px solid #ffffff1f;padding-top:14px;margin-bottom:14px}
+#endOv .endFins{border-top:1px solid #ffffff1f;padding-top:14px;margin-bottom:18px}
+#endOv #ob{width:100%;margin-top:4px;padding:13px 16px;border-radius:999px;border:1px solid #ffd16666;background:#ffd16614;color:#ffd166;font:inherit;font-size:15px;cursor:pointer;transition:.2s}
+#endOv #ob:hover{background:#ffd16626}
+#endOv #ob2{width:100%;margin-top:8px;padding:12px;border-radius:999px;border:1px solid #ffffff2e;background:transparent;color:#ffffffc0;font:inherit;font-size:14px;cursor:pointer}
+#endOv #ob2:hover{border-color:#ffffff55;color:#fff}
