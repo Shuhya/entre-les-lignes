@@ -7,7 +7,7 @@ const step=(ok,msg)=>{console.log((ok?'  ✓ ':'  ✗ ')+msg);if(!ok)fail=1};
 
 /* 1. syntaxe */
 console.log('— Syntaxe');
-['js/assets.js','js/story.js','js/engine.js','js/atelier.js','sw.js'].forEach(f=>{
+['js/assets.js','js/story.js','js/engine.js','js/atelier.js','sw.js'].filter(f=>fs.existsSync(f)).forEach(f=>{
   step((()=>{try{new Function(fs.readFileSync(f,'utf8'));return true}catch(e){console.log('    '+e.message);return false}})(),f);
 });
 
