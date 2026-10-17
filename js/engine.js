@@ -1,4 +1,4 @@
-const DEF_AV={'':AVF1,m:AVF2,k:AVM1,h:AVF3};
+const DEF_AV={'':AVF1,h:AVF3};
 let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},ADM=0,ADS="",kb="",tp=[],nodeNow=null,EDIT=0;
 const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
 /* ---- audio ---- */
@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.46";console.log("Entre les lignes · v"+VER);
+const VER="2.47";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -50,9 +50,9 @@ const nodeBackgrounds=(()=>{try{return JSON.parse(localStorage.getItem("etl_node
 function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0003,#0006),url("+u+")":"";amb(k)}
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
- if(SS&&(SS.id==="o"||SS.id==="h")&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
- CHP=(SS&&(SS.id==="o"||SS.id==="h")&&PART[id])?PART[id]:"";
- if(SS&&(SS.id==="o"||SS.id==="h")&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
+ if(SS&&SS.id==="h"&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
+ CHP=(SS&&SS.id==="h"&&PART[id])?PART[id]:"";
+ if(SS&&SS.id==="h"&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
  if(ADM&&$("a6"))$("a6").textContent=id;
  if(n.j)return play(n.j(st),r);
@@ -205,7 +205,7 @@ function telOv(T,done){const o=document.createElement("div");o.id="telOv";
  beep(1319,.09,.05);setTimeout(()=>beep(1760,.11,.05),150);setTimeout(()=>beep(1760,.11,.04),900)}
 const TTSOK=typeof speechSynthesis!=="undefined";
 let TTS_ON=true;try{TTS_ON=localStorage.getItem("etl_tts")!=="off"}catch(e){}
-const CALL_VOICE={Jeanne:{pitch:1.18,rate:1.04},Camille:{pitch:.96,rate:.97},Malik:{pitch:.8,rate:.98},"\u00C9lodie":{pitch:1.05,rate:1},Cora:{pitch:1.1,rate:1},Yasmine:{pitch:1.22,rate:1.03}};
+const CALL_VOICE={Cora:{pitch:1.1,rate:1},Yasmine:{pitch:1.22,rate:1.03}};
 function pickFr(){const vs=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang));return vs.find(v=>/google/i.test(v.name))||vs.find(v=>/am\u00E9lie|audrey|marie|celine|julie|female|femme/i.test(v.name))||vs[0]||null}
 function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);
@@ -328,7 +328,7 @@ function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML
   if((app==="WhatsApp"||app==="SMS")&&(THR[app]||[]).length>1)return thrOv(app);
   if(app===CAPP)return;
   goApp(app,(THR[app]||[])[0]||app)})}
-const hdrOf=(app,lbl)=>({app,nm:lbl&&lbl!==app?lbl:null,stx:app==="Fichiers"?"Archive · lecture seule":(app==="WhatsApp"?(lbl==="Les Inoubliables"?"Camille · Jeanne":(lbl||"")):"SMS"),mem:app==="WhatsApp"&&lbl==="Les Inoubliables"?["Camille","Jeanne"]:null});
+const hdrOf=(app,lbl)=>({app,nm:lbl&&lbl!==app?lbl:null,stx:app==="Fichiers"?"Archive · lecture seule":(app==="WhatsApp"?(lbl||""):"SMS"),mem:null});
 function goApp(app,lbl){const t=APPH[app+"|"+lbl]||{};applyApp(hdrOf(app,lbl));
  $("chat").innerHTML=t.c||"";$("ch").innerHTML=t.h||"";
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
@@ -336,8 +336,8 @@ function goApp(app,lbl){const t=APPH[app+"|"+lbl]||{};applyApp(hdrOf(app,lbl));
 function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"\u{1F4F1}":"\u{1F4AC}"}
  const title=app==="SMS"?"Messages":app;
- const MEM={"Les Inoubliables":["Camille","Jeanne"],"Projet Orph\u00E9e":["L\u00E9o","Adrien","V."]};
- const PH={"Camille":"C","Jeanne":"J","C.":"C","Cora":"C","Yasmine":"Y"};
+ const MEM={};
+ const PH={"C.":"C","Cora":"C","Yasmine":"Y"};
  const mkAv=lbl=>{
   if(app==="Fichiers")return '<span class="thrA file">\u{1F4C4}</span>';
   if(AVN[lbl])return '<span class="thrA ph" style="background-image:url('+AVN[lbl]+')"></span>';
@@ -362,7 +362,7 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
- if(!SC||(SS.id!=="o"&&SS.id!=="h"))h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
+ if(!SC||SS.id!=="h")h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
  if(SS.id==="h"){
   h+='<b>Qui est qui</b><div class="ntR">Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.</div><div class="ntR">Nils Aveline — l\u2019ancien propriétaire du numéro. Agent d\u2019une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.</div><div class="ntR">Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.</div><div class="ntR">Yasmine — ta meilleure amie depuis l\u2019enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l\u2019appeler au premier détail bizarre.</div><div class="ntR">Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.</div><div class="ntR">Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.</div>';
@@ -381,33 +381,7 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
   h+='<b>Où tu en es</b>';
   const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
   bar(s.int||0,"Discrétion");bar(s.pov||0,"Preuves du réseau");bar(s.prm||0,"Preuves du meurtre");
- }else{  h+='<b>Qui est qui</b><div class="ntR">L\u00E9o Garnier \u2014 la victime. Analyste informatique, 32 ans. Fils de Michel.</div><div class="ntR">Camille, 11 ans avec L\u00E9o \u2014 sa compagne. Prof de lettres. Elle a des r\u00E8gles, m\u00EAme dans le chagrin.</div><div class="ntR">Jeanne \u2014 la s\u0153ur de L\u00E9o. Prof de maths. Elle a gard\u00E9 la maison et le silence de la famille.</div><div class="ntR">Michel Garnier \u2014 le p\u00E8re. Technicien, mort dans un accident de voiture il y a dix ans. Dossier 2016 enterr\u00E9.</div><div class="ntR">Malik \u2014 ton co\u00E9quipier. Fils de gendarme \u00E0 Fort-de-France. Il couvre, mais pas ind\u00E9finiment.</div><div class="ntR">\u00C9lodie \u2014 ta chef. Elle veut un dossier propre, pas un h\u00E9ros.</div><div class="ntR">Marcel Vautrin, 61 ans \u2014 le laboureur qui a trouv\u00E9 le corps. Il a vu la voiture, il n\u2019ose pas le dire.</div><div class="ntR">Adrien Valette \u2014 Vigilex S\u00E9curit\u00E9. Il efface les traces, pas les gens. Jamais les m\u00EAmes mains.</div><div class="ntR">\u00AB V. \u00BB \u2014 le num\u00E9ro masqu\u00E9 qui t\u2019\u00E9crit sur le t\u00E9l\u00E9phone de L\u00E9o. Et sur le tien.</div><b>Ce que tu sais</b>';
-  const R=(v,t)=>{if(v)h+='<div class="ntR">'+t+'</div>'};
-  R(true,"Le corps a \u00E9t\u00E9 d\u00E9plac\u00E9 \u2014 il a pass\u00E9 la nuit sur du b\u00E9ton, avant d\u2019atterrir dans le champ de Marcel.");
-  R(true,"Un dossier \u00AB ORPH\u00C9E \u00BB verrouill\u00E9 dans le t\u00E9l\u00E9phone de L\u00E9o.");
-  R(true,"\u00AB Projet Orph\u00E9e \u00BB \u2014 un groupe WhatsApp archiv\u00E9 : L\u00E9o, Adrien Valette, et \u00AB V. \u00BB.");
-  R(s.pov,"Des journaux d\u2019acc\u00E8s hors proc\u00E9dure \u2014 identifiant AV-7734, encore actif apr\u00E8s la mort de L\u00E9o.");
-  R(s.tech,"Un ancien technicien de Vigilex a aid\u00E9 L\u00E9o \u00E0 voir. Parti \u00AB en burn-out \u00BB, introuvable depuis deux ans.");
-  R(s.prm,"Un utilitaire gris, feu arri\u00E8re gauche cass\u00E9, rep\u00E9r\u00E9 autour de la ferme de Marcel. Parc Vigilex.");
-  R((s.pov||0)>=2||s.prm,"Le dossier \u00AB Garnier, M. \u00BB de 2016, au sous-sol des archives : minimis\u00E9, enterr\u00E9 par un haut grad\u00E9 jamais nomm\u00E9.");
-  R(s.jea||s.d2016,"Le coffre de d\u00E9p\u00F4t de Michel Garnier existe. La r\u00E9f\u00E9rence est chez Jeanne.");
-  R(s.gr,"L\u00E9o avait promis \u00E0 Camille un week-end, et \u00E0 Jeanne un transistor pour No\u00EBl. Il y a eu un champ, \u00E0 la place.");
-  R(s.aveu,"\u00C9lodie sait tout. Le dossier est pass\u00E9 en proc\u00E9dure.");
-  R(s.accord,"Tu as accept\u00E9 le march\u00E9 de Valette.");
-  R(s.bloq,"Tu as bloqu\u00E9 le num\u00E9ro masqu\u00E9 \u2014 il est revenu par d\u2019autres canaux.");
-  R(s.bless,"Tu es bless\u00E9.");
-  h+='<b>Ce que tu as appris d\u2019eux</b>';
-  R(s.ren,"Camille et L\u00E9o se sont rencontr\u00E9s au caf\u00E9 de la gare : lui \u00E9crivait, elle lisait par-dessus son \u00E9paule.");
-  R(s.cric,"L\u00E9o appelait Camille \u00AB Cric \u00BB. Personne d\u2019autre n\u2019avait le droit.");
-  R(s.oph,"Orph\u00E9e, pour L\u00E9o : remonter du monde d\u2019en bas avec la v\u00E9rit\u00E9, sans se retourner.");
-  R(s.marc,"Marcel croit qu\u2019\u00AB on emb\u00EAte personne, personne nous emb\u00EAte \u00BB \u2014 c\u2019est ce qui lui fait taire ses subventions.");
-  R((s.malik||0)>=1,"Malik : \u00AB Une erreur, \u00E7a arrive. Deux, \u00E7a devient une histoire. \u00BB");
-  R(s.voix,"La voix de L\u00E9o, \u00AB Si je ne reviens pas \u00BB : \u00AB Si je me taisais, quelqu\u2019un d\u2019autre aurait peur \u00E0 ma place. \u00BB");
-  R(s.d2016,"Jeanne : \u00AB Papa disait que les derni\u00E8res nuits, c\u2019est l\u00E0 que tout se d\u00E9cidait. \u00BB");
-  if((s.prm||0)<2)h+='<div class="ntR">\u26A0 Sans preuves mat\u00E9rielles \u2014 utilitaire, sc\u00E8ne \u2014 m\u00EAme la v\u00E9rit\u00E9 risque de ne pas tenir au proc\u00E8s.</div>';
-  h+='<b>O\u00F9 tu en es</b>';
-  const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.min(100,v*33)+'%"></i></div>'};
-  bar(s.int||0,"Int\u00E9grit\u00E9");bar(s.pov||0,"Preuves du r\u00E9seau");bar(s.prm||0,"Preuves du meurtre")}}
+ }}
  h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
 const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].trim():x};
@@ -439,7 +413,7 @@ function infoOv(){
  const o=document.createElement("div");o.className="rsOv";
  const c=document.createElement("div");c.className="card";
  const h2=document.createElement("h2");h2.textContent=SS?SS.t:"Progression";c.append(h2);
- if(SS&&(SS.id==="o"||SS.id==="h")){
+ if(SS&&SS.id==="h"){
   let pn=0;try{pn=+localStorage.getItem("etl_part_"+SS.id)||0}catch(e){}
   const rom=["","I","II","III","IV","V","VI"][Math.max(pn,({I:1,II:2,III:3,IV:4,V:5,VI:6})[CHP]||0)]||"I";
   const fs=document.createElement("div");fs.className="finStat";fs.innerHTML="Partie <b>"+rom+" / VI</b> \u00B7 chapitre en cours";c.append(fs);
@@ -469,7 +443,7 @@ function homeIntro(){
   $("mn").classList.remove("on");amb(null);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
- const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=!(s.id==="o"||s.id==="h");const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
+ const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
  row(c,"Smiley dans les messages : "+(emojiMode?"activés":"désactivés"),"Activer ou désactiver les emojis selon ton ton de lecture",()=>{emojiMode=!emojiMode;localStorage.setItem("etl_emoji",emojiMode?"on":"off");menu()});const vr=row(c,"Affichage : "+(PC?"PC":"Téléphone"),"Touche pour changer",()=>{setView(!PC);vr.children[0].textContent="Affichage : "+(PC?"PC":"Téléphone")});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
@@ -590,12 +564,12 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
   const c=card('Choisis une histoire');
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   STORIES.forEach((s,i)=>{
-   const locked=!(s.id==='o'||s.id==='h');
+   const locked=s.id!=='h';
    const b=document.createElement('button');b.className='bk'+(locked?' lock':' open');if(locked)b.disabled=true;
    let foot=locked?'En pause \u2014 bient\u00F4t':'Ouvrir le livre \u203a';
    if(!locked){let P=null;try{P=JSON.parse(localStorage.getItem('pg'+s.id))}catch(e){}
     const tot=endsOf(s),got=feN(s);const g=Math.min(got,tot);const fs=g+' fin'+(g>1?'s':'')+' trouv\u00E9e'+(g>1?'s':'');
-    if(s.id==='o'||s.id==='h'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_'+s.id)||1)}catch(e){};
+    if(s.id==='h'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_'+s.id)||1)}catch(e){};
      foot='Partie '+RN[pp]+' / VI \u00B7 '+fs}
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
@@ -619,12 +593,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
   try{const u=new SpeechSynthesisUtterance(String(txt).replace(/\n+/g,'. '));u.lang='fr-FR';u.rate=.95;u.onend=()=>{proEl=null};
    speechSynthesis.cancel();speechSynthesis.speak(u);proEl='synth'}catch(e){}};
  const oldChap=chap;
- const PRO_INES='Paris, un jeudi de novembre, 22 h 47.\n\nTu t\u2019appelles Sam. Tu viens de t\u2019enfuir d\u2019un d\u00EEner de coll\u00E8gues avant le dessert \u2014 comme toujours. Les grandes conversations, c\u2019est pour les autres.\n\nDans le hall 1 de la gare de Lyon, un carnet de cuir noir, oubli\u00E9 sur un banc. Pas de nom. Juste, \u00E0 la derni\u00E8re page, un num\u00E9ro de t\u00E9l\u00E9phone et une consigne : \u00AB \u00C9cris-moi quand m\u00EAme. \u00BB\n\nLe num\u00E9ro est muet depuis quatorze mois. Tu es curieux \u2014 trop, parfois. Ce soir, tu vas envoyer le premier message.';
- const PRO_LOU='Un samedi de pluie, 14 h 12.\n\nTu t\u2019appelles Sam. Tu ranges des cartons, la fen\u00EAtre ouverte sur un ciel gris. Un SMS tombe, d\u2019un num\u00E9ro inconnu : \u00AB Dis-moi juste si je dois entrer. Je suis devant l\u2019\u00E9glise et je n\u2019arrive plus \u00E0 ouvrir la porti\u00E8re. \u00BB\n\nCe message ne t\u2019est pas destin\u00E9. Une inconnue s\u2019appr\u00EAte \u00E0 entrer dans une \u00E9glise pour une c\u00E9r\u00E9monie dont tu ne sais rien \u2014 un deuil, un amour, une histoire qui ne te regardait pas.\n\nTu es le genre de personne qui r\u00E9pond. M\u00EAme quand \u00E7a ne te regarde pas.';
- const PRO_KERLO='\u00CEle de Kerlo, 6 h 40. Le ferry s\u2019\u00E9loigne dans la brume \u2014 il ne reviendra que mardi.\n\nTu t\u2019appelles Sam. Tu as accept\u00E9 un remplacement d\u2019un mois dans une station m\u00E9t\u00E9o au bout du monde : du vent, une radio qui gr\u00E9sille, un phare, et personne d\u2019autre.\n\nSur la table de la cuisine, un mot \u00E0 l\u2019encre bleue : \u00AB Si \u00E7a coince, \u00E9cris-moi. E. \u00BB Eliott, le m\u00E9t\u00E9orologue que tu remplaces, est reparti sans dire pourquoi.\n\nIl ne te reste qu\u2019une chose \u00E0 faire : \u00E9crire \u2014 ou te d\u00E9brouiller seul.';
- const DEF_PRO={'':PRO_INES,m:PRO_LOU,k:PRO_KERLO};
- const proOf=s=>s.prologue||DEF_PRO[s.id]||null;
- const endsAll=s=>{const seen={},q=[],out=[];s.ch.forEach(h=>{if(h[1])q.push(h[1])});
+ const proOf=s=>s.prologue||null; const endsAll=s=>{const seen={},q=[],out=[];s.ch.forEach(h=>{if(h[1])q.push(h[1])});
   while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
    if(n.e||n.k){const t=(n.e&&n.e[0])||'Fin sans titre';if(!out.includes(t))out.push(t)}
    (n.c||[]).forEach(c=>{if(c[1])q.push(c[1])});if(typeof n.x==='string')q.push(n.x);
@@ -651,7 +620,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
    s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(ADM||i===0||i<P.c);
     const b=row(c,(i+1)+'. '+h[0]+(ok?'':w?' \u00B7 verrouill\u00E9':' \u00B7 bient\u00F4t'),'',()=>{SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()},!ok);
     if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};b.after(rb)}});
-   if(s.id==='o'||s.id==='h'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
+   if(s.id==='h'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
    row(c,'\u2039 Retour','',menu);show(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();

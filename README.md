@@ -1,6 +1,6 @@
 # Entre les lignes
 
-Jeu narratif en messages (SMS / WhatsApp / fichiers simulés). Une enquête en 6 chapitres, 8 fins possibles — chaque réponse compte.
+Jeu narratif en messages (SMS / WhatsApp / fichiers simulés). Une histoire jouable : **Le Numéro du mort** (Vaubris, 2057) — chapitre 1 « Numéro attribué », des choix qui comptent, deux variantes de fin.
 
 ## 🎮 Jouer
 
