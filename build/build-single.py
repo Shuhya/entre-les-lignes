@@ -11,12 +11,14 @@ os.makedirs(OUT, exist_ok=True)
 def read(p): return open(os.path.join(ROOT, p), encoding="utf-8").read()
 def b64(path): return base64.b64encode(open(os.path.join(ROOT, path), "rb").read()).decode()
 
-img_keys = ["menu","gare","train","pluie","aube","mer","carnet","champ","voiture","cafe","bureau","grange","ormes","archives","vaubris","appart","quai9"]
+# clés IMG lues dynamiquement depuis assets.js (robuste aux ajouts/suppressions)
+_img = re.search(r"const IMG=\{([^}]*)\}", read("js/assets.js")).group(1)
+img_keys = re.findall(r'(\w+):\s*"assets/img/(\w+)\.jpg"', _img)
+img_keys = [f for _, f in img_keys]
 av = {"AVF1": "av-c", "AVF2": "av-j", "AVM1": "av-n", "AVF3": "av-cora", "AVF4": "av-yasmine"}
 
 assets = ('const RAIN="%s";\n' % b64("assets/audio/pluie.mp3")
     + 'const IMG={' + ",".join('%s:"data:image/jpeg;base64,%s"' % (k, b64(f"assets/img/{k}.jpg")) for k in img_keys) + '};\n'
-    + 'IMG.nuit=IMG.gare;\n'
     + 'const %s;' % ",".join('%s="data:image/jpeg;base64,%s"' % (n, b64(f"assets/img/{f}.jpg")) for n, f in av.items()))
 
 engine = read("js/engine.js")

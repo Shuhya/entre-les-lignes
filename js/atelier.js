@@ -45,12 +45,24 @@ function draftLoad(){try{return localStorage.getItem(DRAFT)}catch(e){return null
 function draftClear(){try{localStorage.removeItem(DRAFT)}catch(e){}}
 
 /* ---------- génération des fichiers publishables ---------- */
+function ser(v,ind){
+  if(v===null)return "null";
+  const t=typeof v;
+  if(t==="string")return JSON.stringify(v);
+  if(t==="number"||t==="boolean")return String(v);
+  if(t==="function")return v.toString();           /* préserve j:st=>... */
+  if(Array.isArray(v))return "["+v.map(x=>ser(x)).join(",")+"]";
+  if(t==="object")return "{"+Object.entries(v).map(([k,x])=>{
+    const kk=/^[A-Za-z_$][\w$]*$/.test(k)?k:JSON.stringify(k);
+    return kk+":"+ser(x)}).join(",")+"}";
+  throw Error("type non sérialisable : "+t);
+}
 function genStory(){
   return '/* Données narratives : helpers + nœuds (S) + sommaire (STORIES) */\n'
   +'const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],M=x=>["m",x],K=()=>["x",""];\n'
-  +'const S='+JSON.stringify(S)+';\n'
+  +'const S='+ser(S)+';\n'
   +'const C=a=>a.concat(Array.from({length:10-a.length},(_,i)=>["Chapitre "+(a.length+i+1),"-"]));\n'
-  +'const STORIES='+JSON.stringify(STORIES)+';';
+  +'const STORIES='+ser(STORIES)+';';
 }
 function genAssets(){
   return '/* Décors et avatars — l\'histoire référence ces clés (w:"..." / n.w) */\n'
