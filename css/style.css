@@ -429,3 +429,12 @@ body.pc .bk .bkLock{right:24px}
 #lockOv.unlocked .lkMid,#lockOv.unlocked .lkGo,#lockOv.unlocked .lkHint{opacity:0!important;animation:none;transition:opacity .2s}
 @keyframes lkIn{to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#lockOv .lkMid,#lockOv .lkGo,#lockOv .lkHint{animation-delay:0s}}
+
+/* ---- Événement hors téléphone (v2.51) : noir + flou + narration ---- */
+#awayOv{position:absolute;inset:0;z-index:55;background:rgba(5,7,13,.45);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;cursor:pointer;overflow:hidden;animation:awIn .62s ease forwards}
+@keyframes awIn{to{background:rgba(5,7,13,.97);backdrop-filter:blur(9px)}}
+#awayOv.off{opacity:0;transition:opacity .6s;pointer-events:none}
+#awayOv .awIn p{font:italic 400 15px/1.85 Georgia,"Times New Roman",serif;color:#e9e4d8;text-align:center;max-width:350px;margin:0;padding:0 24px;opacity:0;transform:translateY(10px);transition:opacity .85s ease,transform .85s ease}
+#awayOv .awIn p.on{opacity:1;transform:none}
+#awayOv .awGo{padding:11px 26px;border-radius:22px;border:1px solid #ffffff2e;background:#ffffff14;color:#fffee9;font:500 13.5px system-ui;cursor:pointer;backdrop-filter:blur(4px);visibility:hidden}
+#awayOv .awGo:hover{background:#ffffff26}
