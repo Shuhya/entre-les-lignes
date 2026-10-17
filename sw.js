@@ -1,6 +1,6 @@
-/* Entre les lignes — service worker v2 (v2.52) : offline total + MAJ sans Ctrl+F5.
+/* Entre les lignes — service worker v2.1 (v2.72) : offline total + MAJ sans Ctrl+F5.
    Corrigé :
-   - HTML (jeu.html, index.html, /) : network-first — toujours la page fraîche en ligne,
+   - HTML (jeu.html, index.html, /) : network-first avec cache:no-cache (revalidation 304 à chaque navigation — GitHub Pages garde jeu.html 10 min sinon) — toujours la page fraîche en ligne,
      repli sur le cache uniquement hors-ligne.
    - Fichiers versionnés (?v=N) : cache-first EXACT (sans ignoreSearch) — l'URL change
      à chaque version, donc le ?v= redevient un vrai cache-buster.
@@ -34,7 +34,7 @@ self.addEventListener("fetch", e => {
       if (isHTML) {
         /* network-first : la page de jeu est TOUJOURS fraîche quand on est en ligne */
         try {
-          const r = await fetch(e.request);
+          const r = await fetch(e.request, { cache: "no-cache" });
           if (r && r.ok) { c.put(e.request, r.clone()); return r; }
           if (r) return r;
         } catch (x) {}
@@ -47,7 +47,7 @@ self.addEventListener("fetch", e => {
         const hit = await c.match(e.request);
         if (hit) return hit;
         try {
-          const r = await fetch(e.request);
+          const r = await fetch(e.request, { cache: "no-cache" });
           if (r && r.ok) c.put(e.request, r.clone());
           return r;
         } catch (x) { return (await c.match(url.pathname)) || null; }
