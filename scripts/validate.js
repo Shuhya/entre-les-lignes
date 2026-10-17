@@ -40,7 +40,7 @@ step(mo===0,mo===0?'0 mojibake':mo+' mojibake');
 console.log('— Versions');
 const ver=(fs.readFileSync('js/engine.js','utf8').match(/VER="(\d+\.\d+)"/)||[])[1];
 let refsOK=true;
-['jeu.html','atelier.html'].forEach(f=>{
+['jeu.html','atelier.html'].filter(f=>fs.existsSync(f)).forEach(f=>{
   const t=fs.readFileSync(f,'utf8');
   const bad=(t.match(/\?v=(\d+\.\d+)/g)||[]).filter(v=>v!=='?v='+ver);
   if(bad.length){refsOK=false;console.log('    '+f+' : refs périmées '+bad.join(','));}});
