@@ -12,3 +12,5 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: node scripts/validate.js
+      - run: ROUTE=a node scripts/smoke.js
+      - run: ROUTE=b node scripts/smoke.js

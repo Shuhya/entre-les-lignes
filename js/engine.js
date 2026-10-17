@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.68";console.log("Entre les lignes · v"+VER);
+const VER="2.69";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -303,7 +303,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11:"I"};
+const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11c:"I",h11:"I"};
 let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
