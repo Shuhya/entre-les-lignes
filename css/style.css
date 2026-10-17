@@ -415,3 +415,17 @@ body.pc .bk .bkLock{right:24px}
 .trBtn:hover{background:#2a200fc9}
 .trBtn.ld{border-color:#3e91ff66;background:#12233dc9;color:#9fd0ff}
 .trSep{font-size:11.5px;color:#8fa5c5;text-align:center;margin:14px 0 4px;letter-spacing:.5px}
+
+/* ---- intro chapitre 1 : écran noir / déverrouillage / freeze hack ---- */
+#lockOv{position:absolute;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:opacity .65s}
+#lockOv.off{opacity:0;pointer-events:none}
+#lockOv canvas.lkFx{position:absolute;inset:0;width:100%;height:100%}
+#lockOv .lkMid{position:relative;z-index:2;text-align:center;color:#fff;opacity:0;animation:lkIn .7s .9s forwards}
+#lockOv .lkClock{font:200 52px/1.1 system-ui,sans-serif;letter-spacing:-1px}
+#lockOv .lkDate{font:500 13px system-ui;color:#ffffff8c;margin-top:6px;text-transform:capitalize}
+#lockOv .lkGo{position:absolute;z-index:2;bottom:16%;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:22px;border:1px solid #ffffff2e;background:#ffffff14;color:#fffee9;font:500 13.5px system-ui;cursor:pointer;opacity:0;animation:lkIn .7s 1.4s forwards;backdrop-filter:blur(4px)}
+#lockOv .lkGo:hover{background:#ffffff26}
+#lockOv .lkHint{position:absolute;z-index:2;bottom:7%;width:100%;text-align:center;font:italic 400 12px Georgia,serif;color:#ffffff54;opacity:0;animation:lkIn .7s 1.9s forwards}
+#lockOv.unlocked .lkMid,#lockOv.unlocked .lkGo,#lockOv.unlocked .lkHint{opacity:0!important;animation:none;transition:opacity .2s}
+@keyframes lkIn{to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#lockOv .lkMid,#lockOv .lkGo,#lockOv .lkHint{animation-delay:0s}}

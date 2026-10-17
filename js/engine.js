@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.48";console.log("Entre les lignes · v"+VER);
+const VER="2.49";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -393,7 +393,63 @@ function start(){run++;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{i
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
  if(ADM&&ADS){try{Object.assign(st,JSON.parse(ADS))}catch(e){}}
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
- document.body.classList.add("play");$("mn").classList.remove("on");play(SS.ch[SC][1])}
+ document.body.classList.add("play");$("mn").classList.remove("on");
+ if(SS.id==="h"&&!SC&&!(window.__ghost&&window.__ghost())&&typeof introH==="function")introH(()=>play(SS.ch[SC][1]));
+ else play(SS.ch[SC][1])}
+/* ---- intro chapitre 1 : écran noir -> déverrouillage -> freeze hack (canvas 2D) ---- */
+function introH(cb){
+  const RM=(()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(x){return false}})();
+  const app=$("app");
+  const o=document.createElement("div");o.id="lockOv";
+  o.innerHTML='<canvas class="lkFx"></canvas>'
+   +'<div class="lkMid"><div class="lkClock">--:--</div><div class="lkDate"></div></div>'
+   +'<button class="lkGo">Déverrouiller</button>'
+   +'<div class="lkHint">Le téléphone que tu viens de récupérer.</div>';
+  app.append(o);
+  const q=s=>o.querySelector(s),cv=q(".lkFx"),ctx=cv.getContext("2d");
+  let W,H;const fit=()=>{W=cv.width=app.clientWidth||innerWidth;H=cv.height=app.clientHeight||innerHeight};fit();
+  let done=false;
+  const finish=()=>{if(done)return;done=true;o.classList.add("off");setTimeout(()=>{o.remove()},720);try{cb&&cb()}catch(x){}};
+  const clk=()=>{try{const d=new Date();q(".lkClock").textContent=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}catch(x){}};
+  clk();const tick=setInterval(()=>{done?clearInterval(tick):clk()},1000);
+  const glitch=()=>{
+    o.classList.add("unlocked");
+    try{unlock();hit(90,2.6,.22,"lowpass",.02,.6);hit(2400,.05,.05,"highpass",.01,2)}catch(x){}
+    setTimeout(()=>{try{hit(120,1.5,.2,"lowpass")}catch(x){}},900);
+    setTimeout(()=>{try{hit(880,.06,.12);hit(1319,.08,.12)}catch(x){}},2700);
+    const oc=document.createElement("canvas");oc.width=W;oc.height=H;const c=oc.getContext("2d");
+    c.fillStyle="#0b1220";c.fillRect(0,0,W,H);
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#122036");g.addColorStop(1,"#070d18");c.fillStyle=g;c.fillRect(0,0,W,H);
+    c.fillStyle="#9fb4d8";c.font="600 11px system-ui";c.textAlign="right";c.fillText(q(".lkClock").textContent,W-10,22);
+    c.textAlign="left";c.fillText("5G",10,22);
+    c.fillStyle="#e8eefb";c.font="300 46px system-ui";c.fillText(q(".lkClock").textContent,18,H*.15);
+    c.font="12px system-ui";c.fillStyle="#9fb4d8aa";c.fillText(q(".lkDate").textContent,20,H*.15+24);
+    c.globalAlpha=.15;
+    for(let r=0;r<4;r++)for(let col=0;col<4;col++){c.fillStyle="#dbe7f8";c.fillRect(24+col*70,H*.42+r*62,44,44)}
+    c.globalAlpha=1;
+    const lines=["SIM RECYCLÉE : 06 51 09 43 87","ANCIEN TITULAIRE : [DONNÉES EFFACÉES]","MIGRATION DES DONNÉES…","TERMINAL RÉATTRIBUÉ"];
+    const t0=performance.now();
+    const step=()=>{
+      if(done)return;
+      const t=performance.now()-t0,p=Math.min(1,t/3400);
+      ctx.clearRect(0,0,W,H);ctx.drawImage(oc,0,0);
+      const n=2+Math.floor(p*10);
+      for(let i=0;i<n;i++){const y=Math.random()*H,h=6+Math.random()*40,dx=(Math.random()-.5)*p*90;ctx.drawImage(oc,0,y,W,h,dx,y,W,h)}
+      if(Math.random()<.4){ctx.globalAlpha=.25;ctx.drawImage(oc,-3,0);ctx.drawImage(oc,3,0);ctx.globalAlpha=1}
+      ctx.fillStyle="rgba(0,0,0,.16)";for(let y=0;y<H;y+=3)ctx.fillRect(0,y,W,1);
+      if(Math.random()<.5){ctx.fillStyle=["#0f8","#f43","#08f"][Math.floor(Math.random()*3)];ctx.globalAlpha=.1+Math.random()*.18;ctx.fillRect(Math.random()*W,Math.random()*H,30+Math.random()*120,6+Math.random()*26);ctx.globalAlpha=1}
+      const show=Math.min(lines.length-1,Math.floor(t/700));
+      ctx.font="12px ui-monospace,Consolas,monospace";ctx.textAlign="left";
+      for(let k=0;k<=show;k++){ctx.fillStyle=k===show?"#ffd166":"#7fe0a2";ctx.fillText("> "+lines[k],14,H-64-(show-k)*18)}
+      if(p>=1){ctx.fillStyle="rgba(255,255,255,.85)";ctx.fillRect(0,0,W,H);setTimeout(finish,170);return}
+      requestAnimationFrame(step)};
+    requestAnimationFrame(step)};
+  q(".lkGo").onclick=x=>{x.stopPropagation();if(done)return;
+    try{unlock();hit(660,.07,.14);setTimeout(()=>hit(990,.09,.14),70)}catch(e){}
+    if(RM)setTimeout(finish,250);else glitch()};
+  o.onclick=()=>{if(done)return;if(o.classList.contains("unlocked"))finish()};
+}
+
 /* ---- menus ---- */
 const ck=()=>{if(SK)return;$("clk").textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})};ck();setInterval(ck,30000);
 function card(h){const c=document.createElement("div");c.className="card";const e=document.createElement("h2");e.textContent=h;c.append(e);return c}
@@ -524,7 +580,7 @@ add=function(c,x){
 
 /* Sauvegarde de reprise + atelier d'administration */
 (function(){
- const KEY='etl_resume_v4';let restoring=false,GHOST=false,path=[],seenPro={};nodeNow=null;
+ const KEY='etl_resume_v4';let restoring=false,GHOST=false,path=[],seenPro={};nodeNow=null;try{window.__ghost=()=>GHOST}catch(e){}
 /* ---- stats de lecture (locales, agrégées) ---- */
 let STATS={t:0,msgs:0,runs:0};try{STATS=Object.assign(STATS,JSON.parse(localStorage.getItem("etl_stats")||"{}"))}catch(e){}
 let statsMark=Date.now();
