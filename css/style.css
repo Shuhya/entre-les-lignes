@@ -322,6 +322,7 @@ body.pc .bk .bkLock{right:24px}
 #endOv h2{font:400 30px Georgia,serif;margin:0 0 4px;letter-spacing:.4px}
 .endSub{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:#9fb4d4;margin-bottom:14px}
 .endTxt{white-space:pre-line;color:#ffffffd9;line-height:1.7;font-size:15px;margin:0 0 18px}
+.endDossier{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:14px 0 4px;font-size:12px;color:#ffffff8f;letter-spacing:.4px}
 .endStats{border-top:1px solid #ffffff22;padding-top:14px;margin-bottom:16px}
 .endFins{border-top:1px solid #ffffff22;padding-top:14px;margin-bottom:20px}
 .endFins b{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:#ffd166c4;display:block;margin-bottom:8px}

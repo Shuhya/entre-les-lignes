@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.35";console.log("Entre les lignes · v"+VER);
+const VER="2.36";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -67,9 +67,9 @@ async function play(id,r=run){
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
  if(n.call&&!st["cal_"+id]){const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
- for(const[w,x]of n.m||[]){
+ for(const[w,x]of n.m||[]){STATS.msgs++;
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else{const q=x.match(/(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",x);await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.e)return fin(n.e);
  if(n.x)return play(n.x,r);if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
@@ -174,10 +174,38 @@ function transferOv(){
  const sep=document.createElement("div");sep.className="trSep";sep.textContent="ou, sur cet appareil :";c.append(sep);
  const ta2=document.createElement("textarea");ta2.className="trTa";ta2.placeholder="Colle un code de partie ici";c.append(ta2);
  const ld=document.createElement("button");ld.className="trBtn ld";ld.textContent="\u21BB Charger ce code";
- ld.onclick=()=>{try{const d=JSON.parse(decodeURIComponent(escape(atob(ta2.value.trim()))));
+ ld.onclick=()=>loadCode(ta2.value.trim());
+ c.append(ld);
+ const sep2=document.createElement("div");sep2.className="trSep";sep2.textContent="ou, dans le cloud :";c.append(sep2);
+ const pat=document.createElement("input");pat.type="password";pat.className="trTa";pat.placeholder="Jeton GitHub (gist) \u2014 stock\u00E9 sur cet appareil";
+ try{pat.value=localStorage.getItem("etl_gist_pat")||""}catch(e){}
+ c.append(pat);
+ const up=document.createElement("button");up.className="trBtn";up.textContent="\u2601\uFE0F Envoyer ma partie sur mon Gist";
+ const dn=document.createElement("button");dn.className="trBtn ld";dn.textContent="\u2601\uFE0F R\u00E9cup\u00E9rer depuis le cloud";
+ const gistId=()=>{try{return localStorage.getItem("etl_gist")||""}catch(e){return ""}};
+ async function gh(method,body){const r=await fetch("https://api.github.com/gists"+(method==="GET"&&gistId()?"/"+gistId():""),{method,headers:{Authorization:"Bearer "+pat.value.trim(),Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.message||("HTTP "+r.status));return j}
+ up.onclick=async()=>{const tok=pat.value.trim();if(!tok){toast("Entre ton jeton GitHub pour le cloud.");return}
+  try{localStorage.setItem("etl_gist_pat",tok)}catch(e){}
+  up.textContent="\u23F3 Envoi\u2026";
+  try{const code2=code;/* code courant de la session */
+   if(gistId()){await gh("PATCH",{files:{"entre-les-lignes.txt":{content:code2}}})}
+   else{const g=await gh("POST",{description:"Entre les lignes \u2014 sauvegarde",public:false,files:{"entre-les-lignes.txt":{content:code2}}});try{localStorage.setItem("etl_gist",g.id)}catch(e){}}
+   up.textContent="\u2713 Partie envoy\u00E9e"}
+  catch(e){up.textContent="\u2716 "+String(e.message).slice(0,40)}};
+ dn.onclick=async()=>{if(!gistId()){toast("Aucun Gist connu sur cet appareil \u2014 envoie d'abord la partie.");return}
+  const tok=pat.value.trim()||(()=>{try{return localStorage.getItem("etl_gist_pat")||""}catch(e){return ""}})();
+  if(!tok){toast("Entre ton jeton GitHub.");return}
+  dn.textContent="\u23F3 R\u00E9cup\u00E9ration\u2026";
+  try{const g=await fetch("https://api.github.com/gists/"+gistId(),{headers:{Authorization:"Bearer "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());
+   const f=g.files&&g.files["entre-les-lignes.txt"];if(!f)throw Error("Gist vide");
+   loadCode(f.content)}
+  catch(e){dn.textContent="\u2716 "+String(e.message).slice(0,40)}};
+ c.append(up);c.append(dn);
+ function loadCode(txt){try{const d=JSON.parse(decodeURIComponent(escape(atob(txt.trim()))));
    Object.keys(d).forEach(k=>{try{localStorage.setItem(k,d[k])}catch(e){}});
    o.remove();toast("Partie charg\u00E9e \u2014 rechargement\u2026");setTimeout(()=>location.reload(),900)}
-  catch(e){toast("Code invalide \u2014 v\u00E9rifie le collage.")}};
+  catch(e){toast("Code invalide \u2014 v\u00E9rifie le collage.")}}
  c.append(ld);
  const b=document.createElement("button");b.className="bk";b.innerHTML="<h3>\u2039 Retour</h3><p>Annuler</p>";b.onclick=()=>o.remove();c.append(b);
  o.append(c);document.body.append(o);addBack(c);
@@ -248,6 +276,9 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
  const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 "+(SS.id==="z"?"Partie I":"fin de l'enqu\u00EAte");c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
+ const ds=document.createElement("div");ds.className="endDossier";
+ ds.innerHTML="<span>\u23F1 "+fmtT(STATS.t)+" de lecture</span><span>\uD83D\uDCAC "+STATS.msgs+" messages lus</span><span>\uD83D\uDCDA "+(STATS.runs||1)+" passage"+(STATS.runs>1?"s":"")+"</span>";
+ c.append(ds);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
  bar(st.int,SS.id==="z"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
@@ -402,7 +433,7 @@ function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";c
  (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(t);b.onclick=async()=>{c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",emojiClean(t))}else{tx();add("m",emojiClean(rm?unq(rm):unq(t)))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
-function start(){run++;SK=1;$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
+function start(){run++;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
  if(ADM&&ADS){try{Object.assign(st,JSON.parse(ADS))}catch(e){}}
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
@@ -430,6 +461,7 @@ function infoOv(){
   let pn=0;try{pn=+localStorage.getItem("etl_part_"+SS.id)||0}catch(e){}
   const rom=["","I","II","III","IV","V","VI"][Math.max(pn,({I:1,II:2,III:3,IV:4,V:5,VI:6})[CHP]||0)]||"I";
   const fs=document.createElement("div");fs.className="finStat";fs.innerHTML="Partie <b>"+rom+" / VI</b> \u00B7 chapitre en cours";c.append(fs);
+  const ss=document.createElement("div");ss.className="finStat";ss.innerHTML="\u23F1 "+fmtT(STATS.t)+" \u00B7 \uD83D\uDCAC "+STATS.msgs+" messages";c.append(ss);
   let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+SS.id))||P}catch(e){}
   SS.ch.forEach((hh,i)=>{const w=!!S[hh[1]],ok=w&&(i===0||i<P.c);const r=document.createElement("div");r.className="infoCh"+(ok?" on":"");r.innerHTML=(i+1)+". "+hh[0]+(ok?"":" \u00B7 \uD83D\uDD12");c.append(r)});
   const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);g0=(JSON.parse(localStorage.getItem("fe"+SS.id)||"[]")).length}catch(e){}
@@ -575,7 +607,17 @@ add=function(c,x){
 /* Sauvegarde de reprise + atelier d'administration */
 (function(){
  const KEY='etl_resume_v4';let restoring=false,GHOST=false,path=[],seenPro={};nodeNow=null;
- function save(){try{if(GHOST||!SS||!st||!SK)return;localStorage.setItem(KEY,JSON.stringify({story:SS.id,chapter:SC,node:nodeNow,state:st,chat:$('chat').innerHTML,at:Date.now(),path:path.slice(),apph:APPH,thr:THR,papp:PAPP,pnm:PNM}))}catch(e){}}
+/* ---- stats de lecture (locales, agrégées) ---- */
+let STATS={t:0,msgs:0,runs:0};try{STATS=Object.assign(STATS,JSON.parse(localStorage.getItem("etl_stats")||"{}"))}catch(e){}
+let statsMark=Date.now();
+function statsTick(){STATS.t+=Math.round((Date.now()-statsMark)/1000);statsMark=Date.now();try{localStorage.setItem("etl_stats",JSON.stringify(STATS))}catch(e){}}
+function fmtT(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?h+" h "+String(m).padStart(2,"0"):(m?m+" min":"moins d'une minute")}
+/* ---- horloge glissante : le temps du récit avance entre les messages ---- */
+const CLK={h:null,m:0};
+function clkSet(hm){const q=hm.split(":");CLK.h=+q[0];CLK.m=+q[1]}
+function clkNow(){return CLK.h==null?null:String(CLK.h).padStart(2,"0")+":"+String(CLK.m).padStart(2,"0")}
+setInterval(()=>{if(!SK||CLK.h==null)return;CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
+ function save(){statsTick();try{if(GHOST||!SS||!st||!SK)return;localStorage.setItem(KEY,JSON.stringify({story:SS.id,chapter:SC,node:nodeNow,state:st,chat:$('chat').innerHTML,at:Date.now(),path:path.slice(),apph:APPH,thr:THR,papp:PAPP,pnm:PNM}))}catch(e){}}
  const oldPlay=play;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);save();const v=await oldPlay(id,r);save();return v};
  const oldFin=fin;fin=function(v){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v);save()};
