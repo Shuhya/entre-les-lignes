@@ -12,7 +12,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.29";console.log("Entre les lignes · v"+VER);
+const VER="2.30";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -75,7 +75,63 @@ async function play(id,r=run){
  if(n.x)return play(n.x,r);if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
  const c=$("ch");c.innerHTML="";
  mkCh(id);
+ if(n.fx)filesOv(n);else if(n.vw)vwOv(n);
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
+/* ---- Apps natives : explorateur de fichiers & viewers plein ecran ---- */
+function fxClear(){document.querySelectorAll(".fxOv").forEach(x=>x.remove())}
+function fxShell(title,innerHTML){
+ const o=document.createElement("div");o.className="fxOv";
+ o.innerHTML='<div class="fxTop"><div class="fxT">'+title+'</div><button class="fxX" aria-label="Fermer">✕</button></div>'+innerHTML;
+ o.querySelector(".fxX").onclick=()=>o.remove();
+ $("app").append(o);return o}
+function fxBack(o,label,fn){const b=document.createElement("button");b.className="fxFoot";b.innerHTML='‹ '+(label||"Retour");b.onclick=fn;o.append(b);return b}
+function filesOv(n){
+ fxClear();
+ const o=fxShell('📁 '+(n.nm||"Fichiers"),'<div class="fxList"></div>');
+ const L=o.querySelector(".fxList");
+ (n.fx||[]).forEach(it=>{const ic=it[0],nm=it[1],meta=it[2],act=it[3];
+  const r=document.createElement("button");r.className="fxRow";
+  r.innerHTML='<span class="fxIc">'+ic+'</span><span class="fxNm"><b>'+nm+'</b><small>'+meta+'</small></span><span class="fxGo">›</span>';
+  r.onclick=()=>{
+   if(typeof act==="number"){fxClear();const b=$("ch").children[act];if(b)b.click();return}
+   if(act==="png"){fxImg(nm);return}
+   fxLock(nm)};
+  L.append(r)});
+ if(typeof n.fxF==="number"){fxBack(o,(n.c&&n.c[n.fxF]&&n.c[n.fxF][0])||"Ne rien ouvrir",()=>{fxClear();const b=$("ch").children[n.fxF];if(b)b.click()})}}
+function fxLock(nm){
+ fxClear();
+ const o=fxShell('🔒 '+nm,'<div class="fxBody"><div class="fxLockIc">🔒</div><p class="fxBig">chimere_v3.gpg</p><p class="fxDim">Chiffré 4096 bits — clé introuvable.</p><p class="fxDim">Le fichier reste muré. Il ne s\u2019ouvrira pas.</p></div>');
+ fxBack(o,"Retour aux fichiers",()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]}));
+ o.querySelector(".fxX").onclick=()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]})}
+function fxImg(nm){
+ fxClear();
+ const o=fxShell('🗺 '+nm,'<div class="fxBody" style="padding:0"><div class="fxImg"></div></div>');
+ const im=o.querySelector(".fxImg");
+ im.style.backgroundImage=IMG.quai9?'url('+IMG.quai9+')':'';
+ im.innerHTML='<span>Échelle ouest, quai 9 — le stylo rouge cerne une porte de service, flèche vers le hangar 44.</span>';
+ fxBack(o,"Retour aux fichiers",()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]}));
+ o.querySelector(".fxX").onclick=()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]})}
+function vwOv(n){
+ fxClear();
+ const kind=n.vw[0],nm=n.vw[1],lines=n.vw[2];
+ if(kind==="txt"){
+  const o=fxShell('📄 '+nm,'<div class="fxPaper"></div>');
+  const P=o.querySelector(".fxPaper");
+  lines.forEach(function(ln){const p=document.createElement("p");p.className="vwL "+(ln[0]||"n");p.textContent=ln[1];P.append(p)});
+  const nb=document.createElement("div");nb.className="vwBar";nb.textContent="Bas de page — encadré deux fois au stylo rouge";P.append(nb);
+  fxBack(o,"✕ Refermer",function(){o.remove()});
+ }else if(kind==="wav"){
+  const o=fxShell('🎧 '+nm,'<div class="fxBody vwPlay"><div class="wavArt">🎧</div><p class="fxBig">'+nm+'</p><p class="fxDim">0:47 · jamais écouté</p><div class="wavBar"><i></i></div><button class="wavBtn">▶ Lecture</button><div class="wavTx"></div></div>');
+  const bar=o.querySelector(".wavBar i"),tx=o.querySelector(".wavTx"),btn=o.querySelector(".wavBtn");
+  let played=false;
+  btn.onclick=async function(){if(played)return;played=true;btn.textContent="▮▮ Lecture en cours";btn.disabled=true;
+   const total=47,dur=13000,t0=Date.now();
+   const tick=setInterval(function(){const p=Math.min(1,(Date.now()-t0)/dur);bar.style.width=(p*100)+"%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:"+String(Math.floor(p*total)).padStart(2,"0")+" sur 0:47"},120);
+   for(const ln of lines){const p=document.createElement("p");p.className="vwL "+(ln[0]||"q");p.textContent=ln[1];tx.append(p);await sl(dur/lines.length)}
+   clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 — fin de l\u2019enregistrement";btn.textContent="▶ Écouté"};
+  fxBack(o,"✕ Refermer",function(){o.remove()});
+ }}
+
 async function proCards(P){const pars=P.slice(1);if(!pars.length)return;
  const o=document.createElement("div");o.className="proOv";document.body.append(o);
  await new Promise(done=>{const show=i=>{const cd=document.createElement("div");cd.className="proCard";
