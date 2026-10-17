@@ -481,3 +481,6 @@ body.pc .bk .bkLock{right:24px}
 #scrOv .scLi{display:flex;justify-content:space-between;font:400 12.5px system-ui;color:#dbe7f8;padding:2px 2px}
 #scrOv .scLi small{color:#9fb4d8}
 #scrOv .scLi.dim{opacity:.6}
+
+/* v2.63 : bulle photo MMS */
+.b.h.pm{padding:3px;max-width:82%}.b.h.pm img{max-width:100%;max-height:280px;border-radius:12px;display:block}
