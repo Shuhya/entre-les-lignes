@@ -18,11 +18,16 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.88";
+const VER="2.89";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
 let THM="dark";try{THM=localStorage.getItem("etl_theme")||"dark"}catch(e){}console.log("Entre les lignes · v"+VER);
+function ambBg(){try{const h=new Date().getHours();let a="#141d33",b2="#0a0d16";
+ if(h>=5&&h<9){a="#3a2438";b2="#1a1f3f"}else if(h>=17&&h<21){a="#33222b";b2="#1f1a26"}
+ else if(h>=21||h<5){a="#101828";b2="#070b14"}
+ document.documentElement.style.setProperty("--ambA",a);document.documentElement.style.setProperty("--ambB",b2)}catch(e){}}
+ambBg();setInterval(ambBg,18e5);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -648,6 +653,25 @@ function addBack(c){
   a.onclick=fn||homeIntro;
   if(c.parentElement&&c.parentElement.classList&&c.parentElement.classList.contains("rsOv")){c.style.position="relative";a.style.position="absolute";a.style.top="-56px";a.style.left="0";a.style.right="auto"}
   c.prepend(a)}
+/* ---- Guide (bouton dans la bibliotheque) ---- */
+function guideOv(){
+ const o=document.createElement("div");o.id="infoOv";
+ const b=document.createElement("div");b.className="ifCard";
+ const k=document.createElement("div");k.className="ifK";k.textContent="Guide";b.append(k);
+ const h2=document.createElement("h2");h2.textContent="Comment jouer";b.append(h2);
+ const g=document.createElement("div");g.className="ifGuide";
+ g.innerHTML="<p><b>Lire.</b> Chaque histoire se déroule sur un téléphone : des messages arrivent, s’enchaînent, se contredisent. Photos, appels, fichiers — tout se lit comme une vraie messagerie.</p>"
+  +"<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>"
+  +"<p><b>Les boutons :</b></p>"
+  +"<p><b>‹</b> en haut à gauche : la bibliothèque — histoires, reprise de partie, réglages.</p>"
+  +"<p><b>⚙</b> : réglages — thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.</p>"
+  +"<p><b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>"
+  +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>";
+ b.append(g);
+ const cb=document.createElement("button");cb.className="ifBack";cb.textContent="‹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
+ o.append(b);$("app").append(o);
+ o.addEventListener("click",e2=>{if(e2.target===o)o.remove()});
+}
 /* ---- Fiche progression (bouton i a cote de l'heure) ---- */
 function infoOv(){
  try{const M=window.etlMisc;if(M&&M.stopPro)M.stopPro()}catch(e){}
@@ -702,7 +726,7 @@ function homeIntro(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
  const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
- row(c,"Smiley dans les messages : "+(emojiMode?"activés":"désactivés"),"Activer ou désactiver les emojis selon ton ton de lecture",()=>{emojiMode=!emojiMode;localStorage.setItem("etl_emoji",emojiMode?"on":"off");menu()});const vr=row(c,"Affichage : "+(PC?"PC":"Téléphone"),"Touche pour changer",()=>{setView(!PC);vr.children[0].textContent="Affichage : "+(PC?"PC":"Téléphone")});show(c);
+ row(c,"📖 Guide","Comment jouer, les boutons, la sauvegarde",()=>{guideOv()});row(c,"⚙ Paramètres","Thème, son, vitesse de lecture, plein écran, transfert",()=>{$("vol").hidden=!$("vol").hidden});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
@@ -831,7 +855,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
    if(!locked)b.onclick=()=>chap(s);list.append(b)});
-  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Options d\u2019affichage</h3><p>Smileys, affichage t\u00E9l\u00E9phone ou PC</p>';ob.onclick=optCard;list.append(ob)}
+  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=()=>{$('vol').hidden=!$('vol').hidden};list.append(ob);const gb=document.createElement('button');gb.className='bk';gb.innerHTML='<h3>📖 Guide</h3><p>Comment jouer, les boutons, la sauvegarde</p>';gb.onclick=()=>{guideOv()};list.append(gb)};
   show(c);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){

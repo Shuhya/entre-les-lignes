@@ -335,7 +335,7 @@ body.pc .bk .bkLock{right:24px}
 #endOv #ob2{width:100%;margin-top:8px;padding:12px;border-radius:14px;border:1.5px solid #fff6;background:transparent;color:#fff;font:inherit}
 /* ---- version PC assumée ---- */
 @media(min-width:900px){
- body.pc{background:radial-gradient(1200px 800px at 70% -10%,#141d33 0%,#0a0d16 55%,#05070c 100%)}
+ body.pc{background:radial-gradient(1200px 800px at 70% -10%,var(--ambA,#141d33) 0%,var(--ambB,#0a0d16) 55%,#05070c 100%)}
  body.pc #app{border-radius:44px;border-width:10px;box-shadow:0 0 0 1px #ffffff14,0 40px 120px #000e,0 0 90px #1d2f5533}
  body.pc #app:after{content:"Entre les lignes";position:absolute;top:-38px;left:50%;transform:translateX(-50%);font:400 15px Georgia,serif;letter-spacing:2.5px;color:#8fa3c8;opacity:.75}
  body.pc #chat{padding:24px max(14px,20vw)}
