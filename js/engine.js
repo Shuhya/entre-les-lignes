@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.94";
+const VER="2.95";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -670,9 +670,10 @@ function guideOv(){
   +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>";
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="‹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
- o.append(b);$("app").append(o);
+ o.append(b);document.body.append(o);
  o.addEventListener("click",e2=>{if(e2.target===o)o.remove()});
 }
+function volToggle(){const vv=$("vol");if(vv&&vv.parentElement!==document.body)document.body.append(vv);vv.hidden=!vv.hidden}
 /* ---- Fiche progression (bouton i a cote de l'heure) ---- */
 function infoOv(){
  try{const M=window.etlMisc;if(M&&M.stopPro)M.stopPro()}catch(e){}
@@ -727,7 +728,7 @@ function homeIntro(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
  const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
- row(c,"📖 Guide","Comment jouer, les boutons, la sauvegarde",()=>{guideOv()});row(c,"⚙ Paramètres","Thème, son, vitesse de lecture, plein écran, transfert",()=>{$("vol").hidden=!$("vol").hidden});show(c);
+ row(c,"📖 Guide","Comment jouer, les boutons, la sauvegarde",()=>{guideOv()});row(c,"⚙ Paramètres","Thème, son, vitesse de lecture, plein écran, transfert",()=>{volToggle()});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
@@ -856,7 +857,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
    if(!locked)b.onclick=()=>chap(s);list.append(b)});
-  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=()=>{$('vol').hidden=!$('vol').hidden};list.append(ob);const gb=document.createElement('button');gb.className='bk';gb.innerHTML='<h3>📖 Guide</h3><p>Comment jouer, les boutons, la sauvegarde</p>';gb.onclick=()=>{guideOv()};list.append(gb)};
+  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob);const gb=document.createElement('button');gb.className='bk';gb.innerHTML='<h3>📖 Guide</h3><p>Comment jouer, les boutons, la sauvegarde</p>';gb.onclick=()=>{guideOv()};list.append(gb)};
   show(c);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){
