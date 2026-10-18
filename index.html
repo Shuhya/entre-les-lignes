@@ -55,8 +55,14 @@ html.ambC{--ambImg:url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
 .dp .dpHd .dav{width:34px;height:34px;border-radius:50%;flex:none;display:block;object-fit:cover;background:#2a2a2e}
 .dp .dpHd b{font-size:13px;font-weight:600;color:#f2f2f4;display:block;line-height:1.25}
 .dp .dpHd small{font-size:9.5px;color:#98989f;display:block}
-.dp .dpCt{position:absolute;top:79px;left:0;right:0;bottom:0;padding:12px 11px 14px;overflow:hidden;display:flex;flex-direction:column;gap:4px;justify-content:flex-end;z-index:2;background:#0b141a linear-gradient(#0006,#0009) center/cover}
+.dp .dpCt{position:absolute;top:79px;left:0;right:0;bottom:78px;padding:12px 11px 14px;overflow:hidden;display:flex;flex-direction:column;gap:4px;justify-content:flex-end;z-index:2;background:#0b141a linear-gradient(#0006,#0009) center/cover}
 .dp[data-deco] .dpCt{background:#0b141a linear-gradient(#0006,#0009),url('assets/img/appart.jpg') center/cover}
+.dp .dpInp{position:absolute;left:0;right:0;bottom:30px;display:flex;align-items:center;gap:7px;padding:7px 9px 5px;background:#1c1c1f;border-top:1px solid #333338;z-index:3}
+.dp .dpInp .pl{width:26px;height:26px;border-radius:50%;background:#2a2a2e;display:grid;place-items:center;color:#98989f;flex:none}
+.dp .dpInp .fl{flex:1;border-radius:16px;background:#2a2a2e;padding:6px 11px;color:#98989f;font-size:12.5px}
+.dp .dpInp .sd{background:#3e91ff;color:#fff}
+.dp .dpNav{position:absolute;left:0;right:0;bottom:0;height:30px;display:flex;justify-content:space-around;align-items:center;background:#1c1c1f;color:#98989f;z-index:3}
+.dp .dpNav span{display:grid;place-items:center;height:100%;padding:0 18px}
 .dm{max-width:76%;padding:8px 13px;border-radius:19px;font-size:12.5px;line-height:1.45;animation:dIn .22s ease both;white-space:pre-line;overflow-wrap:anywhere}
 .dm.th{background:#2a2a2e;color:#f2f2f4;align-self:flex-start;border-bottom-left-radius:5px}
 .dm.me{background:#0a84ff;color:#fff;align-self:flex-end;border-bottom-right-radius:5px;margin-top:5px}
@@ -122,6 +128,8 @@ html.ambC{--ambImg:url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   <div class="dpHd"><img class="dav" id="dpAv" alt=""><span><b id="dpNm">…</b><small id="dpSt">en ligne</small></span></div>
   <div id="dpNtHost"></div>
   <div class="dpCt" id="dpCt"></div>
+  <div class="dpInp"><span class="pl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span><span class="fl">Envoyer un message</span><span class="pl sd"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l7 6-7 6"/></svg></span></div>
+  <div class="dpNav"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.2"/></svg></span><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></span></div>
 </div></div>
 </div>
 <div class="foot">Entre les lignes · un jeu narratif de Dylan Gaucher</div>
