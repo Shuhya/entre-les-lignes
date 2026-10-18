@@ -668,3 +668,8 @@ html[data-theme="light"] .ifVar,html[data-theme="light"] .endVar{color:#7a5c00;b
 html[data-theme="light"] .ifGuide{color:#3a4356;border-top-color:#0000001a}
 html[data-theme="light"] .ifGuide b{color:#8a6d1a}
 html[data-theme="light"] .ifBack{background:#fff;border-color:#c8ccd4;color:#1a2030}
+
+/* ---- v2.85 : vrai téléphone — nav du bas cachée, sbar sans 5G/batterie fictifs ---- */
+body.mob .nav{display:none}
+body.mob .sbar > i{display:none}
+body.mob #chat{padding-bottom:16px}
