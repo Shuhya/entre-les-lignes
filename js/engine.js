@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.79";console.log("Entre les lignes · v"+VER);
+const VER="2.80";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -671,7 +671,8 @@ $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&!vv.contains(e.target)&&!$("set").contains(e.target))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
- up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"⛶ Quitter le plein écran":"⛶ Plein écran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
+$("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
 {const tr=$("trB");if(tr)tr.onclick=()=>{$("vol").hidden=true;transferOv()};}$("apps").onclick=()=>appHome();
 {const w=$("vw2");if(w)w.onclick=()=>setView(!PC)}
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
@@ -684,7 +685,7 @@ $("bk").onclick=()=>{const no=document.getElementById("notesOv");
 function setView(p){PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE=$("vw");if(vwE)vwE.textContent=PC?"📱":"🖥️";{const v2=$("vw2");if(v2)v2.textContent=PC?"📱 Mode téléphone":"🖥️ Mode PC"}try{localStorage.setItem("view",PC)}catch(e){}}
 {const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?0:+v)}catch(e){setView(0)}
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
-if($("go")){$("go").onclick=startFromIntro;$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
+if($("go")){$("go").onclick=()=>{try{if(matchMedia("(pointer:coarse)").matches&&!document.fullscreenElement){const d=document.documentElement;const rq=(d.requestFullscreen||d.webkitRequestFullscreen);if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}}catch(e){}startFromIntro()};$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:true});
 (async()=>{const im=$("bgi");if(!im)return;const ld=new Promise(res=>{const t=new Image();t.onload=t.onerror=res;t.src=IMG.menu});im.style.backgroundImage='url('+IMG.menu+')';try{await Promise.race([ld,sl(2500)])}catch(e){}
  requestAnimationFrame(()=>$("in").classList.add("on"));
