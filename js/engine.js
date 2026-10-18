@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.82";console.log("Entre les lignes · v"+VER);
+const VER="2.83";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -97,7 +97,7 @@ async function play(id,r=run){
   if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
   else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([gf(x)],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
- if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars[0]||""],1)}
+ if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
  clkPlan(n);
  if(n.e)return fin(n.e);
@@ -289,7 +289,7 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const o=document.createElement("div");o.id="endOv";
  const c=document.createElement("div");c.className="card";
  const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
- const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 "+(SS.id==="h"?"Partie I":"fin de l'enqu\u00EAte");c.append(sub);
+ const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 fin de chapitre";c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
  const ds=document.createElement("div");ds.className="endDossier";
  ds.innerHTML="<span>\u23F1 "+fmtT(STATS.t)+" de lecture</span><span>\uD83D\uDCAC "+STATS.msgs+" messages lus</span><span>\uD83D\uDCDA "+(STATS.runs||1)+" passage"+(STATS.runs>1?"s":"")+"</span>";
@@ -297,13 +297,16 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
  bar(st.int,SS.id==="h"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
- const fd=document.createElement("div");fd.className="endFins";const fl=document.createElement("b");fl.textContent="Fins découvertes — "+seen.length+" / "+tot;fd.append(fl);
+ const fd=document.createElement("div");fd.className="endFins";
+if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes — "+seen.length+" / "+tot;fd.append(fl);
  const list=document.createElement("div");list.className="endFinsList";
  endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
   r.innerHTML=seen.includes(t)?"<span>\u2713</span>"+t.replace(/</g,"&lt;"):"<span>\uD83D\uDD12</span>"+t.replace(/</g,"&lt;");
   list.append(r)});
- fd.append(list);c.append(fd);
- const b1=document.createElement("button");b1.id="ob";b1.textContent="↺ Revivre l'histoire";b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
+ fd.append(list)}
+else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";fd.append(vh)}
+c.append(fd);
+ const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
  o.append(c);document.body.append(o);
  try{save()}catch(e){}}
@@ -645,25 +648,41 @@ function addBack(c){
 /* ---- Fiche progression (bouton i a cote de l'heure) ---- */
 function infoOv(){
  try{const M=window.etlMisc;if(M&&M.stopPro)M.stopPro()}catch(e){}
- const o=document.createElement("div");o.className="rsOv";
- const c=document.createElement("div");c.className="card";
- const h2=document.createElement("h2");h2.textContent=SS?SS.t:"Progression";c.append(h2);
+ const o=document.createElement("div");o.id="infoOv";
+ const b=document.createElement("div");b.className="ifCard";
+ const k=document.createElement("div");k.className="ifK";k.textContent="Progression";b.append(k);
+ const h2=document.createElement("h2");h2.textContent=SS?SS.t:"Entre les lignes";b.append(h2);
  if(SS&&SS.id==="h"){
-  let pn=0;try{pn=+localStorage.getItem("etl_part_"+SS.id)||0}catch(e){}
-  const rom=["","I","II","III","IV","V","VI"][Math.max(pn,({I:1,II:2,III:3,IV:4,V:5,VI:6})[CHP]||0)]||"I";
-  const fs=document.createElement("div");fs.className="finStat";fs.innerHTML="Partie <b>"+rom+" / VI</b> \u00B7 chapitre en cours";c.append(fs);
-  const ss=document.createElement("div");ss.className="finStat";ss.innerHTML="\u23F1 "+fmtT(STATS.t)+" \u00B7 \uD83D\uDCAC "+STATS.msgs+" messages";c.append(ss);
-  let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+SS.id))||P}catch(e){}
-  SS.ch.forEach((hh,i)=>{const w=!!S[hh[1]],ok=w&&(i===0||i<P.c);const r=document.createElement("div");r.className="infoCh"+(ok?" on":"");r.innerHTML=(i+1)+". "+hh[0]+(ok?"":" \u00B7 \uD83D\uDD12");c.append(r)});
+  const cur=(SS.ch&&SS.ch[Math.min(SC,(SS.ch.length-1))])||[];
+  const done=!!(st&&st.e);
+  let Pc={c:0,s:[]};try{Pc=JSON.parse(localStorage.getItem("pg"+SS.id))||Pc}catch(e){}
+  const ch=document.createElement("div");ch.className="ifRow big";
+  ch.innerHTML="<span>"+(SC+1)+". "+(cur[0]||"Num\u00E9ro attribu\u00E9")+"</span><small>"+(done?"chapitre termin\u00E9":"en cours")+"</small>";
+  b.append(ch);
+  SS.ch.forEach((hh,i2)=>{const w=!!S[hh[1]],ok=w&&(i2===0||i2<Pc.c);
+   const r=document.createElement("div");r.className="ifRow"+(ok?" on":" dim");
+   r.innerHTML="<span>"+(i2+1)+". "+hh[0]+"</span><small>"+(ok?"\u2713":"\uD83D\uDD12")+"</small>";
+   b.append(r)});
+  const meta=document.createElement("div");meta.className="ifMeta";
+  meta.innerHTML="\u23F1 "+fmtT(STATS.t)+" de lecture \u00B7 \uD83D\uDCAC "+STATS.msgs+" messages<small>toutes tes parties, sur cet appareil</small>";
+  b.append(meta);
   const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);g0=(JSON.parse(localStorage.getItem("fe"+SS.id)||"[]")).length}catch(e){}
-  if(tot){const fl=document.createElement("button");fl.className="finStat";fl.style.cursor="pointer";fl.style.width="100%";fl.innerHTML="\uD83C\uDFC1 Fins : <b>"+Math.min(g0,tot)+" / "+tot+"</b> \u2014 celles que tu as trouv\u00E9es, touche pour les voir";fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};c.append(fl)}
+  if(tot>1){const fl=document.createElement("button");fl.className="ifBtn";
+   fl.innerHTML="\uD83C\uDFC1 Fins : "+Math.min(g0,tot)+" / "+tot+" — touche pour les voir";
+   fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};b.append(fl)}
+  else{const vh=document.createElement("div");vh.className="ifVar";
+   vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";
+   b.append(vh)}
  }
- const nb2=document.createElement("button");nb2.className="finStat";nb2.style.cursor="pointer";nb2.style.width="100%";nb2.innerHTML="\uD83D\uDCDD Notes de l\u2019enqu\u00EAte — qui est qui, ce que tu sais, o\u00F9 tu en es";nb2.onclick=()=>{o.remove();if(typeof notesOv==="function")notesOv(false)};c.append(nb2);
- const g=document.createElement("div");g.className="infoGuide";
- g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : le menu \u2014 biblioth\u00E8que des histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages \u2014 volume, mode t\u00E9l\u00E9phone / PC, emojis, notes de l'enqu\u00EAte.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche \u2014 o\u00F9 tu en es dans les chapitres, tes fins trouv\u00E9es, et tes notes d'enqu\u00EAte.</p><p><b>\uD83D\uDCDD</b> : notes de l'enqu\u00EAte \u2014 qui est qui, ce que tu sais, tes preuves.</p>";
- c.append(g);
- const cb=document.createElement("button");cb.className="bk";cb.innerHTML="<h3>\u2039 Retour</h3><p>Revenir \u00E0 la conversation</p>";cb.onclick=()=>{o.remove()};c.append(cb);
- o.append(c);document.body.append(o);addBack(c);
+ const nb2=document.createElement("button");nb2.className="finStat ifNotes";
+ nb2.innerHTML="\uD83D\uDCDD Notes de l'enqu\u00EAte — qui est qui, ce que tu sais";
+ nb2.onclick=()=>{o.remove();if(typeof notesOv==="function")notesOv(false)};b.append(nb2);
+ const g=document.createElement("div");g.className="ifGuide";
+ g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : la biblioth\u00E8que — histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages — th\u00E8me nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein \u00E9cran, transfert de sauvegarde.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche — o\u00F9 tu en es, tes fins, tes notes.</p><p><b>\uD83D\uDCDD</b> : les notes de l'enqu\u00EAte — qui est qui, ce que tu sais, tes preuves.</p>";
+ b.append(g);
+ const cb=document.createElement("button");cb.className="ifBack";cb.textContent="\u2039 Reprendre la conversation";
+ cb.onclick=()=>{o.remove()};b.append(cb);
+ o.append(b);$("app").append(o);
  o.addEventListener("click",e=>{if(e.target===o)o.remove()});
 }
 function startFromIntro(){unlock();menu();const d=$("in");if(d){d.classList.add("out");setTimeout(()=>{if(d.classList.contains("out"))d.remove()},1100)}}

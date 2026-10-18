@@ -632,3 +632,39 @@ html[data-theme="light"] #appHome .ah-ic{box-shadow:0 8px 22px #0003}
 html[data-theme="light"] #appHome .ah-dots i{background:#00000030}
 html[data-theme="light"] #appHome .ah-dots i.on{background:#1a2c40}
 html[data-theme="light"] #appHome .ahBack{background:#00000012;border-color:#00000024;color:#1a2c40}
+
+/* ---- v2.83 : fiche 📖 refonte (in-téléphone, identité du site) + bilan ---- */
+#infoOv{position:absolute;inset:0;z-index:46;background:radial-gradient(140% 100% at 50% 42%,#0e1522 0%,#07090f 58%,#040406 100%);overflow-y:auto;padding:calc(18px + env(safe-area-inset-top,0px)) 18px 26px;animation:fo .3s}
+.ifCard{max-width:430px;margin:0 auto;color:#f1eee3;font-family:Georgia,serif}
+.ifK{font:600 10px system-ui;letter-spacing:4px;text-transform:uppercase;color:#ffd1669e;margin:0 0 10px;text-align:center}
+#infoOv h2{font:400 27px Georgia,serif;margin:0 0 18px;text-align:center;color:#fdfbf4}
+.ifRow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 12px;border-bottom:1px solid #ffffff14;font:400 14px/1.5 system-ui;color:#ffffffd9}
+.ifRow:first-of-type{border-top:1px solid #ffffff14}
+.ifRow small{color:#ffffff8c;font-size:11.5px;white-space:nowrap}
+.ifRow.on span{color:#ffe9b0}
+.ifRow.dim{opacity:.5}
+.ifMeta{margin:14px 0 4px;font:400 12.5px system-ui;color:#ffffffa8;text-align:center}
+.ifMeta small{display:block;opacity:.7;font-size:11px;margin-top:2px}
+.ifBtn{display:block;width:100%;margin:10px 0 0;padding:11px 14px;border-radius:12px;border:1px solid #ffd16645;background:#ffd1660f;color:#ffe9b0;font:500 13px system-ui;cursor:pointer}
+.ifBtn:hover{background:#ffd1661e}
+.ifVar{margin:12px 0 0;padding:11px 14px;border:1px dashed #ffd16638;border-radius:12px;font:italic 400 13.5px/1.6 Georgia,serif;color:#ffd166c9;text-align:center}
+#infoOv .finStat.ifNotes{display:block;width:100%;margin:14px 0 0;padding:12px 14px;border-radius:12px;border:1px solid #ffd16645;background:#ffd1660f;color:#ffe9b0;font:500 13px system-ui;cursor:pointer;text-align:center}
+#infoOv .finStat.ifNotes:hover{background:#ffd1661e}
+.ifGuide{margin:18px 0 0;padding-top:14px;border-top:1px solid #ffffff1f;text-align:left;font:400 12.5px/1.7 system-ui;color:#cfe0f5}
+.ifGuide b{color:#ffd166}
+.ifGuide>b{display:block;margin-bottom:8px;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase}
+.ifGuide p{margin:5px 0}
+.ifBack{display:block;width:100%;margin:22px auto 0;padding:11px 16px;border-radius:999px;border:1px solid #ffffff24;background:#ffffff0f;color:#ffffffd6;font:500 13px system-ui;cursor:pointer}
+.ifBack:hover{background:#ffffff1c}
+.endVar{margin:0;font:italic 400 13.5px/1.6 Georgia,serif;color:#ffd166c9}
+html[data-theme="light"] #infoOv{background:radial-gradient(140% 100% at 50% 42%,#f7f8fb 0%,#eef0f5 58%,#e6e9f0 100%)}
+html[data-theme="light"] .ifCard,html[data-theme="light"] #infoOv h2{color:#1a2030}
+html[data-theme="light"] .ifRow{border-bottom-color:#00000014;color:#2a3040}
+html[data-theme="light"] .ifRow small{color:#6a7484}
+html[data-theme="light"] .ifRow.on span{color:#7a5c00}
+html[data-theme="light"] .ifMeta{color:#5a6474}
+html[data-theme="light"] .ifBtn,html[data-theme="light"] #infoOv .finStat.ifNotes{background:#fff;border-color:#c9b26a;color:#5a4a12}
+html[data-theme="light"] .ifVar,html[data-theme="light"] .endVar{color:#7a5c00;border-color:#c9b26a66;background:#fdf6e3}
+html[data-theme="light"] .ifGuide{color:#3a4356;border-top-color:#0000001a}
+html[data-theme="light"] .ifGuide b{color:#8a6d1a}
+html[data-theme="light"] .ifBack{background:#fff;border-color:#c8ccd4;color:#1a2030}
