@@ -27,7 +27,6 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== location.origin) return;
-  if (url.pathname.endsWith("/atelier.html")) return;          /* admin : jamais hors-ligne */
   const isHTML = e.request.mode === "navigate" || e.request.destination === "document" ||
                  /\.(html)?$/i.test(url.pathname) || url.pathname === "/" || url.pathname.endsWith("/");
   e.respondWith(

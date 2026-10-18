@@ -1,5 +1,5 @@
 const DEF_AV={'':AVF1,h:AVF3};
-let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},ADM=0,ADS="",kb="",tp=[],nodeNow=null,EDIT=0;
+let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},nodeNow=null;
 const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
 /* ---- stats de lecture (locales, agrégées) — portée GLOBALE : utilisées par start() et play() ---- */
 let PROD=0; /* prologue déjà affiché par introH (v2.51) — évite le double affichage dans play() */
@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.78";console.log("Entre les lignes · v"+VER);
+const VER="2.79";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -60,7 +60,6 @@ async function play(id,r=run){
  CHP=(SS&&SS.id==="h"&&PART[id])?PART[id]:"";
  if(SS&&SS.id==="h"&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
- if(ADM&&$("a6"))$("a6").textContent=id;
  if(n.j)return play(n.j(st),r);
  if(n.w){scene(n.w,id);try{const sm=JSON.parse(localStorage.getItem("etl_node_sounds")||"{}");if(sm[id])amb(sm[id]);else if(AUTOAMB[n.w])amb(AUTOAMB[n.w])}catch(e){}}
  if(n.pro&&!PROD)await proCards(n.pro);
@@ -405,7 +404,6 @@ function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";c
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
 function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
- if(ADM&&ADS){try{Object.assign(st,JSON.parse(ADS))}catch(e){}}
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
  document.body.classList.add("play");$("mn").classList.remove("on");
  const begin=()=>{if(SS.id==="h"&&!SC&&!(window.__ghost&&window.__ghost())&&typeof introH==="function")introH(()=>play(SS.ch[SC][1]));else play(SS.ch[SC][1])};
@@ -664,16 +662,10 @@ function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").h
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
- s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(ADM||i===0||i<P.c);row(c,(i+1)+". "+h[0]+(ok?"":w?" · verrouillé":" · bientôt"),"",()=>{SC=i;$("nm").textContent=s.n;$("av").textContent=s.n[0];start()},!ok)});
+ s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);row(c,(i+1)+". "+h[0]+(ok?"":w?" · verrouillé":" · bientôt"),"",()=>{SC=i;$("nm").textContent=s.n;$("av").textContent=s.n[0];start()},!ok)});
  row(c,"‹ Retour","",menu);show(c)}
-/* ---- admin ---- */
-function adm(on){ADM=on;const p=$("adm");if(p)p.remove();}
 function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();infoOv()});
-$("clk").parentNode.addEventListener("click",()=>{if(typeof ETL_ATELIER==="undefined")return;const n=Date.now();tp=tp.filter(t=>n-t<3000);tp.push(n);if(tp.length>=7){tp=[];
-  if(EDIT)adm(false);
-  else if(SS&&SK&&nodeNow&&S[nodeNow])adm(true);
-  else toast("Ouvre une histoire puis 7 taps sur l\u2019horloge pour l\u2019\u00E9diter.")}});
 /* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&!vv.contains(e.target)&&!$("set").contains(e.target))vv.hidden=true});
@@ -693,8 +685,7 @@ function setView(p){PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE
 {const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?0:+v)}catch(e){setView(0)}
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
 if($("go")){$("go").onclick=startFromIntro;$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
-if(typeof ETL_ATELIER!=="undefined")setTimeout(()=>toast("Atelier : ouvre une histoire, puis 7 taps sur l'horloge pour l'\u00E9diter."),1200);
-addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK&&!ADM)amb(null)}},{once:true});
+addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:true});
 (async()=>{const im=$("bgi");if(!im)return;const ld=new Promise(res=>{const t=new Image();t.onload=t.onerror=res;t.src=IMG.menu});im.style.backgroundImage='url('+IMG.menu+')';try{await Promise.race([ld,sl(2500)])}catch(e){}
  requestAnimationFrame(()=>$("in").classList.add("on"));
  setTimeout(()=>Object.values(IMG).forEach(u=>{const i=new Image();i.src=u;if(i.decode)i.decode().catch(()=>0)}),800)})();
@@ -764,7 +755,8 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  else if(cur-base>=30)return;                                  /* dérive max 30 min sans repère */
  CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
 
-/* Sauvegarde de reprise + atelier d'administration */
+/* Sauvegarde de reprise */
+function toast(t){let d=document.getElementById("edToast");if(!d){d=document.createElement("div");d.id="edToast";document.body.append(d)}d.textContent=t;d.classList.remove("go");void d.offsetWidth;d.classList.add("go");setTimeout(()=>{if(d&&d.parentNode)d.remove()},3600)}
 (function(){
  const KEY='etl_resume_v4';let restoring=false,GHOST=false,path=[],seenPro={};nodeNow=null;try{window.__ghost=()=>GHOST}catch(e){}
 
@@ -774,7 +766,7 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  const oldFin=fin;fin=function(v){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  const oldMenu=menu;
- menu=function(){GHOST=false;save();stopPro();if(EDIT)adm(false);run++;SK=0;nodeNow=null;updateRail&&EDIT&&updateRail();ck();amb(null);$('ov').hidden=true;
+ menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;ck();amb(null);$('ov').hidden=true;
   const c=card('Choisis une histoire');
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   STORIES.forEach((s,i)=>{
@@ -822,16 +814,16 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]')).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
- chap=function(s){if(EDIT)adm(false);GHOST=false;SS=s;
+ chap=function(s){GHOST=false;SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
   const resuming=!!(v&&v.story===s.id&&v.node&&S[v.node]);
   const goChaps=()=>{
-   nodeNow=null;if(EDIT)updateRail();
+   nodeNow=null;
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
    const c=card(s.t);
    const tot=endsOf(s),got=feN(s);
-   s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(ADM||i===0||i<P.c);
+   s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);
     const b=row(c,(i+1)+'. '+h[0]+(ok?'':w?' \u00B7 verrouill\u00E9':' \u00B7 bient\u00F4t'),'',()=>{SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()},!ok);
     if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};b.after(rb)}});
    if(s.id==='h'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
@@ -867,465 +859,6 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  else{if(path[path.length-1]===v.node)path.pop();setTimeout(()=>play(v.node),120)}
  save()
  }
- const oldAdm=adm;
- /* ================= MODE ADMIN v4 : simulateur éditable en place ================= */
- const LSN='etl_nodes_v2',LSI='etl_img_v2',LSS='etl_stories_v2';
- const jg=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v||d}catch(e){return d}};
- const fnRev=o=>{if(o&&typeof o==='object')for(const k in o){if(k==='j'&&typeof o.j==='string')o.j=new Function('return ('+o.j+')')();else fnRev(o[k])}return o};
- const NP=fnRev(jg(LSN,{})),IP=jg(LSI,{}),SP=jg(LSS,{});
- for(const k in NP){if(NP[k]===null)delete S[k];else if(NP[k])S[k]=NP[k]}
- for(const k in IP){if(IP[k]===null)delete IMG[k];else if(IP[k])IMG[k]=IP[k]}
- STORIES.forEach(x=>{if(SP[x.id])Object.assign(x,SP[x.id])});
- const pu=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
- const fnSer=(k,v)=>typeof v==='function'?v.toString():v;
- const persistNode=id=>{NP[id]=JSON.parse(JSON.stringify(S[id],fnSer));pu(LSN,NP)};
- const saveImgs=()=>pu(LSI,IP),saveStories=()=>pu(LSS,SP);
- const bgMap=(typeof nodeBackgrounds==='object'&&nodeBackgrounds)?nodeBackgrounds:jg('etl_node_backgrounds',{});
- const sndMap=jg('etl_node_sounds',{});
- const saveBg=()=>{try{localStorage.setItem('etl_node_backgrounds',JSON.stringify(bgMap))}catch(e){}};
- const saveSnd=()=>{try{localStorage.setItem('etl_node_sounds',JSON.stringify(sndMap))}catch(e){}};
- const allIds=()=>Object.keys(S).sort();
- const FXK=['t','care','agency','practical'];
- let pop=null,edQ=[],edAuto=false,edTimer=null;
- /* --- annulation (undo) --- */
- let undoStack=[],lastSnap='';
- function pushSnap(){try{const s=JSON.stringify({S:S,stories:STORIES,bg:bgMap,snd:sndMap},fnSer);
-   if(s===lastSnap)return;lastSnap=s;
-   undoStack.push({t:'full',d:s});if(undoStack.length>30)undoStack.shift()}catch(e){}}
- function pushSnapImg(k){undoStack.push({t:'img',k:k,old:IMG[k],oldP:IP[k]})}
- function undo(){const s=undoStack.pop();if(!s){lastSnap='';return toast('Rien \u00E0 annuler.')}
-  try{
-   if(s.t==='img'){if(s.old===undefined){delete IMG[s.k];if(s.oldP===undefined)delete IP[s.k]}else{IMG[s.k]=s.old;if(s.oldP!==undefined)IP[s.k]=s.oldP}saveImgs()}
-   else{const d=fnRev(JSON.parse(s.d));
-    for(const k in S)delete S[k];for(const k in d.S)S[k]=d.S[k];pu(LSN,d.S?JSON.parse(JSON.stringify(d.S,fnSer)):NP);
-    if(d.stories){STORIES.splice(0,STORIES.length,...d.stories);saveStories()}
-    for(const k in bgMap)delete bgMap[k];if(d.bg)Object.assign(bgMap,d.bg);saveBg();
-    for(const k in sndMap)delete sndMap[k];if(d.snd)Object.assign(sndMap,d.snd);saveSnd();
-    lastSnap=s.d}
-   closePop();edRefresh();updateRail();toast('Annul\u00E9 \u21A9')}catch(e){}}
- /* --- utilitaires UI --- */
- window.toast=toast;window.persistNode=persistNode;function toast(t){let d=$('edToast');if(!d){d=document.createElement('div');d.id='edToast';document.body.append(d)}d.textContent=t;d.classList.remove('go');void d.offsetWidth;d.classList.add('go');setTimeout(()=>{if(d&&d.parentNode)d.remove()},3600)}
- function closePop(){if(pop){pop.remove();pop=null}}
- function openPop(html){closePop();pop=document.createElement('div');pop.id='edPop';pop.innerHTML=html;document.body.append(pop);pop.addEventListener('click',e=>{if(e.target===pop)closePop()});return pop}
- function needNode(){if(nodeNow&&S[nodeNow])return nodeNow;toast('Ouvre une histoire et rends-toi sur un point du r\u00E9cit.');return null}
- /* ================= lecteur pas-à-pas ================= */
- function edScene(id){const n=S[id]||{};scene(n.w||null,id);
-  if(sndMap[id]==='__off')amb(null);else if(sndMap[id])amb(sndMap[id])}
- function bubble(t,x,ni){if(t==='p'){const d2=document.createElement('div');d2.className='b h pm';const im2=document.createElement('img');im2.src=x;d2.append(im2);$('chat').append(d2);return d2}const d=document.createElement('div');
-  d.className=t==='h'?'b h':t==='m'?'b m':t==='s'?'sys':'b n';d.textContent=x;
-  if(ni!=null){d.classList.add('ed');d.title='Cliquer pour modifier';d.onclick=()=>{if(EDIT)msgEditor(nodeNow,ni,d)}}
-  $('chat').append(d);$('chat').scrollTop=1e9;return d}
- function edRender(id){if(!id||!S[id])return;nodeNow=id;
-  clearTimeout(edTimer);edAuto=false;edQ=[];closePop();
-  const n=S[id];
-  $('chat').innerHTML='';$('ch').innerHTML='';
-  edScene(id);
-  (n.m||[]).forEach((mm,si)=>edQ.push({t:mm[0],x:mm[1],si:si}));
-  st=st||{t:0,l:0,r:0,v:0,e:''};
-  updateRail();
-  if(!edQ.length)edFinish(id)}
- function edStep(){if(!EDIT||!nodeNow)return;const id=nodeNow;
-  if(!edQ.length){edFinish(id);return}
-  const it=edQ.shift();
-  if(it.t==='x'){$('nm').textContent=SS.n;setAv(SS.n[0])}
-  else bubble(it.t,it.x,it.si);
-  if(!edQ.length&&!edAuto)edFinish(id);
-  updateRail()}
- function edRunAuto(){if(!edQ.length){edAuto=false;edFinish(nodeNow);updateRail();return}
-  edStep();
-  if(edQ.length)edTimer=setTimeout(edRunAuto,650);else{edAuto=false;edFinish(nodeNow)}
-  updateRail()}
- function edFinish(id){const n=S[id];if(!n)return;const c=$('ch');c.innerHTML='';
-  if(n.e||n.k){const d=document.createElement('div');d.className='b n';d.textContent='\uD83C\uDFC1 '+(n.e?n.e[0]:n.k);$('chat').append(d);
-   const b=document.createElement('button');b.textContent='Modifier cette fin';b.onclick=()=>finEditor(id);c.append(b)}
-  else if(typeof n.j==='function'){let tgt=null;try{tgt=n.j(st)}catch(e){}
-   const d=document.createElement('div');d.className='b n';d.textContent='\uD83D\uDCAC Selon tes choix pr\u00E9c\u00E9dents\u2026';$('chat').append(d);
-   if(tgt&&S[tgt]){const b=document.createElement('button');b.title=tgt;b.textContent='Voir la suite de cette sc\u00E8ne';b.onclick=()=>edRender(tgt);c.append(b)}}
-  else if(n.x){const b=document.createElement('button');b.title=n.x;b.textContent='Continuer';b.onclick=()=>edRender(n.x);c.append(b)}
-  (n.c||[]).forEach((ch,i)=>{const b=document.createElement('button');b.textContent=ch[0];
-   b.onclick=()=>{c.innerHTML='';bubble(ch[3]==='!'?'n':'m',ch[3]==='!'?ch[0]:(ch[3]||ch[0]));const ef=ch[2]||{};for(const k in ef)st[k]=FXK.includes(k)?(st[k]||0)+ef[k]:ef[k];setTimeout(()=>edRender(ch[1]),350)};
-   const p=document.createElement('span');p.className='edp';p.textContent='\u270E';p.title='Modifier ce choix';
-   p.onclick=e=>{e.stopPropagation();e.preventDefault();choiceEditor(id,i)};b.append(p);c.append(b)});
-  if(!(n.e||n.k)&&!(typeof n.j==='function')&&!n.x){const a=document.createElement('button');a.className='edAdd';a.textContent='\uFF0B Ajouter un choix';a.onclick=()=>choiceEditor(id,-1);c.append(a)}
-  $('chat').scrollTop=1e9}
- function edRefresh(){if(nodeNow&&S[nodeNow])edRender(nodeNow);else updateRail()}
- /* ================= éditeurs ================= */
- const MT=[['h','Message re\u00E7u'],['m','Message envoy\u00E9'],['n','Narration'],['s','Info syst\u00E8me'],['p','Photo / MMS'],['x','R\u00E9v\u00E9ler le pr\u00E9nom']];
- function msgEditor(id,idx,el){const n=S[id];if(!n||!n.m||!n.m[idx])return;const cur=n.m[idx];
-  const p=openPop('<b>Message '+(idx+1)+' / '+n.m.length+' \u2014 sc\u00E8ne <span class="mono">'+id+'</span></b>'
-   +'<label>Type</label><select id="pmT">'+MT.map(m=>'<option value="'+m[0]+'"'+(m[0]===cur[0]?' selected':'')+'>'+m[1]+'</option>').join('')+'</select>'
-   +'<label>Texte</label><textarea id="pmX"></textarea>'
-   +'<div class="pb"><button id="pmSave" class="pa">Enregistrer</button><button id="pmIns">Ins\u00E9rer un message apr\u00E8s</button><button id="pmDel" class="pw">Supprimer</button><button id="pmCl">Annuler</button></div>');
-  p.querySelector('#pmX').value=cur[1]||'';
-  p.querySelector('#pmSave').onclick=()=>{const t=p.querySelector('#pmT').value,x=p.querySelector('#pmX').value;if(!x.trim())return toast('Le message est vide.');
-   pushSnap();n.m[idx]=[t,x];persistNode(id);closePop();
-   if(el&&t==='x'){el.remove()}
-   else if(el){el.textContent=x;el.className=(t==='h'?'b h':t==='m'?'b m':t==='s'?'sys':'b n')+' ed'}
-   toast('Message enregistr\u00E9 \u2713')};
-  p.querySelector('#pmIns').onclick=()=>{pushSnap();n.m.splice(idx+1,0,['n','(nouveau message)']);persistNode(id);closePop();edRefresh()};
-  p.querySelector('#pmDel').onclick=()=>{if(!confirm('Supprimer ce message ?'))return;pushSnap();n.m.splice(idx,1);persistNode(id);closePop();edRefresh()};
-  p.querySelector('#pmCl').onclick=closePop}
- function choiceEditor(id,i){const n=S[id];if(!n)return;n.c=n.c||[];const cur=i>=0?(n.c[i]||['','','']):['','',''];const ef=cur[2]||{};
-  const p=openPop('<b>'+(i>=0?'Choix '+(i+1):'Nouveau choix')+' \u2014 sc\u00E8ne <span class="mono">'+id+'</span></b>'
-   +'<label>Texte du choix</label><textarea id="pcL" style="min-height:44px"></textarea>'
-    +'<label>Quand le joueur choisit cette r\u00E9ponse</label><select id="pcM"><option value="send">Sam envoie le texte du choix en SMS</option><option value="custom">Sam envoie une autre phrase</option><option value="act">Action : le texte s\u2019affiche en narration, pas de SMS</option></select>'
-    +'<textarea id="pcR" placeholder="La phrase que Sam envoie r\u00E9ellement\u2026 (pour \u00AB autre phrase \u00BB)" style="min-height:44px"></textarea>'
-   +'<label>Effets (facultatifs)</label><div class="pfx">'+FXK.map(k=>'<span>'+k+'<input type="number" id="pcF_'+k+'" value="'+(ef[k]||0)+'">').join('')+'</span></div>'
-   +'<input id="pcX" placeholder="autres effets : bound=1, leave=1\u2026">'
-   +'<label>M\u00E8ne vers</label><select id="pcT"><option value="">\u2014 choisir une sc\u00E8ne \u2014</option>'+storySceneIds().map(k=>'<option value="'+k+'"'+(k===cur[1]?' selected':'')+'>'+k+' \u2014 '+sceneHint(k,42)+'</option>').join('')+'<option value="__new">\uFF0B cr\u00E9er une nouvelle sc\u00E8ne\u2026</option></select>'
-   +'<div class="pb"><button id="pcSave" class="pa">Enregistrer</button>'+(i>=0?'<button id="pcDel" class="pw">Supprimer ce choix</button>':'')+'<button id="pcCl">Annuler</button></div>');
-  p.querySelector('#pcL').value=cur[0]||'';
-   const cv=cur[3];p.querySelector('#pcM').value=cv==='!'?'act':(typeof cv==='string'?'custom':'send');p.querySelector('#pcR').value=(typeof cv==='string'&&cv!=='!')?cv:'';
-  p.querySelector('#pcSave').onclick=()=>{const lb=p.querySelector('#pcL').value.trim();let tgt=p.querySelector('#pcT').value;
-   if(!lb)return toast('Donne un texte au choix.');
-   if(tgt==='__new'){const nid=prompt('Identifiant de la nouvelle sc\u00E8ne :','scene'+(allIds().length+1));if(!nid||S[nid])return toast('Identifiant invalide ou d\u00E9j\u00E0 pris.');pushSnap();S[nid]={m:[['n','\u00C9cris ici ce qui se passe.']],c:[]};persistNode(nid);tgt=nid}
-   if(!tgt||!S[tgt])return toast('Choisis la sc\u00E8ne cible.');
-   const e2={};FXK.forEach(k=>{const v=+p.querySelector('#pcF_'+k).value||0;if(v)e2[k]=v});
-   p.querySelector('#pcX').value.split(',').forEach(pp=>{const[a,b]=pp.split('=').map(s=>(s||'').trim());if(a&&b!==''){e2[a]=isNaN(+b)?b:+b}});
-   pushSnap();const mv=p.querySelector('#pcM').value;const rm=mv==='act'?'!':(mv==='custom'?p.querySelector('#pcR').value.trim():'');const chE=[lb,tgt,e2];if(mv==='act'||(mv==='custom'&&rm))chE.push(rm||'!');n.c[i>=0?i:n.c.length]=chE;persistNode(id);closePop();edFinish(id);toast('Choix enregistr\u00E9 \u2713')};
-  const del=p.querySelector('#pcDel');if(del)del.onclick=()=>{if(!confirm('Supprimer ce choix ?'))return;pushSnap();n.c.splice(i,1);persistNode(id);closePop();edFinish(id)};
-  p.querySelector('#pcCl').onclick=closePop}
- function sceneHint(id,max){const n=S[id];if(!n)return '';let t='';for(const w of(n.m||[])){if(w[0]==='h'||w[0]==='n'){t=w[1];break}}t=String(t||'').replace(/\s+/g,' ').trim();max=max||110;return t.length>max?t.slice(0,max)+'\u2026':t}
- function storySceneIds(){const out=[],seen={},q=[];(SS&&SS.ch||[]).forEach(c=>{if(c[1]&&S[c[1]]&&!seen[c[1]]){seen[c[1]]=1;q.push(c[1])}});
-  while(q.length){const id=q.shift();out.push(id);const n=S[id];const tg=[];(n.c||[]).forEach(c=>{if(c[1])tg.push(c[1])});if(typeof n.x==='string')tg.push(n.x);
-   if(typeof n.j==='function'){try{const t=n.j(st||{});if(t)tg.push(t)}catch(e){}}
-   tg.forEach(t=>{if(S[t]&&!seen[t]){seen[t]=1;q.push(t)}})}
-  return out}
- function decorEditor(id){const n=S[id];if(!n)return;
-  const ids=storySceneIds();
-  const p=openPop('<b>D\u00E9cor de la sc\u00E8ne</b>'
-   +'<label>Sc\u00E8ne \u00E0 modifier</label><select id="pdN">'+ids.map(k=>'<option value="'+k+'"'+(k===id?' selected':'')+'>'+k+' \u2014 '+sceneHint(k,60)+'</option>').join('')+'</select>'
-   +'<div class="seHelp" style="font-style:italic">\u00AB\u00A0'+sceneHint(id)+'\u00A0\u00BB</div>'
-   +'<label>Fond de la biblioth\u00E8que</label><img id="pdP" alt="" style="width:100%;max-height:170px;object-fit:cover;border-radius:10px;border:1px solid #ffffff33;background:#0006;display:none">'
-   +'<input type="hidden" id="pdK"><div class="pdThumbs" id="pdThumbs"></div>'
-   +'<label>Ou image personnalis\u00E9e (URL ou fichier)</label><input id="pdU" placeholder="https://\u2026"><input type="file" id="pdF" accept="image/*">'
-   +'<div class="pb"><button id="pdS" class="pa">Appliquer</button><button id="pdCl">Annuler</button></div>');
-  const pv=p.querySelector('#pdP'),hv=p.querySelector('#pdK'),ur=p.querySelector('#pdU'),grid=p.querySelector('#pdThumbs');
-  const updPrev=()=>{const k=hv.value,u=ur.value.trim();const src=u?u:(k&&IMG[k]?IMG[k]:'');if(src){pv.src=src;pv.style.display='block'}else{pv.removeAttribute('src');pv.style.display='none'}};
-  hv.value=n.w||'';
-  const pick=(k,b)=>{hv.value=k;grid.querySelectorAll('button').forEach(x=>x.classList.remove('selK'));if(b)b.classList.add('selK');updPrev()};
-  const mkTh=(k)=>{const b=document.createElement('button');b.type='button';b.title=k?k:'aucune image de biblioth\u00E8que';
-   if(k){b.style.backgroundImage='url('+IMG[k]+')';const sp=document.createElement('span');sp.textContent=k;b.append(sp)}else b.textContent='\u2014';
-   b.onclick=()=>pick(k,b);if(hv.value===(k||''))b.classList.add('selK');grid.append(b)};
-  mkTh('');Object.keys(IMG).forEach(k=>mkTh(k));
-  ur.value=bgMap[id]||'';
-  ur.oninput=()=>{grid.querySelectorAll('button').forEach(x=>x.classList.remove('selK'));updPrev()};updPrev();
-  p.querySelector('#pdN').onchange=e=>{closePop();decorEditor(e.target.value)};
-  p.querySelector('#pdF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{ur.value=r.result;updPrev()};r.readAsDataURL(f)};
-  p.querySelector('#pdS').onclick=()=>{pushSnap();const k=p.querySelector('#pdK').value,u=p.querySelector('#pdU').value.trim();
-   if(u){bgMap[id]=u;saveBg()}else{delete bgMap[id];saveBg()}
-   if(k){n.w=k;persistNode(id)}else if(!u&&n.w){pushSnap();delete n.w;persistNode(id)}
-   closePop();edScene(id);toast('D\u00E9cor appliqu\u00E9 \u2713')};
-  p.querySelector('#pdCl').onclick=closePop}
- function checkLinks(){
-  const dynRef=id=>{const n=S[id];const tg=[];if(typeof n.j==='function'){try{const t=n.j(st||{});if(t)tg.push(t)}catch(e){}}return tg};
-  const startIds=new Set();STORIES.forEach(s=>(s.ch||[]).forEach(c=>{if(c[1])startIds.add(c[1])}));
-  const issues=[];
-  Object.keys(S).forEach(id=>{const n=S[id];if(!n)return;
-   (n.c||[]).forEach(c=>{const t=c[1];if(t&&!S[t])issues.push({id,sev:'lien cass\u00E9',msg:'le choix \u00AB '+c[0]+' \u00BB m\u00E8ne \u00E0 une sc\u00E8ne inconnue ('+t+')'})});
-   if(typeof n.x==='string'&&!S[n.x])issues.push({id,sev:'lien cass\u00E9',msg:'la suite ('+n.x+') n\u2019existe pas'});
-   if(!(n.e||n.k)&&!(n.c||[]).length&&typeof n.x!=='string'&&typeof n.j!=='function')issues.push({id,sev:'cul-de-sac',msg:'aucune sortie : ni choix, ni suite, ni fin'});
-   if(!(n.m||[]).length)issues.push({id,sev:'vide',msg:'aucun message dans cette sc\u00E8ne'})});
-  const refd=new Set(startIds);
-  Object.keys(S).forEach(id=>{const n=S[id];(n.c||[]).forEach(c=>{if(c[1])refd.add(c[1])});if(typeof n.x==='string')refd.add(n.x);dynRef(id).forEach(t=>refd.add(t))});
-  Object.keys(S).forEach(id=>{if(!refd.has(id))issues.push({id,sev:'orpheline',msg:'aucun chapitre ni choix ne m\u00E8ne \u00E0 cette sc\u00E8ne'})});
-  const sevOrder=['lien cass\u00E9','cul-de-sac','orpheline','vide'];
-  const counts=sevOrder.map(s=>({s,n:issues.filter(i=>i.sev===s).length})).filter(x=>x.n);
-  const p=openPop('<b>V\u00E9rification des liens</b>'
-   +(issues.length?'<div class="seHelp">'+counts.map(c=>c.n+' '+c.s).join(' \u00B7 ')+' \u2014 clique une ligne pour ouvrir la sc\u00E8ne.</div>':'<div class="seHelp">Aucun probl\u00E8me d\u00E9tect\u00E9 \u2713</div>')
-   +'<div id="chkL"></div><div class="pb"><button id="chkCl" class="pa">Fermer</button></div>');
-  const L=p.querySelector('#chkL');
-  sevOrder.forEach(sev=>{const grp=issues.filter(i=>i.sev===sev);if(!grp.length)return;
-   const h=document.createElement('div');h.className='seHelp';h.style.cssText='margin-top:10px;text-transform:uppercase;letter-spacing:.6px';h.textContent=sev+'s ('+grp.length+')';L.append(h);
-   grp.forEach(it=>{const b=document.createElement('button');b.style.cssText='display:block;width:100%;text-align:left;margin:6px 0;font-weight:400';
-    const t=document.createElement('b');t.className='mono';t.textContent=it.id+' ';b.append(t);
-    b.append(it.msg);b.onclick=()=>{closePop();edRender(it.id)};L.append(b)})});
-  p.querySelector('#chkCl').onclick=closePop}
- function soundEditor(id){const n=S[id];if(!n)return;const cur=sndMap[id]||'';
-  const p=openPop('<b>Ambiance sonore de la sc\u00E8ne</b><div class="seHelp" style="font-style:italic">\u00AB\u00A0'+sceneHint(id)+'\u00A0\u00BB</div>'
-   +'<label>Ambiance</label><select id="psA"><option value="">D\u00E9faut du d\u00E9cor ('+(n.w||'aucun')+')</option>'+['pluie','gare','mer','nuit','foret'].map(a=>'<option value="'+a+'"'+(cur===a?' selected':'')+'>'+a+'</option>').join('')+'<option value="__off"'+(cur==='__off'?' selected':'')+'>silence</option></select>'
-   +'<div class="pb"><button id="psS" class="pa">\u00C9couter / appliquer</button><button id="psCl">Annuler</button></div>');
-  p.querySelector('#psS').onclick=()=>{pushSnap();const v=p.querySelector('#psA').value;
-   if(v)sndMap[id]=v;else delete sndMap[id];saveSnd();
-   unlock();if(v==='__off')amb(null);else amb(v||n.w||null);
-   closePop();toast('Ambiance appliqu\u00E9e \u2713')};
-  p.querySelector('#psCl').onclick=closePop}
- function finEditor(id){const n=S[id];if(!n)return;const cur=n.e||[n.k||'',''];
-  const p=openPop('<b>Marquer ce point comme une fin</b>'
-   +'<label>Titre de la fin</label><input id="pfT">'
-   +'<label>Texte de fin (facultatif)</label><textarea id="pfX"></textarea>'
-   +'<div class="pb"><button id="pfS" class="pa">Enregistrer la fin</button><button id="pfCl">Annuler</button></div>');
-  p.querySelector('#pfT').value=cur[0]||'';p.querySelector('#pfX').value=cur[1]||'';
-  p.querySelector('#pfS').onclick=()=>{const t=p.querySelector('#pfT').value.trim();if(!t)return toast('Donne un titre \u00E0 la fin.');
-   pushSnap();const x=p.querySelector('#pfX').value.trim();
-   delete n.c;delete n.x;delete n.j;
-   if(x)n.e=[t,x];else n.k=t;
-   persistNode(id);closePop();edRefresh();toast('Fin enregistr\u00E9e \u2713')};
-  p.querySelector('#pfCl').onclick=closePop}
- function delNode(id){if(!id||!S[id])return;
-  const refs=[];for(const k in S){const n=S[k];(n.c||[]).forEach(c=>{if(c[1]===id)refs.push(k)});if(n.x===id)refs.push(k)}
-  STORIES.forEach(s=>s.ch.forEach(c=>{if(c[1]===id)refs.push('chapitre')}));
-  if(!confirm('Supprimer la sc\u00E8ne \u00AB '+id+' \u00BB ?'+(refs.length?'\nR\u00E9f\u00E9renc\u00E9e par : '+[...new Set(refs)].slice(0,10).join(', ')+'. Pense \u00E0 rec\u00E2bler ces liens.':'')))return;
-  pushSnap();delete S[id];NP[id]=null;pu(LSN,NP);delete bgMap[id];saveBg();delete sndMap[id];saveSnd();
-  nodeNow=null;edRefresh();toast('N\u0153ud supprim\u00E9 \u2713')}
- /* ================= histoires & chapitres ================= */
- function storyEditor(){pushSnap();
-  const p=openPop('<b>Histoires & chapitres</b><p class="seHelp">Ici tu r\u00E8gles ce que voit le joueur : le nom du contact dans le t\u00E9l\u00E9phone, le num\u00E9ro affich\u00E9 en haut de l\u2019\u00E9cran, le titre et le r\u00E9sum\u00E9 du menu. Chaque chapitre s\u2019ouvre sur une sc\u00E8ne pr\u00E9cise \u2014 choisis-la dans la liste sous son titre.</p>'
-   +'<label>Histoire</label><select id="seSel">'+STORIES.map((s,i)=>'<option value="'+i+'"'+(STORIES[i]===SS?' selected':'')+'>'+s.n+' \u2014 '+s.t+'</option>').join('')+'</select>'
-   +'<div id="seForm"></div>'
-   +'<div class="pb"><button id="seSv" class="pa">Enregistrer l\u2019histoire</button><button id="seCl">Fermer</button></div>');
-  const form=p.querySelector('#seForm');
-  function fill(){const s=STORIES[+p.querySelector('#seSel').value];
-   form.innerHTML='<label>Pr\u00E9nom du contact</label><input id="seN" value="'+s.n.replace(/"/g,'&quot;')+'">'
-   +'<label>Num\u00E9ro affich\u00E9</label><input id="seNum" value="'+s.num.replace(/"/g,'&quot;')+'">'
-   +'<label>Titre de l\u2019histoire</label><input id="seT" value="'+s.t.replace(/"/g,'&quot;')+'">'
-   +'<label>Description (menu)</label><input id="seD" value="'+s.d.replace(/"/g,'&quot;')+'">'
-   +'<label>Prologue \u2014 page d\u2019introduction avant le jeu</label><textarea id="seP" placeholder="Le texte que lira le joueur avant de commencer (laisse vide pour le prologue par d\u00E9faut)\u2026"></textarea>'
-   +'<label>Photo de profil du contact (facultatif \u2014 sinon portrait par d\u00E9faut)</label>'
-   +'<div class="pb"><button id="sePhF">Joindre une photo</button><button id="sePhR" class="pw">Retirer</button></div>'
-   +'<label>Narration audio du prologue (facultatif \u2014 fichier court conseill\u00E9)</label>'
-   +'<div class="pb"><span id="seAuSt" class="mono"></span><button id="seAuF">Joindre un fichier audio</button><button id="seAuR" class="pw">Retirer</button></div>'
-   +'<label>Chapitres</label><div id="seChaps"></div>'
-   +'<div class="pb"><button id="seAddCh">\uFF0B Nouveau chapitre</button></div>';
-   form.querySelector('#seP').value=s.prologue||'';
-   let audNew=null,phNew=null;
-   const st1=form.querySelector('#seAuSt');
-   const upd=()=>{st1.textContent=audNew===null?(s.audio?'\u2713 audio jointe \u2014 lue sur la page du prologue':'aucun audio : le bouton d\u2019\u00E9coute utilisera la synth\u00E8se vocale'):(audNew?'\u2713 nouveau fichier pr\u00EAt \u00E0 enregistrer':'audio retir\u00E9e \u2014 sera sauvegard\u00E9 ainsi');st1.dataset.v=audNew===null?(s.audio||''):audNew};
-   upd();
-   form.querySelector('#seAuF').onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='audio/*';
-    f.onchange=()=>{if(!f.files[0])return;const r=new FileReader();r.onload=()=>{audNew=r.result;upd()};r.readAsDataURL(f.files[0])};f.click()};
-   form.querySelector('#seAuR').onclick=()=>{audNew='';upd()};
-   form.querySelector('#sePhF').onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='image/*';
-    f.onchange=()=>{if(!f.files[0])return;const r=new FileReader();r.onload=()=>{phNew=r.result};r.readAsDataURL(f.files[0])};f.click()};
-   form.querySelector('#sePhR').onclick=()=>{phNew=''};
-   const cb=form.querySelector('#seChaps');
-   function chRow(ch,i){const r=document.createElement('div');r.className='chRow';
-    const nl=k=>k+' \u2014 \u00AB'+String((S[k]&&S[k].m||[]).map(m=>m[1]||'').join(' ').slice(0,42)||'sc\u00E8ne vide').replace(/"/g,'&quot;')+'\u00BB';
-    r.innerHTML='<input class="seChT" placeholder="Titre du chapitre (affich\u00E9 au joueur)" value="'+String(ch[0]||'').replace(/"/g,'&quot;')+'">'
-     +'<select class="seChS" title="Sc\u00E8ne sur laquelle s\u2019ouvre ce chapitre"><option value="">\u2014 sc\u00E8ne de d\u00E9part \u2014</option>'+allIds().map(k=>'<option value="'+k+'"'+(k===ch[1]?' selected':'')+'>'+nl(k)+'</option>').join('')+'</select>'
-     +'<span class="pb"><button class="mini seUp" title="Monter ce chapitre">\u2191</button><button class="mini seDn" title="Descendre ce chapitre">\u2193</button><button class="mini pw seDel" title="Retirer ce chapitre">\u2715</button></span>';
-    r.querySelector('.seUp').onclick=()=>{if(i>0){const a=s.ch;[a[i-1],a[i]]=[a[i],a[i-1]];fill()}};
-    r.querySelector('.seDn').onclick=()=>{if(i<s.ch.length-1){const a=s.ch;[a[i+1],a[i]]=[a[i],a[i+1]];fill()}};
-    r.querySelector('.seDel').onclick=()=>{if(s.ch.length<=1)return toast('Une histoire garde au moins un chapitre.');if(confirm('Retirer ce chapitre ?')){s.ch.splice(i,1);fill()}};
-    cb.append(r)}
-   s.ch.forEach((ch,i)=>chRow(ch,i));
-   form.querySelector('#seAddCh').onclick=()=>{s.ch.push(['Nouveau chapitre','']);fill()}}
-  p.querySelector('#seSel').onchange=fill;fill();
-  p.querySelector('#seSv').onclick=()=>{const s=STORIES[+p.querySelector('#seSel').value];
-   const f=p.querySelector('#seForm');
-   s.n=f.querySelector('#seN').value.trim()||s.n;s.num=f.querySelector('#seNum').value.trim()||s.num;
-   s.t=f.querySelector('#seT').value.trim()||s.t;s.d=f.querySelector('#seD').value.trim()||s.d;
-   s.prologue=f.querySelector('#seP').value;
-   const auSt=f.querySelector('#seAuSt');if(auSt&&auSt.dataset.v!==undefined)s.audio=auSt.dataset.v;
-   if(phNew!==null)s.photo=phNew||null;
-   const rows=[...f.querySelectorAll('.chRow')];
-   s.ch.length=0;rows.forEach(r=>{const t=r.querySelector('.seChT').value.trim(),nd=r.querySelector('.seChS').value;if(t||nd)s.ch.push([t||'Chapitre',nd])});
-   if(!s.ch.length)s.ch.push(['Chapitre 1','']);
-   SP[s.id]=s;saveStories();closePop();updateRail();toast('Histoire enregistr\u00E9e \u2713 (le menu joueur l\u2019affichera \u00E0 sa prochaine ouverture)')};
-  p.querySelector('#seCl').onclick=closePop}
- /* ================= carte du chapitre ================= */
- function closeMap(){const m=$('edMap');if(m)m.remove()}
- function mapPop(){
-  const s=SS;const start=(s.ch[SC]||[])[1];
-  if(!start||!S[start]){toast('Choisis d\u2019abord un chapitre valide.');return}
-  const esc=t=>String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  const depth={},cols={};const q=[[start,0]];const nodes=[];
-  while(q.length){const[id,d]=q.shift();if(!S[id]||depth[id]!==undefined)continue;depth[id]=d;nodes.push(id);
-   const n=S[id];const tg=[];(n.c||[]).forEach(c=>{if(c[1])tg.push(c[1])});if(typeof n.x==='string')tg.push(n.x);
-   if(typeof n.j==='function'){try{const t=n.j(st||{});if(t)tg.push(t)}catch(e){}}
-   tg.forEach(t=>{if(depth[t]===undefined)q.push([t,d+1])})}
-  const byD={};nodes.forEach(id=>{(byD[depth[id]]=byD[depth[id]]||[]).push(id)});
-  const CW=252,GPX=30,GPY=70,MG=28;
-  const tgOf=id=>{const n=S[id];const tg=[];(n.c||[]).forEach(c=>{if(c[1])tg.push(c[1])});if(typeof n.x==='string')tg.push(n.x);
-   if(typeof n.j==='function'){try{const t=n.j(st||{});if(t)tg.push(t)}catch(e){}}return tg};
-  const hOf=id=>{const n=S[id];const txt=(n.m||[]).map(m=>m[1]||'').join('\n');let ls=0;
-   txt.split('\n').forEach(l=>{ls+=Math.max(1,Math.ceil((l.length||1)/32))});
-   return 20+ls*18+((n.c||[]).length?((n.c||[]).length*27+6):0)+((n.e||n.k)?22:0)};
-  let maxW=0;for(const d in byD){byD[d].forEach((id,i)=>{cols[id]=i});maxW=Math.max(maxW,byD[d].length)}
-  const ds=Object.keys(byD).map(Number).sort((a,b)=>a-b);const rowY={};let acc=MG;
-  ds.forEach(d=>{let h=0;byD[d].forEach(id=>{h=Math.max(h,hOf(id))});rowY[d]=acc;acc+=h+GPY});
-  const X=id=>MG+(cols[id]||0)*(CW+GPX),Y=id=>rowY[depth[id]]||MG;
-  const W=Math.max(680,MG+maxW*(CW+GPX)),H=acc+MG;
-  let svg='';
-  nodes.forEach(id=>{const h=hOf(id);const x1=X(id)+CW/2,y1=Y(id)+h;
-   tgOf(id).forEach(t=>{if(depth[t]===undefined)return;const x2=X(t)+CW/2,y2=Y(t);
-    svg+='<path class="mpEdge" data-f="'+id+'" data-t="'+t+'" d="M '+x1+' '+y1+' C '+x1+' '+(y1+28)+', '+x2+' '+(y2-28)+', '+x2+' '+y2+'" fill="none" stroke="#3e91ff77" stroke-width="1.6"/>'})});
-  let cards='';
-  nodes.forEach(id=>{const n=S[id];const txt=(n.m||[]).map(m=>m[1]||'').join('\n');
-   const cls='mpCard'+(id===nodeNow?' mpCur':'')+((n.e||n.k)?' mpEnd':'');
-   cards+='<div class="'+cls+'" data-id="'+id+'" style="left:'+X(id)+'px;top:'+Y(id)+'px;width:'+CW+'px">'
-    +'<div class="mpTxt">'+esc(txt)+'</div>'
-    +(n.c||[]).map(c=>'<div class="mpCh" data-t="'+(c[1]||'')+'">\u21AA '+esc(c[0])+'</div>').join('')
-    +((n.e||n.k)?'<div class="mpEnd">\uD83C\uDFC1 Fin</div>':'')+'</div>'});
-  closeMap();
-  const ov=document.createElement('div');ov.id='edMap';
-  ov.innerHTML='<div class="mpTop"><b>Carte du chapitre \u2014 '+esc(s.t)+' \u00B7 '+esc((s.ch[SC]||[])[0])+'</b>'
-   +'<span class="mpHint">'+nodes.length+' cartes \u00B7 clique une r\u00E9ponse pour voir o\u00F9 elle m\u00E8ne, reclique pour y aller \u00B7 molette : zoom \u00B7 glisser : d\u00E9placer</span>'
-   +'<input id="mpQ" type="search" placeholder="\uD83D\uDD0D Rechercher\u2026">'
-   +'<span class="mpZ"><button data-z="in">Zoom +</button><button data-z="out">Zoom \u2212</button><button data-z="fit">Recentrer</button><button data-z="path">Mon parcours</button><button data-z="x" class="pa">Fermer</button></span></div>'
-   +'<div class="mpWrap"><div class="mpInner" style="width:'+W+'px;height:'+H+'px">'
-   +'<svg width="'+W+'" height="'+H+'" style="position:absolute;left:0;top:0">'+svg+'</svg>'+cards+'</div></div>';
-  document.body.append(ov);
-  const wrap=ov.querySelector('.mpWrap'),inner=ov.querySelector('.mpInner');let zk=1,pOn=false,traced=null;
-  const mq=ov.querySelector('#mpQ');
-  if(mq)mq.oninput=()=>{const v=mq.value.trim().toLowerCase();
-   ov.querySelectorAll('.mpCard').forEach(cd=>{const hit=!v||cd.textContent.toLowerCase().includes(v)||((cd.dataset.id||'').toLowerCase().includes(v));cd.classList.toggle('mpDim',!hit)});
-   ov.querySelectorAll('.mpEdge').forEach(e=>{const f=(e.dataset.f||'')+' '+(e.dataset.t||'');e.classList.toggle('mpDim',!!v&&!f.toLowerCase().includes(v))})};
-  const setZ=k=>{zk=Math.min(2.2,Math.max(.25,k));inner.style.transformOrigin='top left';inner.style.transform='scale('+zk+')'};
-  wrap.addEventListener('wheel',e=>{e.preventDefault();setZ(zk*(e.deltaY<0?1.12:0.89))},{passive:false});
-  ov.querySelectorAll('.mpZ button').forEach(b=>{b.onclick=()=>{const z=b.dataset.z;
-   if(z==='in')setZ(zk*1.25);else if(z==='out')setZ(zk/1.25);
-   else if(z==='fit'){setZ(1);wrap.scrollLeft=0;wrap.scrollTop=0}
-   else if(z==='path'){pOn=!pOn;
-    ov.querySelectorAll('.mpEdge').forEach(x=>x.classList.remove('hl'));ov.querySelectorAll('.mpCard').forEach(x=>x.classList.remove('mpDim','hlT'));
-    if(pOn){const ps=new Set(path.filter(p2=>depth[p2]!==undefined));
-     ov.querySelectorAll('.mpCard').forEach(x=>{if(ps.has(x.dataset.id))x.classList.add('hlT');else x.classList.add('mpDim')});
-     for(let pi=0;pi<path.length-1;pi++){const pa=path[pi],pb=path[pi+1];
-      if(depth[pa]!==undefined&&depth[pb]!==undefined)ov.querySelectorAll('.mpEdge[data-f="'+pa+'"][data-t="'+pb+'"]').forEach(x=>x.classList.add('hl'))}}}
-   else closeMap()}});
-  let pan=null;
-  wrap.addEventListener('pointerdown',e=>{if(e.target.closest('.mpCard'))return;
-   pan={x:e.clientX,y:e.clientY,l:wrap.scrollLeft,t:wrap.scrollTop}});
-  wrap.addEventListener('pointermove',e=>{if(!pan)return;
-   wrap.scrollLeft=pan.l-(e.clientX-pan.x);wrap.scrollTop=pan.t-(e.clientY-pan.y)});
-  wrap.addEventListener('pointerup',()=>{pan=null});
-  wrap.addEventListener('pointerleave',()=>{pan=null});
-  ov.querySelectorAll('.mpCard').forEach(c=>{c.addEventListener('click',()=>{
-   const id=c.dataset.id;const n=S[id]||{};const isEnd=!!(n.e||n.k);
-   if(isEnd&&traced!==id){traced=id;
-    const anc={};anc[id]=1;let ch2=true;
-    while(ch2){ch2=false;nodes.forEach(nid=>{if(anc[nid])return;const tgs=tgOf(nid);
-     if(tgs.some(t2=>anc[t2])){anc[nid]=1;ch2=true}})}
-    ov.querySelectorAll('.mpCh').forEach(x=>x.classList.remove('hlCh'));
-    ov.querySelectorAll('.mpCard').forEach(x=>{const xi=x.dataset.id;
-     x.classList.remove('mpDim','hlT');if(anc[xi])x.classList.add('hlT');else x.classList.add('mpDim');
-     if(anc[xi])x.querySelectorAll('.mpCh').forEach(ch3=>{if(anc[ch3.dataset.t])ch3.classList.add('hlCh')})});
-    ov.querySelectorAll('.mpEdge').forEach(x=>{x.classList.remove('hl');if(anc[x.dataset.f]&&anc[x.dataset.t])x.classList.add('hl')});
-    toast('Chemins vers cette fin \u2014 reclique pour y aller.');
-    return}
-   traced=null;closeMap();edRender(id)})});
-  ov.querySelectorAll('.mpCh').forEach(ch=>{ch.addEventListener('click',e=>{e.stopPropagation();
-   const f=ch.closest('.mpCard').dataset.id;const t=ch.dataset.t;
-   if(!t||!depth[t]){toast('Cette r\u00E9ponse ne m\u00E8ne nulle part pour l\u2019instant.');return}
-   if(ch.dataset.arm==='1'){closeMap();edRender(t);return}
-   ov.querySelectorAll('.mpCh').forEach(x=>x.removeAttribute('data-arm'));
-   ch.setAttribute('data-arm','1');
-   ov.querySelectorAll('.mpEdge').forEach(x=>x.classList.remove('hl','mpDim'));
-   ov.querySelectorAll('.mpCard').forEach(x=>{x.classList.remove('hlT','mpDim');if(x.dataset.id!==f&&x.dataset.id!==t)x.classList.add('mpDim')});
-   ov.querySelectorAll('.mpEdge[data-f="'+f+'"][data-t="'+t+'"]').forEach(x=>x.classList.add('hl'));
-   const tc=ov.querySelector('.mpCard[data-id="'+t+'"]');tc.classList.remove('mpDim');tc.classList.add('hlT');
-   tc.scrollIntoView({behavior:'smooth',block:'center',inline:'center'})})});
- }
- /* ================= bibliothèque d'images ================= */
- function imgLib(){const p=openPop('<b>Biblioth\u00E8que d\u2019images</b>'
-   +'<div id="ilList"></div>'
-   +'<label>Ajouter une image</label><input id="ilK" placeholder="nom (ex : gare2)"><input id="ilU" placeholder="URL de l\u2019image"><input type="file" id="ilF" accept="image/*">'
-   +'<div class="pb"><button id="ilAdd" class="pa">Ajouter</button><button id="ilCl">Fermer</button></div>');
-  const list=p.querySelector('#ilList');
-  Object.keys(IMG).forEach(k=>{const d=document.createElement('div');d.className='ilRow';
-   d.innerHTML='<img src="'+IMG[k]+'" alt=""><span class="mono">'+k+'</span>'
-    +'<button class="pw ilDel"'+(IP[k]===undefined?' disabled style="opacity:.35" title="image d\u2019origine, non supprimable"':'')+'>supprimer</button>';
-   const del=d.querySelector('.ilDel');if(del&&!del.disabled)del.onclick=()=>{if(!confirm('Supprimer \u00AB '+k+' \u00BB ?'))return;pushSnapImg(k);delete IMG[k];IP[k]=null;saveImgs();d.remove()};
-   list.append(d)});
-  p.querySelector('#ilF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{p.querySelector('#ilU').value=r.result};r.readAsDataURL(f)};
-  p.querySelector('#ilAdd').onclick=()=>{const k=p.querySelector('#ilK').value.trim(),u=p.querySelector('#ilU').value.trim();
-   if(!k||!u)return toast('Donne un nom et une image.');
-   pushSnapImg(k);IMG[k]=u;IP[k]=u;saveImgs();closePop();imgLib()};
-  p.querySelector('#ilCl').onclick=closePop}
- /* ================= export HTML autonome ================= */
- function exportHTML(){
-  const data={nodes:JSON.parse(JSON.stringify(S,fnSer)),imgs:JSON.parse(JSON.stringify(IMG)),stories:JSON.parse(JSON.stringify(STORIES)),bg:bgMap,snd:sndMap};
-  const clone=document.documentElement.cloneNode(true);
-  clone.querySelectorAll('#adm,#edRail,#edPop,#edMap,#edToast,#edGear,#edCSS,#etlBaked').forEach(e=>e.remove());
-  const body=clone.querySelector('body');body.removeAttribute('class');
-  ['chat','ch'].forEach(id=>{const e=clone.querySelector('#'+id);if(e){e.innerHTML='';e.style.backgroundImage=''}});
-  const ov=clone.querySelector('#ov');if(ov)ov.setAttribute('hidden','');
-  const mn=clone.querySelector('#mn');if(mn)mn.classList.remove('on');
-  if(clone.querySelector('#in'))clone.querySelector('#in').classList.remove('out');
-  else{const d=document.createElement('div');d.id='in';d.innerHTML='<button class="vwb" id="sbi">=</button><button class="vwb" id="vw2"></button><div id="bgi"></div><div class="tx"><h1>Entre les lignes</h1><p class="lead">Des histoires qui se lisent en messages \u2014 et dont tu \u00E9cris la suite.</p><p>Un t\u00E9l\u00E9phone vibre. Des messages arrivent, des conversations s\u2019ouvrent \u2014 et quelque part derri\u00E8re l\u2019\u00E9cran, quelqu\u2019un attend une r\u00E9ponse. La tienne. Chaque mot que tu tapes rapproche de la v\u00E9rit\u00E9\u2026 ou la fait taire pour toujours.</p><p class="metaL">Des conversations \u00E0 lire \u00B7 des choix \u00E0 porter \u00B7 chaque r\u00E9ponse compte</p><button id="go">Commencer \u203A</button></div>';body.append(d);const sb2=d.querySelector('#sbi');if(sb2)sb2.onclick=togSnd;setV()}
-  const js='(function(){try{var D='+JSON.stringify(data).replace(/</g,'\\u003c')+';var rv=function(o){if(o&&typeof o==="object"){for(var k in o){if(k==="j"&&typeof o[k]==="string"){try{o[k]=new Function("return ("+o[k]+")")()}catch(e){}}else{rv(o[k])}}}return o};D=rv(D);for(var k in D.nodes)S[k]=D.nodes[k];for(var k in D.imgs)IMG[k]=D.imgs[k];for(var i=0;i<D.stories.length;i++)STORIES[i]=D.stories[i];STORIES.length=D.stories.length;if(D.bg&&typeof nodeBackgrounds==="object"){for(var k in D.bg)nodeBackgrounds[k]=D.bg[k]}if(D.snd){try{localStorage.setItem("etl_node_sounds",JSON.stringify(D.snd))}catch(e){}}}catch(e){}})();';
-  const sc=document.createElement('script');sc.id='etlBaked';sc.textContent=js;body.append(sc);
-  const html='<!DOCTYPE html>\n'+clone.outerHTML;
-  const bl=new Blob([html],{type:'text/html'});const a=document.createElement('a');
-  a.href=URL.createObjectURL(bl);a.download='Entre_les_lignes_Studio.html';a.click();
-  setTimeout(()=>{try{URL.revokeObjectURL(a.href)}catch(e){}},600000);
-  toast('HTML t\u00E9l\u00E9charg\u00E9 \u2014 remplace ton ancien fichier par celui-ci.')}
- /* ================= rail admin ================= */
- function ensureCSS(){if($('edCSS'))return;const s=document.createElement('style');s.id='edCSS';
-  s.textContent='#edRail{position:fixed;left:10px;top:50%;transform:translateY(-50%);z-index:80;width:210px;background:#0e1626f2;border:1px solid #2c4a73;border-radius:14px;padding:10px;box-shadow:0 18px 60px #000c;backdrop-filter:blur(6px);font:12.5px system-ui,sans-serif;color:#dbe7f8;max-height:88vh;overflow:auto}#edRail .rg{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#7fa7d9;margin:10px 2px 4px}#edRail .rg:first-child{margin-top:0}#edRail .rGrp .rHead{font-weight:700;color:#a9c4ea;background:#0c1930}#edRail .rGrp.cl .rBody{display:none}#edRail.peek{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-240px)}#edRail{transition:.35s}#edRail button{display:block;width:100%;text-align:left;background:#16243c;color:#dbe7f8;border:1px solid #27405f;border-radius:8px;padding:7px 10px;margin:3px 0;font:inherit;cursor:pointer;transition:.12s}#edRail button:hover{background:#1d3151;border-color:#3e91ff}#edRail button:disabled{opacity:.45;cursor:default}#edRail select{width:100%;box-sizing:border-box;background:#16243c;color:#dbe7f8;border:1px solid #27405f;border-radius:8px;padding:6px 8px;margin:3px 0;font:inherit}#edRail .rstat{font-size:10.5px;color:#8fb0e0;margin:6px 2px;line-height:1.5;border-top:1px solid #223754;padding-top:6px;word-break:break-word}.ed{cursor:pointer}.ed:hover{outline:1.5px dashed #0a84ff;outline-offset:2px}#edPop{position:fixed;z-index:90;right:12px;top:12px;bottom:12px;width:min(420px,44vw);overflow:auto;background:#0e1626f5;color:#e8eefb;border:1px solid #3e91ff88;border-radius:14px;padding:14px;font:14px system-ui,sans-serif;box-shadow:-8px 0 40px #000a;backdrop-filter:blur(6px)}#edPop b{font-size:15px}#edPop .mono{color:#6db2ff;font-family:ui-monospace,monospace}#edPop label{display:block;font-size:11px;color:#9fb4d4;margin:10px 0 3px;text-transform:uppercase;letter-spacing:.4px}#edPop textarea,#edPop input,#edPop select{width:100%;box-sizing:border-box;background:#0a1424;color:#e8eefb;border:1px solid #2b405f;border-radius:8px;padding:7px;font:inherit;margin-top:2px}#edPop textarea{min-height:70px;resize:vertical}#edPop .pb{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}#edPop button{font:inherit;border:0;border-radius:8px;background:#1b2a41;color:#fff;padding:8px 12px;cursor:pointer}#edPop button.pa{background:#0a84ff}#edPop button.pw{background:#7a2030}#edPop button:disabled{opacity:.4;cursor:default}#edPop .pfx{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}#edPop .pfx span{font-size:10px;color:#9fb4d4;text-align:center}#edPop .pfx input{text-align:center;padding:4px}#edPop .chRow{border:1px solid #223754;border-radius:10px;padding:8px;margin:6px 0;background:#0a1424}#edPop .chRow input,#edPop .chRow select{margin:4px 0 0}#edPop .ilRow{display:flex;align-items:center;gap:10px;border:1px solid #223754;border-radius:10px;padding:6px;margin:6px 0;background:#0a1424}#edPop .ilRow img{width:64px;height:40px;object-fit:cover;border-radius:6px}#edPop .ilRow .mono{flex:1;font-size:12px}#edMap{position:fixed;inset:0;z-index:92;background:#060c17f2;display:flex;flex-direction:column;font:13px system-ui,sans-serif}#edMap .mpTop{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#0e1626;border-bottom:1px solid #2c4a73;flex-wrap:wrap}#edMap .mpTop b{color:#e8eefb;font-size:15px}#edMap .mpHint{font-size:11px;color:#8fa5c5;flex:1;min-width:180px}#edMap .mpZ{display:flex;gap:6px}#edMap .mpZ button{font:inherit;border:0;border-radius:8px;background:#1b2a41;color:#fff;padding:7px 12px;cursor:pointer}#edMap .mpZ button.pa{background:#0a84ff}#edMap .mpWrap{flex:1;overflow:auto;cursor:grab}#edMap .mpWrap:active{cursor:grabbing}#edMap .mpInner{position:relative}#edMap .mpSvg{position:absolute;left:0;top:0}.mpCard{position:absolute;background:#14233c;border:1px solid #2c4a73;border-radius:12px;padding:10px 12px;box-shadow:0 8px 26px #0008;cursor:pointer;transition:border-color .12s;box-sizing:border-box}.mpCard:hover{border-color:#3e91ff}.mpCard.mpCur{border-color:#7cc0ff;box-shadow:0 0 0 2.5px #0a84ff77,0 8px 26px #0008}.mpCard.mpEnd{background:#29230f;border-color:#d4a01766}.mpCard .mpTxt{color:#dbe7f8;font-size:12.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.mpCard .mpCh{margin-top:6px;font-size:11px;color:#6db2ff;background:#0a1424;border-radius:6px;padding:3px 7px}.mpCard .mpEnd{margin-top:6px;font-size:11px;color:#ffd166;font-weight:700}.mpEdge.hl{stroke:#ffd166;stroke-width:3px;filter:drop-shadow(0 0 4px #ffd16688)}.mpEdge.mpDim,.mpCard.mpDim{opacity:.28;transition:opacity .15s}.mpCard.hlT{border-color:#ffd166;box-shadow:0 0 0 2px #ffd16655,0 8px 26px #0008}.mpCh{cursor:pointer}.mpCh:hover{background:#122a4d}.mpCh.hlCh{background:#2a2410;color:#ffd166;border:1px solid #d4a01766}#edPop .seHelp{font-size:11.5px;color:#8fa5c5;margin:6px 0 2px;line-height:1.5}#edToast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#0a84ffef;color:#fff;padding:10px 18px;border-radius:12px;z-index:95;font:13px system-ui;box-shadow:0 8px 30px #0009;max-width:88vw;text-align:center;opacity:0;pointer-events:none}#edToast.go{animation:edt 3.6s ease both}@keyframes edt{0%{opacity:0;transform:translateX(-50%) translateY(-8px)}10%{opacity:1;transform:translateX(-50%)}85%{opacity:1}100%{opacity:0}}.edp{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.5;padding:2px 5px}.edp:hover{opacity:1}.edAdd{border-style:dashed !important;opacity:.85 !important;font-style:italic}#edGear{color:#0a84ff}';
-  document.head.append(s)}
- function buildRail(){let r=$('edRail');if(r)return r;r=document.createElement('div');r.id='edRail';
-  const ctx=document.createElement('div');ctx.id='edCtx';ctx.className='rstat';r.append(ctx);
-  const pview=document.createElement('button');pview.textContent='\u25C0 Aper\u00E7u joueur';pview.title='Cache le rail 5 secondes pour voir le rendu';
-  pview.onclick=()=>{r.classList.add('peek');setTimeout(()=>r.classList.remove('peek'),5000)};r.append(pview);
-  let body=null;
-  const g=(t,open)=>{const d=document.createElement('div');d.className='rGrp'+(open?'':' cl');
-   const h=document.createElement('button');h.className='rHead';h.textContent=t;
-   h.onclick=()=>d.classList.toggle('cl');d.append(h);
-   body=document.createElement('div');body.className='rBody';d.append(body);r.append(d)};
-  const bt=(label,fn,id)=>{const b=document.createElement('button');b.textContent=label;if(id)b.id=id;b.onclick=fn;body.append(b);return b};
-  g('Lecture',true);
-  bt('Message suivant \u2192',()=>edStep(),'edNext');
-  bt('Lecture auto \u25B6',()=>{if(edAuto){clearTimeout(edTimer);edAuto=false}else{edAuto=true;edRunAuto()}updateRail()},'edAuto');
-  g('\u00C9dition de la sc\u00E8ne');
-  bt('\uFF0B Ajouter un message',()=>{const id=needNode();if(!id)return;pushSnap();S[id].m.push(['n','(nouveau message)']);persistNode(id);edRefresh()},'edAddM');
-  bt('\uFF0B Ajouter un choix',()=>{const id=needNode();if(!id)return;choiceEditor(id,-1)},'edAddC');
-  bt('\uD83C\uDFC1 Marquer comme fin',()=>{const id=needNode();if(!id)return;finEditor(id)},'edFin');
-  bt('\uD83D\uDDBC D\u00E9cor d\u2019une sc\u00E8ne',()=>{const ids=storySceneIds();if(!ids.length)return toast('Aucune sc\u00E8ne dans cette histoire.');decorEditor(nodeNow&&S[nodeNow]?nodeNow:ids[0])},'edDeco');
-  bt('\uD83D\uDD0A Ambiance sonore',()=>{const id=needNode();if(!id)return;soundEditor(id)},'edSnd');
-  bt('\uD83D\uDDD1 Supprimer cette sc\u00E8ne',()=>{const id=needNode();if(!id)return;delNode(id)},'edDel');
-  g('Histoire',true);
-  bt('\u270E Histoires & chapitres',storyEditor);
-  bt('\uD83D\uDDFA Carte du chapitre',mapPop,'edMapBtn');
-  g('Projet');
-  const sel=document.createElement('select');sel.id='edJump';body.append(sel);
-  sel.onchange=()=>{if(sel.value&&S[sel.value])edRender(sel.value)};
-  bt('\u21BA Rejouer la sc\u00E8ne',()=>{const id=needNode();if(!id)return;edRender(id)},'edRejouer');
-  bt('\u23ED Sc\u00E8ne suivante',()=>{const ids=storySceneIds();if(!ids.length)return toast('Aucune sc\u00E8ne dans cette histoire.');const i=nodeNow&&ids.indexOf(nodeNow)>-1?ids.indexOf(nodeNow):-1;edRender(ids[(i+1)%ids.length])},'edSkip');
-  bt('\u21A9 Annuler (Ctrl+Z)',undo);
-  bt('\uD83D\uDDBC Biblioth\u00E8que d\u2019images',imgLib);
-  bt('\u2714 V\u00E9rifier les liens',checkLinks);
-  bt('\u2B07 Exporter le HTML modifi\u00E9',exportHTML);
-  const stt=document.createElement('div');stt.id='edStat';stt.className='rstat';r.append(stt);
-  bt('\u2716 Quitter le mode \u00E9dition',()=>adm(false));
-  document.body.append(r);
-  return r}
- function updateRail(){const r=$('edRail');if(!r)return;
-  const cx=$('edCtx');if(cx){const inStory=!!(SS&&SK&&nodeNow);
-   cx.innerHTML=inStory?'\u{1F4D8} <b>'+SS.t+'</b><br>chapitre '+(SC+1)+' : '+((SS.ch[SC]||[])[0]||''):'aucune histoire ouverte'};
-  const sel=$('edJump');if(sel){const v=nodeNow;sel.innerHTML='';
-   const ids=storySceneIds();ids.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+(S[k].e||S[k].k?' \u00B7 fin':'')+(sceneHint(k,38)?' \u2014 '+sceneHint(k,38):'');sel.append(o)});if(v&&ids.includes(v))sel.value=v}
-  const nx=$('edNext');if(nx){nx.disabled=!edQ.length}
- const on=!!(nodeNow&&S[nodeNow]);
- ['edAddM','edAddC','edFin','edSnd','edDel','edMapBtn','edRejouer'].forEach(i=>{const e=$(i);if(e){e.disabled=!on;e.style.opacity=on?'':'.4'}});
- if(!on)sel.disabled=true;else sel.disabled=false;
-  const au=$('edAuto');if(au)au.textContent=edAuto?'\u23F8 Pause lecture auto':'Lecture auto \u25B6';
-  const stt=$('edStat');if(stt){const ends=Object.values(S).filter(n=>n&&(n.e||n.k)).length;
-   stt.innerHTML=(nodeNow?'sc\u00E8ne : <b>'+nodeNow+'</b>':'aucune sc\u00E8ne ouverte')+'<br>'+(edQ.length?edQ.length+' message(s) en attente':'sc\u00E8ne compl\u00E8te')+'<br>'+Object.keys(S).length+' sc\u00E8nes \u00B7 '+ends+' fins \u00B7 '+Object.keys(IMG).length+' images'}}
- function gearBtn(){}
- /* ================= activation ================= */
- adm=function(on){
-  oldAdm(false);
-  if(on&&!(SS&&SK&&nodeNow&&S[nodeNow]))on=0;
-  EDIT=on?1:0;ADM=EDIT;
-  try{localStorage.setItem('etl_admin',EDIT?'1':'0')}catch(e){}
-  clearTimeout(edTimer);edAuto=false;
-  if(!EDIT){closePop();const r=$('edRail');if(r)r.remove();if(!SS||!SK){updateRail();toast('\u00C9dition quitt\u00E9e \u2014 reviens au menu et lance l\u2019histoire pour relire.')}else{edRender(nodeNow);toast('\u00C9dition quitt\u00E9e.')}
-   return}
-  ensureCSS();buildRail();
-  if(nodeNow&&S[nodeNow])edRender(nodeNow);else updateRail();
-  toast('\u00C9dition de cette histoire \u2014 Espace ou \u2192 : message suivant \u00B7 Ctrl+Z : annuler \u00B7 7 taps sur l\u2019horloge ou le bouton du rail pour quitter')}
- /* en mode \u00E9dition, le r\u00E9cit attend le pas-à-pas */
- const playPrev=play;
- play=async function(id,r=run){if(EDIT&&S[id]){edRender(id);return}const v=await playPrev(id,r);return v};
- addEventListener('keydown',e=>{if(!EDIT||pop)return;
-  const tag=(e.target&&e.target.tagName)||'';
-  if(e.code==='Space'&&tag!=='INPUT'&&tag!=='TEXTAREA'&&tag!=='SELECT'){e.preventDefault();edStep()}
-  if(e.code==='ArrowRight'&&tag!=='INPUT'&&tag!=='TEXTAREA')edStep();
-  if(e.code==='Escape'){closePop();closeMap()}
-  if((e.ctrlKey||e.metaKey)&&e.code==='KeyZ'){e.preventDefault();undo()}});
- try{if(localStorage.getItem('etl_admin')==='1'&&SS&&SK&&nodeNow&&S[nodeNow])adm(true);else{try{localStorage.setItem('etl_admin','0')}catch(e){}}}catch(e){}
- /* Les personnalisations importées sont explicites : une ancienne sauvegarde ne doit pas écraser les dialogues corrigés. */
 })();
 
 
@@ -1339,10 +872,8 @@ try{
 }catch(e){}
 
 
-/* Réécriture narrative intégrale de Lou — dialogues et branches cohérents */
 
 
 
-/* Rythme narratif : révélations progressives, prénoms présentés tôt, réponses qui suivent les choix. */
 
 

@@ -7,7 +7,7 @@ const step=(ok,msg)=>{console.log((ok?'  ✓ ':'  ✗ ')+msg);if(!ok)fail=1};
 
 /* 1. syntaxe */
 console.log('— Syntaxe');
-['js/assets.js','js/story.js','js/engine.js','js/atelier.js','sw.js'].filter(f=>fs.existsSync(f)).forEach(f=>{
+['js/assets.js','js/story.js','js/engine.js','sw.js'].filter(f=>fs.existsSync(f)).forEach(f=>{
   step((()=>{try{new Function(fs.readFileSync(f,'utf8'));return true}catch(e){console.log('    '+e.message);return false}})(),f);
 });
 
@@ -31,7 +31,7 @@ step(orph.length===0,orph.length?'orphelins : '+orph.join(', '):'0 orphelin');
 /* 3. mojibake */
 console.log('— Encodage');
 let mo=0;
-['js/story.js','js/engine.js','js/atelier.js'].filter(f=>fs.existsSync(f)).forEach(f=>{
+['js/story.js','js/engine.js'].filter(f=>fs.existsSync(f)).forEach(f=>{
   const t=fs.readFileSync(f,'utf8');
   const n=(t.match(/[\uFFFD\u0080-\u009F]/g)||[]).length; mo+=n; if(n)console.log('    '+f+' : '+n);});
 step(mo===0,mo===0?'0 mojibake':mo+' mojibake');
@@ -40,7 +40,7 @@ step(mo===0,mo===0?'0 mojibake':mo+' mojibake');
 console.log('— Versions');
 const ver=(fs.readFileSync('js/engine.js','utf8').match(/VER="(\d+\.\d+)"/)||[])[1];
 let refsOK=true;
-['jeu.html','atelier.html'].filter(f=>fs.existsSync(f)).forEach(f=>{
+['jeu.html'].filter(f=>fs.existsSync(f)).forEach(f=>{
   const t=fs.readFileSync(f,'utf8');
   const bad=(t.match(/\?v=(\d+\.\d+)/g)||[]).filter(v=>v!=='?v='+ver);
   if(bad.length){refsOK=false;console.log('    '+f+' : refs périmées '+bad.join(','));}});
