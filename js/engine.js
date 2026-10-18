@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.81";console.log("Entre les lignes · v"+VER);
+const VER="2.82";console.log("Entre les lignes · v"+VER);
 const AM={
 gare:{b:["lowpass",130,.04],e:[[26000,()=>Pk([[784,587],[659,523,659],[880,660,784]]).forEach((f,i)=>setTimeout(()=>tn(f,f,R(1.6,2.4),.03,.03),i*750))],[4500,()=>steps(Math.round(R(3,6)))]]},
 mer:{b:["lowpass",170,.06],e:[[6000,()=>hit(R(200,320),R(4,7),R(.08,.16),"lowpass",R(1.5,2.5))],[12000,()=>tn(R(1700,2100),R(800,1100),R(.3,.6),.02,.05)]]},
@@ -432,11 +432,12 @@ function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hid
 /* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t).replace(/\b(Désolé|éveillé|certain|seul|content|rentré|fatigué|prêt)\b/g,"$1e")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
- o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom. Comment t’appelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><div class="ngGen"><button id="ngF">♀ Une femme</button><button id="ngM">♂ Un homme</button></div><button class="ngGo">Continuer</button></div>';
+ o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom. Comment t’appelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><div class="ngGen"><button id="ngF">♀ Une femme</button><button id="ngM">♂ Un homme</button></div><div class="ngThm"><button data-th="dark">🌑 Nuit</button><button data-th="light">🌤 Jour</button><button data-th="auto">🌓 Suit l’histoire</button></div><button class="ngGo">Continuer</button></div>';
  document.body.append(o);
  const inp=o.querySelector("#ngName"),go=o.querySelector(".ngGo"),bf=o.querySelector("#ngF"),bm=o.querySelector("#ngM");let gen=null;
  bf.onclick=()=>{gen="f";bf.classList.add("sel");bm.classList.remove("sel")};
  bm.onclick=()=>{gen="m";bm.classList.add("sel");bf.classList.remove("sel")};
+ o.querySelectorAll(".ngThm button").forEach(bt=>{if(bt.dataset.th===THM)bt.classList.add("sel");bt.onclick=()=>{THM=bt.dataset.th;try{localStorage.setItem("etl_theme",THM)}catch(e){}o.querySelectorAll(".ngThm button").forEach(x=>x.classList.remove("sel"));bt.classList.add("sel");thApply()}});
  go.onclick=()=>{const v=(inp.value||"").trim().slice(0,14);if(!v||!gen)return;try{st.pname=v;st.pf=gen==="f"?1:0;localStorage.setItem("etl_pname",v);localStorage.setItem("etl_pgen",gen)}catch(e){}try{hit(660,.05,.08)}catch(e){}o.remove();cb()}}
 /* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
 function reactOv(txt,btnLabel,done){
@@ -692,7 +693,8 @@ $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&!vv.contains(e.target)&&!$("set").contains(e.target))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
- up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"⛶ Quitter le plein écran":"⛶ Plein écran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const tb2=$("thB");if(tb2){const THL={dark:"🌑 Nuit",auto:"🌓 Suit l’histoire",light:"🌤 Jour"};const upT=()=>{tb2.textContent="🌊 Thème : "+THL[THM]};tb2.onclick=()=>{THM=THM==="dark"?"auto":(THM==="auto"?"light":"dark");try{localStorage.setItem("etl_theme",THM)}catch(e){}thApply();upT()};upT()}}
+{const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"⛶ Quitter le plein écran":"⛶ Plein écran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
 $("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
 {const tr=$("trB");if(tr)tr.onclick=()=>{$("vol").hidden=true;transferOv()};}$("apps").onclick=()=>appHome();
 {const w=$("vw2");if(w)w.onclick=()=>setView(!PC)}
@@ -754,7 +756,12 @@ add=function(c,x){
 /* ---- horloge glissante (v2.51) : hissée au top-level — play() top-level utilise clkSet/clkPlan, elles NE DOIVENT PAS rester dans l'IIFE sauvegarde (cf bug STATS v2.50) ---- */
 /* ---- horloge glissante : le temps du récit avance entre les messages ---- */
 const CLK={h:null,m:0},CLKBASE={h:null,m:0};let CLKMAX=null;
-function clkSet(hm){const q=String(hm).replace("h",":").split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null}
+/* ---- v2.82 : thème nuit/jour/auto (auto = suit l'horloge fiction) ---- */
+let THM="dark";try{THM=localStorage.getItem("etl_theme")||"dark"}catch(e){}
+function thEff(){if(THM!=="auto")return THM;let h=null;try{h=CLK.h}catch(e){}return(h!=null&&h>=8&&h<19)?"light":"dark"}
+function thApply(){try{document.documentElement.dataset.theme=thEff()}catch(e){}}
+thApply();
+function clkSet(hm){const q=String(hm).replace("h",":").split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null;thApply()}
 function clkNow(){return CLK.h==null?null:String(CLK.h).padStart(2,"0")+":"+String(CLK.m).padStart(2,"0")}
 /* borne : l'horloge ne dérive JAMAIS au-delà du prochain horodatage scénarisé (ni +30 min sans repère) */
 function clkScan(id,cand){const n2=S[id];if(!n2)return;for(const[w,x]of n2.m||[]){const q=String(w==="n"?x:"").match(/(\d{1,2})h(\d{2})/);if(q){cand.push({h:+q[1],m:+q[2]});return}}}

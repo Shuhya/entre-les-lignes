@@ -556,3 +556,79 @@ body.pc .bk .bkLock{right:24px}
 body.pc #chat.kb{animation:chatkb 48s ease-in-out infinite alternate}
 @keyframes chatkb{from{background-position:center 28%}to{background-position:center 72%}}
 @media (prefers-reduced-motion: reduce){.b.h.pm img{animation:none}body.pc #chat.kb{animation:none}}
+
+/* ---- v2.82 : thème nuit/jour/auto (nuit = identique à avant) ---- */
+html[data-theme="dark"]{--card:#1c1c1f;--her:#2a2a2e;--hx:#f2f2f4;--tx:#f2f2f4;--mu:#98989f;--bd:#333338;--ac:#3e91ff}
+html[data-theme="light"]{--card:#f6f6f8;--her:#e9e9eb;--hx:#111;--tx:#111;--mu:#8a8a90;--ac:#3e91ff;--bd:#d8d8dc}
+.ngThm{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.ngThm button{background:#ffffff0f;border:1px solid #ffffff24;border-radius:12px;color:#dfe7f3;font:500 12px system-ui;padding:9px 2px;cursor:pointer}
+.ngThm button.sel{border-color:#ffd166;background:#ffd16622;color:#ffe9b0}
+html[data-theme="light"] #vol{background:#fffffff2;color:#111}
+html[data-theme="light"] #vol button.volB{border-color:#c8ccd4;background:#f2f3f6;color:#1a1c22}
+html[data-theme="light"] #ch button{background:#fff;color:#111}
+html[data-theme="light"] body.wa header{background:#f0f2f5;border-bottom-color:#e0e2e6}
+html[data-theme="light"] #thrOv{background:#fff;color:#111}
+html[data-theme="light"] #thrOv .thrHead{background:#f0f2f5;box-shadow:0 1px 3px #0002}
+html[data-theme="light"] #thrOv .thrSub{color:#66707a}
+html[data-theme="light"] .thrR{color:#111}
+html[data-theme="light"] .thrR:hover{background:#f2f3f5}
+html[data-theme="light"] .thrT small{color:#66707a}
+html[data-theme="light"] .thrA{background:#dfe3e8;color:#45505c}
+html[data-theme="light"] .thrA.unk{color:#67788a;background:#dfe6ec}
+html[data-theme="light"] .thrA.file{color:#a8811a;background:#efe9d4}
+html[data-theme="light"] .thrA.grp i{background:#dfe3e8;color:#45505c;border-color:#fff}
+html[data-theme="light"] .thrA.grp img{border-color:#fff}
+html[data-theme="light"] .thrM i{color:#66707a}
+html[data-theme="light"] #thrOv .ahBack,html[data-theme="light"] #notesOv .ahBack{background:#00000014;border-color:#00000024;color:#111}
+html[data-theme="light"] #notesOv{background:linear-gradient(#f7f7fa,#eceef2);color:#111}
+html[data-theme="light"] #notesOv>b{color:#8a6d1a}
+html[data-theme="light"] .ntR{background:#0000000d;color:#222}
+html[data-theme="light"] .ntB{color:#333}
+html[data-theme="light"] #scrOv{background:#f4f6fa}
+html[data-theme="light"] #scrOv .scHead{color:#1a2030;border-bottom-color:#0000001a}
+html[data-theme="light"] #scrOv .scSub,html[data-theme="light"] #scrOv .scSbar{color:#5a6474}
+html[data-theme="light"] #scrOv .scQ{color:#5a6474}
+html[data-theme="light"] #scrOv .scRow{background:#fff;border-color:#e2e5ec;color:#22262e}
+html[data-theme="light"] #scrOv .scRow small{color:#6a7484}
+html[data-theme="light"] #scrOv .scRow.go:hover{background:#f2f6ff;border-color:#bcd2ff}
+html[data-theme="light"] #scrOv .scNote{color:#5a6474}
+html[data-theme="light"] #scrOv .scBtn{background:#fff;border-color:#c9b26a;color:#5a4a12}
+html[data-theme="light"] #scrOv .scBtn:hover{background:#fdf6e3;border-color:#b89a3e}
+html[data-theme="light"] #scrOv .scTrack{background:#0000001a}
+html[data-theme="light"] #scrOv .scLi{color:#22262e}
+html[data-theme="light"] .fxOv{background:#f4f6fa;color:#1a2030}
+html[data-theme="light"] .fxTop{border-bottom-color:#e2e5ec;color:#1a2030}
+html[data-theme="light"] .fxX{color:#67707e}
+html[data-theme="light"] .fxRow{color:#1a2030;border-bottom-color:#0000000d}
+html[data-theme="light"] .fxRow:hover{background:#eef1f6}
+html[data-theme="light"] .fxIc{background:#e6eaf2}
+html[data-theme="light"] .fxNm small{color:#67707e}
+html[data-theme="light"] .fxGo{color:#9aa4b4}
+html[data-theme="light"] .fxFoot{border-color:#c8ccd4;background:#fff;color:#1a2030}
+html[data-theme="light"] .fxDim{color:#5a6474}
+html[data-theme="light"] .wavBar{background:#dfe3ec}
+html[data-theme="light"] .wavBtn{border-color:#3e91ff;background:#e8f1ff;color:#12325c}
+html[data-theme="light"] .wavTx .vwL{color:#22262e}
+html[data-theme="light"] .wavTx .vwL.i{color:#67707e}
+html[data-theme="light"] #calOv{background:linear-gradient(180deg,#eef2f8,#dfe5ee)}
+html[data-theme="light"] .calHd{border-bottom-color:#0000001a}
+html[data-theme="light"] .calHd b{color:#111}
+html[data-theme="light"] .calHd small{color:#5a719e}
+html[data-theme="light"] .calL.me{color:#0b6b4f}
+html[data-theme="light"] .calL.info{color:#5a719e}
+html[data-theme="light"] .calCh button{background:#fff;border-color:#c8d4e8;color:#1a2c44}
+html[data-theme="light"] .calCh button:hover{background:#eef3fb}
+html[data-theme="light"] .calHint{background:#fff8e0;border-color:#d4b13e;color:#7a5c00}
+html[data-theme="light"] .notif{background:#fffffff2;border-color:#0000001a;color:#111}
+html[data-theme="light"] .notif small{color:#555}
+html[data-theme="light"] #appHome{background:linear-gradient(170deg,#dfe9f4 0%,#cfe4ec 62%,#c9e8e2 100%)}
+html[data-theme="light"] #appHome .ah-clock{color:#1a2c40}
+html[data-theme="light"] #appHome .ah-bat{border-color:#1a2c40}
+html[data-theme="light"] #appHome .ah-bat:before{background:#1a2c40}
+html[data-theme="light"] #appHome .ah-search{background:#ffffff9e;border-color:#ffffffb8}
+html[data-theme="light"] #appHome .ah-search input{color:#1a2c40}
+html[data-theme="light"] #appHome .ah-app{color:#1a2c40;text-shadow:none}
+html[data-theme="light"] #appHome .ah-ic{box-shadow:0 8px 22px #0003}
+html[data-theme="light"] #appHome .ah-dots i{background:#00000030}
+html[data-theme="light"] #appHome .ah-dots i.on{background:#1a2c40}
+html[data-theme="light"] #appHome .ahBack{background:#00000012;border-color:#00000024;color:#1a2c40}
