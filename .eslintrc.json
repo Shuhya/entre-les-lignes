@@ -15,11 +15,6 @@
     { "files": ["scripts/**"], "env": { "node": true } },
     { "files": ["sw.js"], "env": { "serviceworker": true, "browser": true } },
     {
-      "files": ["js/assets.js"],
-      "globals": { "IMG": "writable", "AVF1": "writable", "AVF2": "writable", "AVF3": "writable", "AVF4": "writable", "AVM1": "writable", "VOICES": "writable" }
-    },
-    { "files": ["js/story.js"], "globals": { "S": "writable", "STORIES": "writable" } },
-    {
       "files": ["js/engine.js"],
       "globals": { "IMG": "readonly", "S": "readonly", "STORIES": "readonly", "AVF1": "readonly", "AVF2": "readonly", "AVF3": "readonly", "AVF4": "readonly", "AVM1": "readonly", "VOICES": "readonly" },
       "rules": { "no-func-assign": "off" }
