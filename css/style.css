@@ -272,7 +272,7 @@ body.pc .bk p{max-width:60ch}
 body.pc .bk .bkLock{right:24px}
 /* ---- prologue en cartes séquentielles ---- */
 .proOv{position:fixed;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;background:radial-gradient(140% 100% at 50% 42%,#101018 0%,#08090e 58%,#030305 100%);animation:fo .5s;padding:26px}
-.proCard{width:min(400px,86vw);max-height:80vh;overflow-y:auto;text-align:center;animation:proIn .55s;scrollbar-width:thin;border:1px solid #ffd1662e;padding:38px 30px 30px;background:linear-gradient(180deg,#ffffff05,#ffffff01)}
+.proCard{width:min(400px,86vw);max-height:80vh;overflow-y:auto;text-align:center;animation:proIn .55s;scrollbar-width:none;border:1px solid #ffd1662e;padding:38px 30px 30px;background:linear-gradient(180deg,#ffffff05,#ffffff01)}
 .proCard .proK{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#ffd1669e;margin-bottom:22px}
 .proCard .proK:before,.proCard .proK:after{content:"";display:inline-block;width:26px;height:1px;background:#ffd16640;vertical-align:middle;margin:0 12px}
 .proCard h2{font:400 29px Georgia,serif;color:#fdfbf4;margin:0 auto 20px;line-height:1.32;letter-spacing:.3px;max-width:300px}
@@ -406,6 +406,7 @@ body.pc .bk .bkLock{right:24px}
 /* ---- prologue machine a ecrire ---- */
 .proSkip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:5;background:none;border:0;color:#ffffff8f;font:inherit;font-size:13px;letter-spacing:.5px;cursor:pointer;padding:6px 8px}
 .proSkip:hover{color:#fff}
+.proCard::-webkit-scrollbar{display:none}
 .proCard h2.tw:after,.proCard p.tw:after{content:"\258D";color:#ffd166;margin-left:2px;animation:caretB 1s steps(1) infinite}
 @keyframes caretB{50%{opacity:0}}
 /* ---- transfert de partie ---- */
@@ -445,6 +446,8 @@ body.pc .bk .bkLock{right:24px}
 #scrOv.off{opacity:0;transition:opacity .5s;pointer-events:none}
 #scrOv .scHead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid #ffffff14;font:600 14px system-ui;color:#e8eefb}
 #scrOv .scHead .scIc{font-size:18px}
+#scrOv .scHead.hs{padding-top:calc(46px + env(safe-area-inset-top,0px))}
+#scrOv .scHead .scIc svg{display:block;width:20px;height:20px}
 #scrOv .scBody{flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:12px}
 #scrOv .scSub{font:400 13.5px/1.7 system-ui;color:#9fb4d8;margin:0}
 #scrOv .scRow{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid #ffffff12;border-radius:12px;background:#ffffff06;font:400 13px system-ui;color:#dbe7f8}

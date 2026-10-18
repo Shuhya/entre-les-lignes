@@ -7,7 +7,7 @@ const S={
 h1:{w:"appart",pro:["Numéro attribué",
 "Vaubris, 2057.\nIl y a six jours, ton numéro a fuité sur des forums.\nDes inconnus appelaient la nuit. Tu as porté plainte.\nCe soir, tu as payé pour tout changer : une ligne vierge, un téléphone sorti du carton.\n« Tout est remis à zéro », a dit le vendeur.\nIl a oublié une case dans le système.\nCe numéro aurait dû rester bloqué pour toujours : avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
 out:["« C'est quoi ce bordel… ? » Le téléphone s'ouvre sur une application que tu n'as jamais installée : HÉLIOS Cloud. Elle tourne déjà, toute seule, comme si elle t'attendait.",
-"4,2 Go de données au nom de « N. A. », l'ancien titulaire, attendent d'être rapatriés dans ce téléphone neuf. Il propose de récupérer les fichiers. À toi de décider."],
+"4,2 Go de données attendent d'être rapatriés dans ce téléphone neuf. Les tiennes, forcément — qui d'autre ? HÉLIOS propose de tout récupérer. À toi de décider."],
 scr:{k:"helios",ts:"21h58"},
 c:[["Suivre la migration, le téléphone à la main. Ta vie, tes photos : tu veux la voir revenir, ligne par ligne.","h2",{mig:1}],["La laisser faire seule, écran posé face contre la table. Tu regarderas plus tard, ou jamais.","h2",{mig:0}]]},
 h2:{w:"appart",app:"WhatsApp",nm:"Yasmine",

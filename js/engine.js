@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.85";
+const VER="2.86";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -75,7 +75,7 @@ function fxRain(on){
   D.forEach(d=>{d.y+=d.v/H*1.6;if(d.y>1.05){d.y=-.05;d.x=Math.random()}x.beginPath();x.moveTo(d.x*W,d.y*H);x.lineTo((d.x-.004)*W,(d.y+d.l)*H);x.stroke()});
   rfR=requestAnimationFrame(dr)};
  dr()}
-function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0003,#0006),url("+u+")":"";try{$("chat").classList.add("kb")}catch(e){}try{fxRain(k==="appart")}catch(e){}amb(k)}
+function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0003,#0006),url("+u+")":"";try{$("chat").classList.add("kb")}catch(e){}try{fxRain(false)}catch(e){}amb(k)}
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
  if(SS&&SS.id==="h"&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
@@ -189,9 +189,9 @@ async function proCards(P,opts){const pars=P.slice(1);if(!pars.length)return;con
    const d=document.createElement("div");d.className="proDots";if(pars.length>1){pars.forEach((_,j)=>{const e=document.createElement("i");if(j===i)e.className="on";d.append(e)});cd.append(d)}
    const b=document.createElement("button");b.className="proBtn";b.hidden=true;b.textContent=i===pars.length-1?LB:"Continuer";
    cd.append(b);
-   cd.addEventListener("pointerdown",ev=>{ev.preventDefault();
-    if(typing){finish(t);if(titleEl)finish(titleEl);b.hidden=false;return}
-    cd.remove();if(i+1<pars.length)show(i+1);else end()});
+   cd.addEventListener("pointerdown",ev=>{if(ev.target&&ev.target.closest&&ev.target.closest("button"))return;
+    if(typing){ev.preventDefault();finish(t);if(titleEl)finish(titleEl);b.hidden=false}});
+   b.onclick=ev=>{ev.stopPropagation();cd.remove();if(i+1<pars.length)show(i+1);else end()};
    o.replaceChildren(skip,sb,cd);
    if(opts&&opts.instant){t.textContent=pars[i];if(titleEl)titleEl.textContent=P[0];b.hidden=false}else{const goPar=()=>type(t,pars[i],()=>{b.hidden=false});
    if(titleEl)type(titleEl,P[0],()=>goPar());else goPar()}};
@@ -342,7 +342,7 @@ function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle(
  const av=$("av");if(!av)return;
  if(n.mem&&n.mem.length>1){av.className="av grp";av.style.backgroundImage="";av.textContent="";n.mem.forEach(m=>{const i=document.createElement("img");i.alt=m;i.src=AVGR[m[0]]||"";av.append(i)})}
  else if(n.mem){av.className="av";const ph=avOf(n.mem[0]);av.style.backgroundImage=ph?"linear-gradient(#0003,#0006),url("+ph+")":"";av.textContent=ph?"":n.mem[0][0]}
- else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="📁"}else setAv(SC?SS.n[0]:"\u{1F464}")}}
+ else{const pn=AVN[n.nm];if(pn){av.className="av";av.style.backgroundImage="linear-gradient(#0003,#0006),url("+pn+")";av.textContent=""}else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="📁"}else setAv(SC?SS.n[0]:"\u{1F464}")}}}
 function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95);
  const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";
  const snd=n.nm||((n.prev||"").split(" : ")[0])||n.app;
@@ -512,7 +512,6 @@ async function introH(cb){
   q(".lkGo").onclick=x=>{x.stopPropagation();if(done)return;
     try{unlock();hit(660,.07,.14);setTimeout(()=>hit(990,.09,.14),70)}catch(e){}
     if(RM)setTimeout(reactThen,250);else glitch()};
-  o.onclick=()=>{if(done)return;if(o.classList.contains("unlocked"))reactThen()};
 }
 
 /* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
@@ -541,7 +540,7 @@ async function awayOv(lines,LB){
    setTimeout(()=>{inn.append(p);requestAnimationFrame(()=>requestAnimationFrame(()=>p.classList.add("on")))},i2*650)});
   btn.style.visibility="visible";btn.textContent=LB||"Reprendre le t\u00E9l\u00E9phone";
   btn.onclick=e=>{e.stopPropagation();try{hit(660,.05,.08)}catch(e2){}close()};
-  o.onclick=()=>{try{hit(660,.05,.08)}catch(e2){}close()}})}
+})}
 /* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
 async function heliosTransfer(o){
  const btns=o.querySelector(".scBtns");btns.innerHTML="";
@@ -575,9 +574,9 @@ async function scrOv(n){
  if(spec.k==="helios"){
   const dn=spec.st==="done";
   const hm9=spec.ts?String(spec.ts).replace("h",":"):"";
-  o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead"><span class="scIc">☁️</span><b>HÉLIOS Cloud</b></div><div class="scBody">'
+  o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead hs"><span class="scIc"><svg viewBox="0 0 24 24" fill="none" stroke="#9fb4d8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H6a4.5 4.5 0 0 1-.9-8.9 7 7 0 0 1 13.3-1.4A4.6 4.6 0 0 1 17.5 19z"/></svg></span><b>HÉLIOS Cloud</b></div><div class="scBody">'
   +(dn?'<p class="scSub">Migration terminée — 4 fichiers rapatriés<br>06 51 09 43 87 · Espace « N. A. » synchronisé</p>'
-      :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go au nom de « N. A. »</p>')
+      :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go</p>')
   +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>'+(dn?'✓ 2,1 Go':'2,1 Go')+'</small></div>'
   +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>'+(dn?'✓ 1,4 Go':'1,4 Go')+'</small></div>'
   +'<div class="scRow"><i>📄</i><span>Documents</span><small>'+(dn?'✓ 0,7 Go':'0,7 Go')+'</small></div>'
@@ -613,7 +612,7 @@ async function scrOv(n){
   note.textContent="Quatre fichiers qui ne sont pas à toi, maintenant dans ton téléphone.";
   body.append(note);
   o.append(head);o.append(body)}
- const btns=document.createElement("div");btns.className="scBtns";if(spec.k==="helios"){const q2=document.createElement("p");q2.className="scQ";q2.textContent=spec.st==="done"?"L'archive est synchronisée. Qu'en fais-tu ?":"Rapatrier la vie d'un mort dans ton téléphone ?";btns.append(q2)}o.append(btns);
+ const btns=document.createElement("div");btns.className="scBtns";if(spec.k==="helios"){const q2=document.createElement("p");q2.className="scQ";q2.textContent=spec.st==="done"?"L'archive est synchronisée. Qu'en fais-tu ?":"Rapatrier tes données dans ton téléphone neuf ?";btns.append(q2)}o.append(btns);
  app.append(o);
  if(spec.ts){const q=String(spec.ts).match(/^(\d{1,2})h(\d{2})$/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}}
  try{beep(520,.06,.05)}catch(e){}
