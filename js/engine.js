@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.87";
+const VER="2.88";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -728,7 +728,7 @@ $("bk").onclick=()=>{const no=document.getElementById("notesOv");
  const ho=document.getElementById("appHome");if(ho){ho.remove();applyApp(hdrOf(CAPP,CNM));return}
  menu()};$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
 function setView(p){updMob();PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE=$("vw");if(vwE)vwE.textContent=PC?"📱":"🖥️";{const v2=$("vw2");if(v2)v2.textContent=PC?"📱 Mode téléphone":"🖥️ Mode PC"}try{localStorage.setItem("view",PC)}catch(e){}}
-{const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?0:+v)}catch(e){setView(0)}
+{const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?((typeof innerWidth==="number"&&innerWidth>=900)?1:0):+v)}catch(e){setView(0)}
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
 if($("go")){$("go").onclick=()=>{try{if(matchMedia("(pointer:coarse)").matches&&!document.fullscreenElement){const d=document.documentElement;const rq=(d.requestFullscreen||d.webkitRequestFullscreen);if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}}catch(e){}startFromIntro()};$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:true});
