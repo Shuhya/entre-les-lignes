@@ -2,6 +2,7 @@
 
 Format court. Détail complet des versions dans les messages de commit.
 
+- **2.97** — Fix : overlay Paramètres/Guide de la landing enfin stylé (il manquait tout le CSS, la fenêtre apparaissait sous l’écran d’intro) ; config ESLint par fichier (globals AVF/VOICES, monkey-patching autorisé).
 - **2.96** — Chantier qualité : test menu en CI, ESLint, E2E Playwright, CHANGELOG, déduplication des images de la landing (453→~90 Ko, réutilisation des fichiers du jeu).
 - **2.95** — Fix : ⚙ Paramètres / 📖 Guide invisibles depuis le menu (overlays attachés au body, au-dessus du menu).
 - **2.94** — Démo landing : bas du téléphone complet (barre de saisie + nav comme dans le jeu).
