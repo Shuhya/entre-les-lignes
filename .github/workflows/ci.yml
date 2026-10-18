@@ -14,3 +14,21 @@ jobs:
       - run: node scripts/validate.js
       - run: ROUTE=a node scripts/smoke.js
       - run: ROUTE=b node scripts/smoke.js
+      - run: node scripts/test-menu.js
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-save eslint@8.57.0
+      - run: npx eslint .
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/e2e.js
