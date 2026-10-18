@@ -525,3 +525,15 @@ body.pc .bk .bkLock{right:24px}
 #lkWake .lkClock,#lkWake .lkDate,#lkWake .lkNotif,#lkWake .lkHint{position:relative;z-index:1}
 #lkWake .lkDate{font-size:13px;opacity:.65;margin:-28px 0 32px}
 .scQ{width:100%;text-align:center;font-style:italic;color:#9fb4d8;font-size:13.5px;margin:0 0 10px;letter-spacing:.2px}
+
+/* v2.75 : bulle prénom + genre */
+.ngOv{position:fixed;inset:0;z-index:90;background:radial-gradient(140% 100% at 50% 42%,#101018 0%,#08090e 58%,#030305 100%);display:grid;place-items:center;animation:fo .4s}
+.ngCard{width:min(340px,86vw);text-align:center;color:#fff;font-family:Georgia,serif}
+.ngCard h2{font-size:24px;font-weight:400;margin:0 0 10px}
+.ngP{font-size:14.5px;font-style:italic;color:#cfe0f5;line-height:1.6;margin:0 0 22px}
+.ngCard input{width:100%;box-sizing:border-box;background:#ffffff12;border:1px solid #ffffff2e;border-radius:12px;color:#fff;font:16px Georgia,serif;padding:12px 14px;text-align:center;outline:none;margin-bottom:14px}
+.ngCard input:focus{border-color:#ffd16688}
+.ngGen{display:flex;gap:10px;margin-bottom:16px}
+.ngGen button{flex:1;background:#ffffff0f;border:1px solid #ffffff24;border-radius:999px;color:#dfe7f3;font:500 13px system-ui;padding:10px 0;cursor:pointer}
+.ngGen button.sel{border-color:#ffd166;background:#ffd16622;color:#ffe9b0}
+.ngGo{width:100%;background:#ffd166;border:0;border-radius:999px;color:#20180a;font:600 13.5px system-ui;letter-spacing:1.5px;padding:13px 0;cursor:pointer}

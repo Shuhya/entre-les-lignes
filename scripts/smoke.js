@@ -103,7 +103,8 @@ async function drive(){
   if(Date.now()-t0>120000)throw new Error("timeout global du replay (boucle sans interaction)");
   const node=T.node();if(node)seen.nodes.add(node);
   if(node==="h5c"&&first('.pm img'))seen.mms=true;
-  let el=first(".proSkip");if(el){el.click();await sleep(40);continue}
+  let el=first("#nameGate");if(el){const ni=first("input",el);if(ni)ni.value="Sam";const mb=qa(el,"#ngM")[0];if(mb)mb.click();const gb=qa(el,".ngGo")[0];if(gb)gb.click();await sleep(40);continue}
+  el=first(".proSkip");if(el){el.click();await sleep(40);continue}
   el=first("#lockOv .lkGo");if(el&&!first(".lkNext")){el.click();await sleep(120);continue}
   el=first(".lkNext");if(el){el.click();await sleep(60);continue}
   el=first(".rxOv");if(el){el.click();await sleep(20);if(first(".rxOv"))el.click();await sleep(60);continue}
