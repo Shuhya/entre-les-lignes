@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.125";
+const VER="2.126";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -108,7 +108,7 @@ async function play(id,r=run){
  let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
  for(const[w,x0]of n.m||[]){const x=String(x0).replace(/%N%/g,(st&&st.pname)||"toi");STATS.msgs++;if(w!=="a")veil(0);
   if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([gf(x)],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([gf(x)],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
@@ -295,14 +295,15 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
   if(L[0]===2&&Array.isArray(L[1])){
    const bx=document.createElement("div");bx.className="calCh";
    inChoice=true;eb.hidden=false;hint.hidden=false;
-   L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;
-    const b=document.createElement("button");b.textContent=lab;
-    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab],1);tx();if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
+   L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;const lab2=gf(lab);
+    const b=document.createElement("button");b.textContent=lab2;
+    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab2],1);tx();if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
    tr.append(bx);tr.scrollTop=1e9;return}
   const est=Math.max(700,(String(L[1]).split(/\s+/).length*310)+450)/SPD;
   const d=put(L,0);
-  if(L[0]===1){rx();if(!muted)callSpeak(L[1],nm)}
-  typeIn(d,L[1],()=>setTimeout(next,Math.max(300,est-1200)/SPD))};
+  const LT=gf(L[1]);
+  if(L[0]===1){rx();if(!muted)callSpeak(LT,nm)}
+  typeIn(d,LT,()=>setTimeout(next,Math.max(300,est-1200)/SPD))};
  setTimeout(next,700/SPD);
  eb.onclick=()=>{callSpeakStop();veil(1);o.remove();stopV();done(inChoice?"hangup":undefined)}}
 function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
@@ -458,12 +459,12 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
   h+='<b>Ce que tu sais</b>';
   NH(s).forEach(x=>{h+='<div class="ntR">'+x.tex+'</div>'});
  }}
- h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);try{noRubber(o)}catch(e){}
+ h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=gf(h);$("app").append(o);try{noRubber(o)}catch(e){}
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
 async function lockFx(){const o=document.createElement("div");o.id="lockFx";$("app").append(o);try{hit(440,.5,.05,"lowpass",.02,.6)}catch(e){}await sl(520)}
 const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].trim():x};
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
- (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(t);b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",gf(emojiClean(t)))}else{tx();add("m",emojiClean(rm?unq(rm):unq(t)))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);if(ef&&ef.lock){delete st.lock;await lockFx()}play(nx,run)};c.append(b)});
+ (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(gf(t));b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",gf(emojiClean(t)))}else{tx();add("m",emojiClean(rm?unq(gf(rm)):unq(gf(t))))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);if(ef&&ef.lock){delete st.lock;await lockFx()}play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
 function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
@@ -477,11 +478,18 @@ function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne 
  o.innerHTML='<div class="ngCard"><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><button class="ngGo bioGo">Suivant</button></div>';
  document.body.append(o);
  const P=o.querySelectorAll(".ngP");
- P[0].textContent=nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans de service et une quête sur la Larme, la drogue de Vaubris.";
- P[1].textContent="Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié — le hack de ces six derniers jours a commencé là.";
+ P[0].textContent=gf(nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans de service et une quête sur la Larme, la drogue de Vaubris.");
+ P[1].textContent=gf("Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié — le hack de ces six derniers jours a commencé là.");
  o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}cb&&cb();o.remove()}}
 /* ---- v2.75 : genre du joueur + prénom ---- */
-function gf(t){if(!st||!st.pf)return String(t);return String(t).replace(/\b(Désolé|éveillé|certain|seul|content|rentré|fatigué|prêt)\b/g,"$1e")}
+function gf(t){if(!st||!st.pf)return String(t);return String(t)
+ .replace(/(?<![\p{L}])(Désolé|désolé|éveillé|certain|seul|content|rentré|fatigué|prêt|vivant|sûr|repéré|appelé|aiguillé)(?![\p{L}])/gu,"$1e")
+ .replace(/(?<![\p{L}])curieux(?![\p{L}])/gu,"curieuse")
+ .replace(/(?<![\p{L}])le flic(?![\p{L}])/gu,"la flic")
+ .replace(/(?<![\p{L}])ancien inspecteur(?![\p{L}])/gu,"ancienne inspectrice")
+ .replace(/(?<![\p{L}])réparateur indépendant(?![\p{L}])/gu,"réparatrice indépendante")
+ .replace(/(?<![\p{L}])un ancien inspecteur(?![\p{L}])/gu,"une ancienne inspectrice")
+ .replace(/n'es pas lui/g,"n'es pas elle")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
  o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom. Comment t’appelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><div class="ngGen"><button id="ngF">♀ Une femme</button><button id="ngM">♂ Un homme</button></div><button class="ngGo">Continuer</button></div>';
  document.body.append(o);
@@ -919,14 +927,12 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   return out};
  const endsOf=s=>endsAll(s).length;
  function endsCard(s){const all=endsAll(s);let got=[];try{got=JSON.parse(localStorage.getItem('fe'+s.id)||'[]')}catch(e){}
-  const o=document.createElement('div');o.id='infoOv';
-  const c=document.createElement('div');c.className='ifCard';
-  const k=document.createElement('div');k.className='ifK';k.textContent='Fins';c.append(k);
-  const h2=document.createElement('h2');h2.textContent=s.t;c.append(h2);
-  all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('div');r.className='ifRow'+(ok?' on':' dim');
-   r.innerHTML='<span>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</span>';c.append(r)});
-  const bk2=document.createElement('button');bk2.className='ifBack';bk2.textContent='\u2039 Retour';bk2.onclick=()=>{o.remove();chap(s)};c.append(bk2);
-  document.body.append(o);o.append(c)}
+  const c=card('Fins \u2014 '+s.t);
+  const list=document.createElement('div');list.className='bkWrap';c.append(list);
+  all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('button');r.className='bk'+(ok?' open':' lock');r.disabled=!ok;
+   r.innerHTML='<h3>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</h3>';list.append(r)});
+  const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>chap(s);c.append(bk3);
+  show(c)}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]')).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
@@ -937,23 +943,19 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    nodeNow=null;
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
-   const tot=endsOf(s),got=feN(s);
-   const o=document.createElement('div');o.id='infoOv';
-   const c=document.createElement('div');c.className='ifCard';
-   const k=document.createElement('div');k.className='ifK';k.textContent='Chapitres';c.append(k);
-   const h2=document.createElement('h2');h2.textContent=s.t;c.append(h2);
+   const c=card(s.t);
+   const list=document.createElement('div');list.className='bkWrap';c.append(list);
    s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);
-    const b=document.createElement('button');b.className='ifCh'+(ok?(i===SC?' on':''):' lock');b.disabled=!ok;
-    b.innerHTML='<span>'+(i+1)+'. '+h[0]+'</span><small>'+(ok?(i===SC?'en cours':'\u2713'):(w?'verrouill\u00E9':'bient\u00F4t'))+'</small>';
-    if(ok)b.onclick=()=>{o.remove();SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};
-    c.append(b);
-    if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='ifRep';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{o.remove();GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};c.append(rb)}});
-   if(s.id==='h'){const fl=document.createElement('button');fl.className='ifFins';
-    fl.innerHTML='\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'<small>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</small>';
-    fl.onclick=()=>{o.remove();endsCard(s)};c.append(fl)}
-   const bk2=document.createElement('button');bk2.className='ifBack';bk2.textContent='\u2039 Retour';bk2.onclick=()=>{o.remove();menu()};c.append(bk2);
-   try{document.querySelectorAll('.mnBack').forEach(x=>x.remove())}catch(e2){}
-   document.body.append(o);o.append(c)};
+    const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
+    b.innerHTML='<h3>'+(i+1)+'. '+h[0]+'</h3><div class="bkF">'+(ok?(i===SC?'en cours':'\u2713 termin\u00E9'):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
+    if(ok)b.onclick=()=>{SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};
+    list.append(b);
+    if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};list.append(rb)}});
+   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
+    fb.innerHTML='<h3>\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'</h3><p>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</p>';
+    fb.onclick=()=>endsCard(s);list.append(fb)}
+   const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>menu();c.append(bk3);
+   show(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
    const o=document.createElement('div');o.className='rsOv';

@@ -16,7 +16,8 @@ const PRE = [
   "./assets/audio/pluie.mp3",
   "./assets/img/echantillon.jpg",
   "./assets/img/fond-ecran.jpg",
-  "./assets/img/surveillance.svg"
+  "./assets/img/surveillance.svg",
+  "./assets/img/surveillance-f.svg"
 ];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.concat(PRE)).catch(()=>{})).then(() => self.skipWaiting()));
