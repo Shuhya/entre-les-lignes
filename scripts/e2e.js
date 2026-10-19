@@ -9,11 +9,12 @@
 const path = require('path');
 const { chromium } = require('playwright');
 
+const errs = [];
+let page = null;
 (async () => {
   const b = await chromium.launch();
   const ctx = await b.newContext();
-  const page = await ctx.newPage();
-  const errs = [];
+  page = await ctx.newPage();
   page.on('pageerror', e => errs.push('pageerror: ' + e.message));
   page.setDefaultTimeout(15000);
   const root = 'file://' + path.resolve(__dirname, '..');
@@ -44,9 +45,7 @@ const { chromium } = require('playwright');
   await ch1.click();
   console.log('e2e 4/6: chapitre 1 choisi');
 
-  const pro = await page.$('.proSkip');
-  if (pro) { await pro.click(); console.log('e2e: prologue passé'); }
-
+  /* start() : nameGate D'ABORD, puis introH (prologue en cartes + lock screen) */
   const gate = await page.$('#nameGate');
   if (gate) {
     await page.fill('#ngName', 'Sam');
@@ -56,6 +55,20 @@ const { chromium } = require('playwright');
     await page.waitForSelector('#nameGate', { state: 'detached', timeout: 8000 });
     console.log('e2e: prénom saisi (Sam)');
   }
+
+  /* prologue en cartes (S.h1.pro) : .proSkip visible dès la 1re carte */
+  try {
+    await page.waitForSelector('.proSkip', { state: 'visible', timeout: 8000 });
+    await page.click('.proSkip');
+    console.log('e2e: prologue passé');
+  } catch (e) { /* pas de prologue en cartes */ }
+
+  /* lock screen intro ch.1 : .lkGo apparaît après l'animation d'horloge */
+  try {
+    await page.waitForSelector('.lkGo', { state: 'visible', timeout: 15000 });
+    await page.click('.lkGo');
+    console.log('e2e: téléphone déverrouillé');
+  } catch (e) { /* pas de lock screen */ }
 
   await page.waitForFunction(() => {
     const c = document.getElementById('chat');
@@ -87,4 +100,13 @@ const { chromium } = require('playwright');
   await b.close();
   console.log('E2E OK (menu + partie + landing)');
   process.exit(0);
-})().catch(e => { console.error('E2E FAIL:', e.message); if (errs.length) console.error('ERREURS PAGE:\n' + errs.join('\n')); process.exit(1); });
+})().catch(e => {
+  console.error('E2E FAIL:', e.message);
+  if (errs.length) console.error('ERREURS PAGE:\n' + errs.join('\n'));
+  if (page) page.evaluate(() => {
+    console.log('DIAG chat=' + (document.getElementById('chat') || {}).children.length
+      + ' body=' + document.body.className
+      + ' ov=' + Array.from(document.querySelectorAll('body > div[id]')).map(d => d.id + (d.hidden ? ':h' : '')).join(','));
+  }).catch(() => {});
+  setTimeout(() => process.exit(1), 500);
+});
