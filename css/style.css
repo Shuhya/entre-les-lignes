@@ -713,3 +713,18 @@ html[data-theme="light"] .rdOk{border-color:#b98a1e44;background:#b98a1e0a;color
 html[data-theme="light"] .calMute{border-color:#00000022;background:#ffffff70;color:#333}
 #scrOv,.fxOv,#thrOv{animation:fo .3s}
 #lkWake .lkClock,#lkWake .lkDate,#lkWake .lkNotif,#lkWake .lkTools{animation:fo .55s .12s both}
+
+/* ---- v2.116 : bulles de choix refonte douce (option C) ---- */
+#ch button{text-align:left;padding:11px 15px;border-radius:18px;border:1px solid #ffffff26;background:#ffffff0a;color:var(--tx);font:inherit;font-size:15px;transition:background .2s,transform .12s,opacity .2s;cursor:pointer}
+#ch button:active{transform:scale(.985);background:#ffffff16}
+html[data-theme="light"] #ch button{background:#ffffffd9;border-color:#00000012;color:#111}
+html[data-theme="light"] #ch button:active{background:#fff}
+/* notif android : avatar rond (option B) */
+.notif .nIc.nAv{border-radius:50%;background-size:cover;background-position:center 18%;font-size:0}
+/* animation de verrouillage */
+#lockFx{position:absolute;inset:0;z-index:75;background:#000;pointer-events:none;animation:lkfx 1.25s ease forwards}
+@keyframes lkfx{0%{opacity:0}38%{opacity:1}72%{opacity:1}100%{opacity:0}}
+/* parametres : tenir sans scroll */
+.volCard{padding:15px 15px 13px}
+.volCard .volB{padding:9px 12px}
+.volCard label{margin:7px 0 3px}

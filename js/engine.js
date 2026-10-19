@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.115";
+const VER="2.116";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -105,7 +105,7 @@ async function play(id,r=run){
  if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>incCallOv(n,q));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
- let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:0;
+ let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
  for(const[w,x0]of n.m||[]){const x=String(x0).replace(/%N%/g,(st&&st.pname)||"toi");STATS.msgs++;if(w!=="a")veil(0);
   if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}}
   else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([gf(x)],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
@@ -373,9 +373,10 @@ function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle(
 function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95);
  const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";
  const snd=n.nm||((n.prev||"").split(" : ")[0])||n.app;
- b.innerHTML='<div class="nIc" style="background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6"))+'">'+ic+'</div><div><b>'+snd+'</b><small>'+(snd!==n.app?n.app+" · ":"")+(n.prev||"Nouveau message")+'</small></div>';
+ const avp=(typeof AVN!=="undefined"&&AVN[snd])||null;
+ b.innerHTML='<div class="nIc'+(avp?' nAv':'')+'" style="'+(avp?'background-image:url('+avp+')':'background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6")))+'">'+(avp?'':ic)+'</div><div><b>'+snd+'</b><small>'+(snd!==n.app?n.app+" · maintenant":"maintenant")+'</small></div>';
  $("app").append(b);let done=false;
- const open=()=>{if(done)return;done=true;b.remove();applyApp(n);setTimeout(res,400)};
+ const open=()=>{if(done)return;done=true;if(n.prev)try{window.__noan=1}catch(e2){};b.remove();applyApp(n);setTimeout(res,400)};
  b.onclick=open})}
 function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML};
  const o=document.createElement("div");o.id="appHome";
@@ -459,9 +460,10 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
  }}
  h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);try{noRubber(o)}catch(e){}
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
+async function lockFx(){const o=document.createElement("div");o.id="lockFx";$("app").append(o);try{hit(440,.5,.05,"lowpass",.02,.6)}catch(e){}await sl(520)}
 const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].trim():x};
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
- (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(t);b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",gf(emojiClean(t)))}else{tx();add("m",emojiClean(rm?unq(rm):unq(t)))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);play(nx,run)};c.append(b)});
+ (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(t);b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",gf(emojiClean(t)))}else{tx();add("m",emojiClean(rm?unq(rm):unq(t)))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);if(ef&&ef.lock){delete st.lock;await lockFx()}play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
 function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
