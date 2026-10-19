@@ -54,6 +54,7 @@ let page = null;
     await page.click('.ngGo');
     await page.waitForSelector('#nameGate', { state: 'detached', timeout: 8000 });
     console.log('e2e: prénom saisi (Sam)');
+    try { await page.waitForSelector('#bioOv', { timeout: 6000 }); await page.click('.bioGo'); console.log('e2e: fiche perso validée'); } catch (e2) {}
   }
 
   /* prologue en cartes (S.h1.pro) : .proSkip visible dès la 1re carte */

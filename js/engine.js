@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.100";
+const VER="2.101";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -457,7 +457,16 @@ function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hid
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
  document.body.classList.add("play");$("mn").classList.remove("on");
  const begin=()=>{if(SS.id==="h"&&!SC&&!(window.__ghost&&window.__ghost())&&typeof introH==="function")introH(()=>play(SS.ch[SC][1]));else play(SS.ch[SC][1])};
- if(SS.id==="h"&&!SC&&!st.pname&&!(window.__ghost&&window.__ghost()))nameGate(begin);else begin()}
+ if(SS.id==="h"&&!SC&&!st.pname&&!(window.__ghost&&window.__ghost()))nameGate(()=>bioOv(begin));else begin()}
+function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne inspectrice":"ancien inspecteur";
+ const o=document.createElement("div");o.id="bioOv";o.className="ngOv";
+ o.innerHTML='<div class="ngCard"><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><p class="ngP"></p><button class="ngGo bioGo">Reprendre le téléphone</button></div>';
+ document.body.append(o);
+ const P=o.querySelectorAll(".ngP");
+ P[0].textContent=nm+", "+insp+" de la brigade urbaine de Vaubris. Six ans de patrouilles et de dossiers — puis une affaire de drogue classée trop vite, des relais qu'on t'a ordonné de cesser de regarder, et un badge rendu plutôt que tes convictions.";
+ P[1].textContent="Depuis, tu ressembles à n'importe qui : réparateur indépendant, un atelier, des clients de quartier qui payent en espèces. Mais chaque soir, la même recherche. La Larme, ce sucre qui noie la ville. Jusqu'au soir où ils ont remarqué que tu regardais trop près.";
+ P[2].textContent="Six jours de hack. Ta ligne fichée sur des forums, des appels inconnus à trois heures du matin. Tu as payé pour tout changer : une ligne vierge, un téléphone sorti du carton. Tout, sauf tes habitudes.";
+ o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}o.remove();cb&&cb()}}
 /* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t).replace(/\b(Désolé|éveillé|certain|seul|content|rentré|fatigué|prêt)\b/g,"$1e")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
