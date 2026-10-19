@@ -22,7 +22,7 @@ let broken=[],seen=new Set(),q=[];
 STORIES.forEach(s=>(s.ch||[]).forEach(c=>{if(c[1]!=='-'&&S[c[1]])q.push(c[1])}));
 const push=(t,f)=>{if(t&&t!=='-'){if(!(t in S))broken.push(f+'→'+t);else q.push(t)}};
 while(q.length){const id=q.pop();if(seen.has(id))continue;seen.add(id);const n=S[id];
-  (n.c||[]).forEach(ch=>ch&&push(ch[1],id));push(n.x,id);push(n.h,id);
+  (n.c||[]).forEach(ch=>ch&&push(ch[1],id));push(n.x,id);push(n.h,id);if(n.dec)push(n.dec,id);
   if(n.j)states.forEach(st=>{let t;try{t=n.j(st)}catch(e){}push(t,id+' (j)')});}
 const orph=Object.keys(S).filter(k=>!seen.has(k));
 step(broken.length===0,broken.length?broken.join(', '):'0 lien cassé');

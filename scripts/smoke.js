@@ -111,6 +111,7 @@ async function drive(){
   el=first("#awayOv");if(el){(first(".awGo",el)||el).click();await sleep(40);continue}
   el=first("#lkWake");if(el){el.click();await sleep(80);continue}
   el=first(".notif");if(el){el.click();await sleep(60);continue}
+  el=first("#incOv");if(el){const ab=first(".incAcc",el);if(ab)ab.click();await sleep(60);continue}
   el=first("#calOv");if(el){const chs=qa(el,".calCh button");if(chs.length){chs[0].click();await sleep(60);continue}
    const eb=first(".calEnd",el);if(eb&&!eb.hidden){eb.click();await sleep(60);continue}}
   const scr=first("#scrOv");

@@ -680,3 +680,21 @@ html[data-theme="light"] .ifBack{background:#fff;border-color:#c8ccd4;color:#1a2
 body.mob .nav{display:none}
 body.mob .sbar > i{display:none}
 body.mob #chat{padding-bottom:16px}
+/* ---- v2.100 : appel entrant (incCallOv) ---- */
+#incOv{position:absolute;inset:0;z-index:65;background:radial-gradient(120% 100% at 50% 30%,#0e1a14 0%,#05080a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;animation:incIn .3s ease both;padding:20px;text-align:center}
+@keyframes incIn{from{opacity:0}to{opacity:1}}
+#incOv .calHd{position:static;flex-direction:column;text-align:center;gap:12px;background:none;border:0;padding:0}
+#incOv .calAv{width:88px;height:88px;border-radius:50%;background-size:cover;background-position:center top;display:grid;place-items:center;font-size:40px;position:relative;color:#f2f2f4}
+#incOv .calAv:after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid #ffd16655;animation:incRing 1.7s ease-out infinite}
+@keyframes incRing{from{transform:scale(1);opacity:.9}to{transform:scale(1.38);opacity:0}}
+#incOv b{font:600 21px Georgia,serif;color:#f2f2f4;display:block}
+#incOv small{color:#9fb4a8;display:block;font-size:12px;margin-top:3px}
+.incState{color:#ffd166b9;font-size:11px;letter-spacing:2.5px;text-transform:uppercase}
+.incBtns{display:flex;gap:42px}
+.incBtns button{width:64px;height:64px;border-radius:50%;border:0;display:grid;place-items:center;gap:2px;cursor:pointer;transition:transform .15s;padding:6px}
+.incBtns button:active{transform:scale(.92)}
+.incBtns button i{font-style:normal;font-size:24px}
+.incBtns button small{display:block;font-size:9.5px;color:#ffffffc9}
+.incDec{background:#e5484d}
+.incAcc{background:#2fa56b}
+@media(prefers-reduced-motion:reduce){#incOv .calAv:after{animation:none}#incOv{animation:none}}

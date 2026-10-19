@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.99";
+const VER="2.100";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -100,7 +100,7 @@ async function play(id,r=run){
   applyApp(n);
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
- if(n.call&&!st["cal_"+id]){const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
+ if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>incCallOv(n,q));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  for(const[w,x0]of n.m||[]){const x=String(x0).replace(/%N%/g,(st&&st.pname)||"toi");STATS.msgs++;if(w!=="a")veil(0);
@@ -254,6 +254,22 @@ function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  const cfg=CALL_VOICE[nm]||{pitch:1,rate:1};u.pitch=cfg.pitch;u.rate=cfg.rate;u.volume=Math.max(.2,Math.min(1,VS||1));
  const v=pickFr();if(v)u.voice=v;u.lang="fr-FR";speechSynthesis.speak(u)}catch(e){}}
 function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
+function incCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
+ const o=document.createElement("div");o.id="incOv";
+ const hd=document.createElement("div");hd.className="calHd incHd";
+ const av=document.createElement("div");av.className="calAv incAv";
+ const ph=avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
+ const tb=document.createElement("div");const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub+" \u00b7 appel entrant";tb.append(ne,se);
+ hd.append(av,tb);o.append(hd);
+ const mid=document.createElement("div");mid.className="incMid";const sp=document.createElement("span");sp.className="incState";sp.textContent="Appel entrant\u2026";mid.append(sp);o.append(mid);
+ const bt=document.createElement("div");bt.className="incBtns";
+ const dec=document.createElement("button");dec.className="incDec";dec.innerHTML='<i>\u{1F4F5}</i><small>Refuser</small>';
+ const acc=document.createElement("button");acc.className="incAcc";acc.innerHTML='<i>\u{1F4DE}</i><small>Accepter</small>';
+ bt.append(dec,acc);o.append(bt);
+ $("app").append(o);
+ let rg=null;try{rg=setInterval(()=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)},1500);beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)}catch(e){}
+ const end=v=>{if(rg)clearInterval(rg);veil(1);o.remove();done(v)};
+ dec.onclick=()=>end("decline");acc.onclick=()=>end("accept")}
 function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let vo=null;if(typeof VOICES!=="undefined"&&VOICES[nm]){try{vo=new Audio(VOICES[nm]);vo.loop=true;vo.volume=.9;const p=vo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){vo=null}}
  const o=document.createElement("div");o.id="calOv";
  const hd=document.createElement("div");hd.className="calHd";
@@ -339,7 +355,7 @@ function addH(x){const d=add("h",x);
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
 const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
-const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h9e:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11f:"I",h11:"I",h3a:"I",h3b:"I",h3c:"I",h3l:"I",h3l1:"I",h3l2:"I",h3l3:"I",h9f2:"I",h9z:"I",h9w:"I"};
+const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h8d:"I",h8d2:"I",h8pd:"I",h8pd2:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h9e:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11f:"I",h11:"I",h3a:"I",h3b:"I",h3c:"I",h3l:"I",h3l1:"I",h3l2:"I",h3l3:"I",h9f2:"I",h9z:"I",h9w:"I"};
 let CHP="";
 let CGP=null;
 function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle("wa",wa);CAPP=n.app;CNM=n.nm||"";CGP=(n.mem&&n.mem.length>1)?n.mem:null;
