@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.108";
+const VER="2.109";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -113,6 +113,7 @@ async function play(id,r=run){
  if(n.e)return fin(n.e);
  if(n.x)return play(n.x,r);if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
  if(!n.vw&&!n.fx)veil(0);const c=$("ch");c.innerHTML="";
+ noteTick();
  mkCh(id);
  if(n.fx)filesOv(n);else if(n.vw)vwOv(n);
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
@@ -422,6 +423,19 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  h+='<button class="ahBack" id="thrB">\u2039 Applications</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
+function NH(s){return[
+ {id:"num",t:1,tex:"Ton numéro était celui de Nils. Quelqu’un l’a volontairement remis dans le pool de recyclage."},
+ {id:"piege",t:s.piege,tex:"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils — et un échantillon t’attend à 23h40."},
+ {id:"avou",t:s.avou,tex:"Cora sait que tu n’es pas Nils. Elle t’a appelé pour t’expliquer les règles."},
+ {id:"pov",t:s.pov,tex:"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »"},
+ {id:"prm",t:s.prm,tex:"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu’à C. »"},
+ {id:"chim",t:1,tex:"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même."},
+ {id:"mig",t:s.mig,tex:"Tu as tout migré : les fichiers de Nils sont maintenant dans ton téléphone."},
+ {id:"trst",t:(s.trst||0)>=2,tex:"Cora te fait confiance — pour l’instant."},
+ {id:"mentir",t:s.mentir,tex:"Tu as menti à Cora en improvisant. Elle t’a repéré en quatre minutes."},
+ {id:"pol",t:s.pol,tex:"Tu as annoncé à Cora que tu irais à la police municipale. Elle t’a aiguillé vers le commandant Riffaud — en te demandant de ne jamais citer son nom."}
+].filter(x=>x.t)}
+function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"));try{save()}catch(e){}}}catch(e){}}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
@@ -430,20 +444,7 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
  if(SS.id==="h"){
   h+='<b>Qui est qui</b><div class="ntR">Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.</div><div class="ntR">Nils Aveline — l\u2019ancien propriétaire du numéro. Agent d\u2019une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.</div><div class="ntR">Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.</div><div class="ntR">Yasmine — ta meilleure amie depuis l\u2019enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l\u2019appeler au premier détail bizarre.</div><div class="ntR">Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.</div><div class="ntR">Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.</div>';
   h+='<b>Ce que tu sais</b>';
-  const R=(v,t)=>{if(v)h+='<div class="ntR">'+t+'</div>'};
-  R(true,"Ton numéro était celui de Nils. Quelqu\u2019un l\u2019a volontairement remis dans le pool de recyclage.");
-  R(s.piege,"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils — et un échantillon t\u2019attend à 23h40.");
-  R(s.avou,"Cora sait que tu n\u2019es pas Nils. Elle t\u2019a appelé pour t\u2019expliquer les règles.");
-  R(s.pov,"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »");
-  R(s.prm,"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu\u2019à C. »");
-  R(true,"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même.");
-  R(s.mig,"Tu as tout migré : les fichiers de Nils sont maintenant dans ton téléphone.");
-  R((s.trst||0)>=2,"Cora te fait confiance — pour l\u2019instant.");
-  R(s.mentir,"Tu as menti à Cora en improvisant. Elle t\u2019a repéré en quatre minutes.");
-  R(s.pol,"Tu as annoncé à Cora que tu irais à la police municipale. Elle t\u2019a aiguillé vers le commandant Riffaud — en te demandant de ne jamais citer son nom.");
-  h+='<b>Où tu en es</b>';
-  const bar=(v,l)=>{h+='<div class="ntB"><span>'+l+'</span><i style="width:'+Math.max(0,Math.min(100,v*33))+'%"></i></div>'};
-  bar(s.int||0,"Discrétion");bar(s.pov||0,"Preuves du réseau");bar(s.prm||0,"Preuves du meurtre");
+  NH(s).forEach(x=>{h+='<div class="ntR">'+x.tex+'</div>'});
  }}
  h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
