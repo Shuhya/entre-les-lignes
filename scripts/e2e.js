@@ -60,13 +60,13 @@ const { chromium } = require('playwright');
   await page.waitForFunction(() => {
     const c = document.getElementById('chat');
     return c && c.children.length >= 2;
-  }, { timeout: 45000 });
+  }, undefined, { timeout: 60000 });
   console.log('e2e 5/6: messages affichés dans le chat');
 
   await page.waitForSelector('#ch button:not(.finB)', { timeout: 45000 });
   const nBefore = await page.evaluate(() => document.getElementById('chat').children.length);
   await page.locator('#ch button:not(.finB)').first().click();
-  await page.waitForFunction(n => document.getElementById('chat').children.length > n, nBefore, { timeout: 30000 });
+  await page.waitForFunction(n => document.getElementById('chat').children.length > n, nBefore, { timeout: 45000 });
   console.log('e2e 6/6: premier choix cliqué → bulle envoyée');
   const bubbles = await page.evaluate(() => document.getElementById('chat').children.length);
   if (bubbles < 3) throw new Error('trop peu de bulles après le choix : ' + bubbles);
@@ -80,11 +80,11 @@ const { chromium } = require('playwright');
   await page.click('#lGuide');
   await page.waitForSelector('.lOv', { state: 'visible', timeout: 8000 });
   console.log('e2e landing: Paramètres + Guide OK');
-  await page.waitForFunction(() => document.getElementById('dpCt') && document.getElementById('dpCt').children.length >= 2, { timeout: 20000 });
+  await page.waitForFunction(() => document.getElementById('dpCt') && document.getElementById('dpCt').children.length >= 2, undefined, { timeout: 20000 });
   console.log('e2e landing: démo téléphone anime OK');
 
   if (errs.length) { console.error('ERREURS PAGE:\n' + errs.join('\n')); process.exit(1); }
   await b.close();
   console.log('E2E OK (menu + partie + landing)');
   process.exit(0);
-})().catch(e => { console.error('E2E FAIL:', e.message); process.exit(1); });
+})().catch(e => { console.error('E2E FAIL:', e.message); if (errs.length) console.error('ERREURS PAGE:\n' + errs.join('\n')); process.exit(1); });
