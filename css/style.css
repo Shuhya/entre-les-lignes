@@ -641,7 +641,8 @@ html[data-theme="light"] #appHome .ah-dots i.on{background:#1a2c40}
 html[data-theme="light"] #appHome .ahBack{background:#00000012;border-color:#00000024;color:#1a2c40}
 
 /* ---- v2.83 : fiche 📖 refonte (in-téléphone, identité du site) + bilan ---- */
-#infoOv{position:absolute;inset:0;z-index:46;background:radial-gradient(140% 100% at 50% 42%,#0e1522 0%,#07090f 58%,#040406 100%);overflow-y:auto;padding:calc(18px + env(safe-area-inset-top,0px)) 18px 26px;animation:fo .3s}
+#infoOv{position:absolute;inset:0;z-index:46;background:radial-gradient(140% 100% at 50% 42%,#0e1522 0%,#07090f 58%,#040406 100%);overflow-y:auto;scrollbar-width:none;padding:calc(18px + env(safe-area-inset-top,0px)) 18px 26px;animation:fo .3s}
+#infoOv::-webkit-scrollbar{display:none}
 .ifCard{max-width:430px;margin:0 auto;color:#f1eee3;font-family:Georgia,serif}
 .ifK{font:600 10px system-ui;letter-spacing:4px;text-transform:uppercase;color:#ffd1669e;margin:0 0 10px;text-align:center}
 #infoOv h2{font:400 27px Georgia,serif;margin:0 0 18px;text-align:center;color:#fdfbf4}
