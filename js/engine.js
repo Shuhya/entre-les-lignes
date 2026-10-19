@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.113";
+const VER="2.114";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -436,7 +436,7 @@ function NH(s){return[
  {id:"mentir",t:s.mentir,tex:"Tu as menti à Cora en improvisant. Elle t’a repéré en quatre minutes."},
  {id:"pol",t:s.pol,tex:"Tu as annoncé à Cora que tu irais à la police municipale. Elle t’a aiguillé vers le commandant Riffaud — en te demandant de ne jamais citer son nom."}
 ].filter(x=>x.t)}
-function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"));try{save()}catch(e){}}}catch(e){}}
+function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"))}}catch(e){}}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
