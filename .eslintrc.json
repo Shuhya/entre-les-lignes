@@ -1,7 +1,13 @@
 {
   "root": true,
-  "env": { "browser": true, "es2022": true },
-  "parserOptions": { "ecmaVersion": 2022, "sourceType": "script" },
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "script"
+  },
   "rules": {
     "no-undef": "error",
     "no-redeclare": "error",
@@ -12,12 +18,45 @@
     "no-unused-vars": "warn"
   },
   "overrides": [
-    { "files": ["scripts/**"], "env": { "node": true } },
-    { "files": ["sw.js"], "env": { "serviceworker": true, "browser": true } },
     {
-      "files": ["js/engine.js"],
-      "globals": { "IMG": "readonly", "S": "readonly", "STORIES": "readonly", "AVF1": "readonly", "AVF2": "readonly", "AVF3": "readonly", "AVF4": "readonly", "AVM1": "readonly", "VOICES": "readonly" },
-      "rules": { "no-func-assign": "off" }
+      "files": [
+        "scripts/**"
+      ],
+      "env": {
+        "node": true
+      }
+    },
+    {
+      "files": [
+        "sw.js"
+      ],
+      "env": {
+        "serviceworker": true,
+        "browser": true
+      }
+    },
+    {
+      "files": [
+        "js/engine.js"
+      ],
+      "globals": {
+        "IMG": "readonly",
+        "S": "readonly",
+        "STORIES": "readonly",
+        "AVF1": "readonly",
+        "AVF2": "readonly",
+        "AVF3": "readonly",
+        "AVF4": "readonly",
+        "AVM1": "readonly",
+        "VOICES": "readonly"
+      },
+      "rules": {
+        "no-func-assign": "off"
+      }
     }
+  ],
+  "ignorePatterns": [
+    "beta/",
+    "build/"
   ]
 }
