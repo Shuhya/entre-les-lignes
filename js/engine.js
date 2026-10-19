@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.104";
+const VER="2.105";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -686,12 +686,13 @@ function guideOv(){
  const h2=document.createElement("h2");h2.textContent="Comment jouer";b.append(h2);
  const g=document.createElement("div");g.className="ifGuide";
  g.innerHTML="<p><b>Lire.</b> Chaque histoire se déroule sur un téléphone : des messages arrivent, s’enchaînent, se contredisent. Photos, appels, fichiers — tout se lit comme une vraie messagerie.</p>"
-  +"<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>"
-  +"<p><b>Les boutons :</b></p>"
-  +"<p><b>‹</b> en haut à gauche : la bibliothèque — histoires, reprise de partie, réglages.</p>"
-  +"<p><b>⚙</b> : réglages — thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.</p>"
-  +"<p><b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>"
-  +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>";
+ +"<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>"
+ +"<p><b>Les boutons, une fois dans le jeu :</b></p>"
+ +"<p><b>‹</b> en haut à gauche : la bibliothèque — histoires, reprise de partie, réglages.<br>"
+ +"<b>⚙</b> : paramètres de la partie — thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.<br>"
+ +"<b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>"
+ +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>"
+ +"<p><b>Le téléphone de démo</b> de la page d’accueil joue des extraits imaginaires, inventés pour donner le ton du jeu : rien de ce qui y apparaît ne fait partie des vraies histoires.</p>";
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="‹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
  o.append(b);document.body.append(o);
@@ -752,7 +753,7 @@ function homeIntro(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
  const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
- row(c,"📖 Guide","Comment jouer, les boutons, la sauvegarde",()=>{guideOv()});row(c,"⚙ Paramètres","Thème, son, vitesse de lecture, plein écran, transfert",()=>{volToggle()});show(c);
+ row(c,"📖 Guide","Comment jouer, les boutons, la sauvegarde",()=>{guideOv()});row(c,"⚙ Paramètres de la partie","Thème, son, vitesse de lecture, plein écran, transfert",()=>{volToggle()});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
@@ -762,7 +763,7 @@ function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();infoOv()});
 /* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
-document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&!vv.contains(e.target)&&!$("set").contains(e.target))vv.hidden=true});
+document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&(e.target===vv||(!vv.contains(e.target)&&!$("set").contains(e.target))))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
  up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const tb2=$("thB");if(tb2){const THL={dark:"🌑 Nuit",auto:"🌓 Suit l’histoire",light:"🌤 Jour"};const upT=()=>{tb2.textContent="🌊 Thème : "+THL[THM]};tb2.onclick=()=>{THM=THM==="dark"?"auto":(THM==="auto"?"light":"dark");try{localStorage.setItem("etl_theme",THM)}catch(e){}thApply();upT()};upT()}}
@@ -881,7 +882,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
    if(!locked)b.onclick=()=>chap(s);list.append(b)});
-  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob);const gb=document.createElement('button');gb.className='bk';gb.innerHTML='<h3>📖 Guide</h3><p>Comment jouer, les boutons, la sauvegarde</p>';gb.onclick=()=>{guideOv()};list.append(gb)};
+  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres de la partie</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob);const gb=document.createElement('button');gb.className='bk';gb.innerHTML='<h3>📖 Guide</h3><p>Comment jouer, les boutons, la sauvegarde</p>';gb.onclick=()=>{guideOv()};list.append(gb)};
   show(c);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){
