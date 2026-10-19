@@ -728,3 +728,16 @@ html[data-theme="light"] #ch button:active{background:#e2e2e6}
 .volCard{padding:15px 15px 13px}
 .volCard .volB{padding:9px 12px}
 .volCard label{margin:7px 0 3px}
+
+/* ---- grands ecrans : le telephone grandit avec l'ecran (1440p etc.) ---- */
+@media(min-width:1200px) and (min-height:800px){
+ #app{width:440px;height:min(940px,96vh)}
+ .b{font-size:17.5px}
+}
+@media(min-width:1600px) and (min-height:900px){
+ #app{width:490px;height:min(1020px,96vh)}
+ .b{font-size:18px}
+ #ch button{font-size:16px}
+ .sbar{font-size:16px}
+ .inp .fl{font-size:16px}
+}
