@@ -433,6 +433,7 @@ body.pc .b{max-width:58%}
 #lockOv .lkGo:hover{background:#ffffff26}
 #lockOv .lkHint{position:absolute;z-index:2;bottom:7%;width:100%;text-align:center;font:italic 400 12px Georgia,serif;color:#ffffff54;opacity:0;animation:lkIn .7s 1.9s forwards}
 #lockOv.unlocked .lkMid,#lockOv.unlocked .lkGo,#lockOv.unlocked .lkHint{opacity:0!important;animation:none;transition:opacity .2s}
+#lockOv.unlocked .lkGo,#lockOv.unlocked .lkHint{pointer-events:none}
 @keyframes lkIn{to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#lockOv .lkMid,#lockOv .lkGo,#lockOv .lkHint{animation-delay:0s}}
 
