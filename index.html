@@ -275,20 +275,18 @@ if("serviceWorker" in navigator){var __etlHad=!!navigator.serviceWorker.controll
 (function(){
  function get(k,d){try{return localStorage.getItem(k)===null?d:localStorage.getItem(k)}catch(e){return d}}
  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
- function wide(){try{return innerWidth>=900}catch(e){return true}}
+ 
  function ov(inner){var o=document.createElement("div");o.className="lOv";var c=document.createElement("div");c.className="lCard";c.innerHTML=inner;o.append(c);document.body.append(o);
   o.addEventListener("click",function(e){if(e.target===o)o.remove()});return {o:o,c:c}}
  function closeBtn(c){var b=c.querySelector(".lClose");b.onclick=function(){c.parentElement.remove()}}
  document.getElementById("lSet").onclick=function(){
-  var v=get("view",wide()?"1":"0"),em=get("etl_emoji","on");
+  var em=get("etl_emoji","on");
   var x=ov('<button class="lClose" aria-label="Fermer">✕</button><p class="lK">Réglages</p><h2>Réglages</h2>'
-   +'<div class="lRow"><b>Affichage du jeu</b><small>Comment le jeu s’ouvrira par défaut sur cet appareil — modifiable à tout moment depuis le jeu.</small>'
-   +'<div class="seg" id="segV"><button data-v="0">Téléphone</button><button data-v="1">PC</button></div></div>'
    +'<div class="lRow"><b>Smileys dans les messages</b><small>Activer ou désactiver les emojis selon ton humeur de lecture.</small>'
    +'<div class="seg" id="segE"><button data-v="on">Activés</button><button data-v="off">Désactivés</button></div></div>'
    +'<p class="lNote">Tes réglages sont enregistrés sur cet appareil, pas de compte. Le reste (thème nuit / jour, vitesse de lecture, volume, voix des appels) se règle depuis le ⚙ à l’intérieur du jeu.</p>');
   closeBtn(x.c);
-  [["segV",v,"view"],["segE",em,"etl_emoji"]].forEach(function(cfg){
+  var v=get("view","0");[["segE",em,"etl_emoji"]].forEach(function(cfg){
    var id=cfg[0],cur=cfg[1],key=cfg[2];
    x.c.querySelectorAll("#"+id+" button").forEach(function(b){
     b.classList.toggle("sel",b.dataset.v===cur);

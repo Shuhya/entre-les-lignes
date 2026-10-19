@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.121";
+const VER="2.122";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -760,7 +760,6 @@ function homeIntro(){
   const im=d.querySelector("#bgi");if(im)im.style.backgroundImage='url('+IMG.menu+')';
   d.querySelector("#go").onclick=startFromIntro;
   const sbi=d.querySelector("#sbi");if(sbi)sbi.onclick=togSnd;setV();
-  const v=d.querySelector("#vw2");if(v){v.onclick=()=>setView(!PC);v.textContent=PC?"\uD83D\uDCF1 Mode t\u00E9l\u00E9phone":"\uD83D\uDDA5\uFE0F Mode PC"}
   $("mn").classList.remove("on");amb(null);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
@@ -782,7 +781,6 @@ document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&
 {const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"⛶ Quitter le plein écran":"⛶ Plein écran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
 $("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
 {const tr=$("trB");if(tr)tr.onclick=()=>{$("vol").hidden=true;transferOv()};}$("apps").onclick=()=>appHome();
-{const w=$("vw2");if(w)w.onclick=()=>setView(!PC)}
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
 $("bk").onclick=()=>{const no=document.getElementById("notesOv");
  if(no){no.remove();if(no.dataset.from==="app")appHome();else applyApp(hdrOf(CAPP,CNM));return}
@@ -790,8 +788,8 @@ $("bk").onclick=()=>{const no=document.getElementById("notesOv");
  if(ov){ov.remove();appHome();return}
  const ho=document.getElementById("appHome");if(ho){ho.remove();applyApp(hdrOf(CAPP,CNM));return}
  menu()};$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
-function setView(p){updMob();PC=p?1:0;document.body.classList.toggle("pc",!!PC);const vwE=$("vw");if(vwE)vwE.textContent=PC?"📱":"🖥️";{const v2=$("vw2");if(v2)v2.textContent=PC?"📱 Mode téléphone":"🖥️ Mode PC"}try{localStorage.setItem("view",PC)}catch(e){}}
-{const w2=$("vw2");if(w2)w2.onclick=()=>setView(!PC)}try{const v=localStorage.getItem("view");setView(v===null?((typeof innerWidth==="number"&&innerWidth>=900)?1:0):+v)}catch(e){setView(0)}
+function setView(p){updMob();PC=0;document.body.classList.remove("pc");try{localStorage.setItem("view",0)}catch(e){}}
+setView(0)
 $("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
 if($("go")){$("go").onclick=()=>{try{if(matchMedia("(pointer:coarse)").matches&&!document.fullscreenElement){const d=document.documentElement;const rq=(d.requestFullscreen||d.webkitRequestFullscreen);if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}}catch(e){}startFromIntro()};$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:true});
@@ -905,7 +903,6 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    :'<b>Mode sobre : sans smileys \uD83D\uDCAC</b><small>Lecture plus dramatique \u2014 les \u00E9motic\u00F4nes sont retir\u00E9es des messages.</small>';
   em.onclick=()=>{emojiMode=!emojiMode;try{localStorage.setItem('etl_emoji',emojiMode?'on':'off')}catch(e){};optCard()};
   c.append(em);
-  row(c,'Affichage : '+(PC?'PC':'T\u00E9l\u00E9phone'),'Adapte la mise en page \u00E0 ton \u00E9cran',()=>{setView(!PC);optCard()});
   row(c,'\u2039 Retour','',menu);show(c)}
  let proEl=null;
  const stopPro=()=>{if(proEl){try{proEl.pause&&proEl.pause()}catch(e){}proEl=null}try{speechSynthesis.cancel()}catch(e){}};
