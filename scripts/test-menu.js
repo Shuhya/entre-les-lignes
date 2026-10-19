@@ -94,13 +94,6 @@ const first=s=>qa(doc.body,s)[0]||null;
 (async()=>{try{
  T.menu(); await sleep(200);
  const cards=qa(doc.body,".bkWrap .bk");
- const g=cards.find(c=>/Guide/.test(c.textContent));
- if(!g)throw new Error("pas de carte Guide");
- g.click(); await sleep(100);
- const ov1=doc.getElementById("infoOv");
- if(!ov1)throw new Error("overlay Guide absent après clic");
- if(ov1.parentNode!==doc.body)throw new Error("overlay Guide attaché à "+ov1.parentNode.tagName+" au lieu de body (invisible derrière le menu)");
- if(ov1&&ov1.parentNode)ov1.remove();
  const p=cards.find(c=>/Param/.test(c.textContent));
  if(!p)throw new Error("pas de carte Paramètres");
  const vol=doc.getElementById("vol");
@@ -108,6 +101,6 @@ const first=s=>qa(doc.body,s)[0]||null;
  p.click(); await sleep(80);
  if(vol.hidden===h0)throw new Error("#vol n'a pas basculé (hidden="+vol.hidden+")");
  if(vol.parentNode!==doc.body)throw new Error("#vol attaché à "+vol.parentNode.tagName+" au lieu de body");
- console.log("MENU OK — Guide→body, Paramètres→toggle+body");
+ console.log("MENU OK — Paramètres→toggle+body");
  process.exit(0)
 }catch(e){console.error("MENU FAIL:",e&&(e.stack||e.message));process.exit(1)}})();

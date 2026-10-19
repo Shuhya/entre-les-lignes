@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.114";
+const VER="2.115";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -82,6 +82,8 @@ function fxRain(on){
   rfR=requestAnimationFrame(dr)};
  dr()}
 function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0002,#0004),url("+u+")":"";try{$("chat").classList.add("kb")}catch(e){}try{fxRain(false)}catch(e){}amb(k)}
+async function rdOk(){const b=document.createElement("button");b.className="rdOk";b.textContent="✓ J'ai tout lu";$("ch").append(b);await new Promise(r2=>{b.onclick=()=>{try{beep(660,.05,.06)}catch(e){}b.remove();r2()}})}
+const noRubber=el=>{try{setTimeout(()=>{if(el&&el.scrollHeight<=el.clientHeight+8)el.style.overflowY="hidden"},0)}catch(e){}};
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
  if(SS&&SS.id==="h"&&PART[id]){const pi={I:0,II:1,III:2,IV:3,V:4,VI:5}[PART[id]];if(pi!=null&&pi>SC){SC=pi;try{PG.c=Math.max(PG.c||0,pi+1)}catch(e){}}}
@@ -103,15 +105,16 @@ async function play(id,r=run){
  if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>incCallOv(n,q));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
+ let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:0;
  for(const[w,x0]of n.m||[]){const x=String(x0).replace(/%N%/g,(st&&st.pname)||"toi");STATS.msgs++;if(w!=="a")veil(0);
-  if(w=="h"){$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}
+  if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}}
   else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([gf(x)],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
  clkPlan(n);
  if(n.e)return fin(n.e);
- if(n.x)return play(n.x,r);if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
+ if(n.x){const lm=(n.m||[]).slice(-1)[0];if(lm&&lm[0]!=="a")await rdOk();if(r!=run)return;return play(n.x,r)}if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
  if(!n.vw&&!n.fx)veil(0);const c=$("ch");c.innerHTML="";
  if(n.c&&n.c.length)st["cpl_"+id]=1;
  noteTick();
@@ -258,19 +261,16 @@ function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
 function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
 function incCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const o=document.createElement("div");o.id="incOv";
- const hd=document.createElement("div");hd.className="calHd incHd";
  const av=document.createElement("div");av.className="calAv incAv";
  const ph=avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
- const tb=document.createElement("div");const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub+" \u00b7 appel entrant";tb.append(ne,se);
- hd.append(av,tb);o.append(hd);
- const mid=document.createElement("div");mid.className="incMid";const sp=document.createElement("span");sp.className="incState";sp.textContent="Appel entrant\u2026";mid.append(sp);o.append(mid);
+ const tb=document.createElement("div");tb.className="incTb";const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub+" · appel entrant…";tb.append(ne,se);
  const bt=document.createElement("div");bt.className="incBtns";
- const dec=document.createElement("button");dec.className="incDec";dec.innerHTML='<i>\u{1F4F5}</i><small>Refuser</small>';
- const acc=document.createElement("button");acc.className="incAcc";acc.innerHTML='<i>\u{1F4DE}</i><small>Accepter</small>';
- bt.append(dec,acc);o.append(bt);
+ const dec=document.createElement("button");dec.className="incDec";dec.innerHTML='<i>\u{1F4F5}</i>';
+ const acc=document.createElement("button");acc.className="incAcc";acc.innerHTML='<i>\u{1F4DE}</i>';
+ bt.append(dec,acc);o.append(av,tb,bt);
  $("app").append(o);
  let rg=null;try{rg=setInterval(()=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)},1500);beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)}catch(e){}
- const end=v=>{if(rg)clearInterval(rg);veil(1);o.remove();done(v)};
+ const end=v=>{if(rg)clearInterval(rg);o.remove();done(v)};
  dec.onclick=()=>end("decline");acc.onclick=()=>end("accept")}
 function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let vo=null;if(typeof VOICES!=="undefined"&&VOICES[nm]){try{vo=new Audio(VOICES[nm]);vo.loop=true;vo.volume=.9;const p=vo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){vo=null}}
  const o=document.createElement("div");o.id="calOv";
@@ -286,8 +286,10 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  const stopV=()=>{if(vo){try{vo.pause();vo.currentTime=0}catch(e){}vo=null}};
  $("app").append(o);
  beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),110);
- let q=lines.slice();
- const put=L=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
+ let q=lines.slice(),muted=false;
+ const mb=document.createElement("button");mb.className="calMute";mb.textContent="🔊";mb.onclick=()=>{muted=!muted;mb.textContent=muted?"🔇":"🔊";if(muted){try{callSpeakStop()}catch(e){}}};o.append(mb);
+ const put=(L,raw)=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");if(raw)d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
+ const typeIn=(d,txt,cb)=>{let i2=0;try{const iv=setInterval(()=>{i2+=2;d.textContent=txt.slice(0,i2);tr.scrollTop=1e9;if(i2>=txt.length){clearInterval(iv);cb()}},Math.max(8,12/SPD))}catch(e){d.textContent=txt;cb()}};
  const next=()=>{if(!q.length){inChoice=false;hint.hidden=true;eb.hidden=false;return}
   const L=q.shift();
   if(L[0]===2&&Array.isArray(L[1])){
@@ -295,11 +297,12 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
    inChoice=true;eb.hidden=false;hint.hidden=false;
    L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;
     const b=document.createElement("button");b.textContent=lab;
-    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab]);tx();if(ex&&ex.length)q.unshift(...ex);setTimeout(next,700/SPD)};bx.append(b)});
+    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab],1);tx();if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
    tr.append(bx);tr.scrollTop=1e9;return}
-  put(L);
-  if(L[0]===1){rx();callSpeak(L[1],nm)}
-  setTimeout(next,Math.min(4200,1300+L[1].length*38)/SPD)};
+  const est=Math.max(700,(String(L[1]).split(/\s+/).length*310)+450)/SPD;
+  const d=put(L,0);
+  if(L[0]===1){rx();if(!muted)callSpeak(L[1],nm)}
+  typeIn(d,L[1],()=>setTimeout(next,Math.max(300,est-1200)/SPD))};
  setTimeout(next,700/SPD);
  eb.onclick=()=>{callSpeakStop();veil(1);o.remove();stopV();done(inChoice?"hangup":undefined)}}
 function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
@@ -425,12 +428,12 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
 function NH(s){return[
- {id:"num",t:1,tex:"Ton numéro était celui de Nils. Quelqu’un l’a volontairement remis dans le pool de recyclage."},
+ {id:"num",t:(s.piege||s.avou||s.mentir),tex:"Ton numéro était celui de Nils. Quelqu’un l’a volontairement remis dans le pool de recyclage."},
  {id:"piege",t:s.piege,tex:"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils — et un échantillon t’attend à 23h40."},
  {id:"avou",t:s.avou,tex:"Cora sait que tu n’es pas Nils. Elle t’a appelé pour t’expliquer les règles."},
  {id:"pov",t:s.pov,tex:"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »"},
  {id:"prm",t:s.prm,tex:"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu’à C. »"},
- {id:"chim",t:1,tex:"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même."},
+ {id:"chim",t:(s.cal_h8||s.cal_h8p),tex:"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même."},
  {id:"mig",t:s.mig,tex:"Tu as tout migré : les fichiers de Nils sont maintenant dans ton téléphone."},
  {id:"trst",t:(s.trst||0)>=2,tex:"Cora te fait confiance — pour l’instant."},
  {id:"mentir",t:s.mentir,tex:"Tu as menti à Cora en improvisant. Elle t’a repéré en quatre minutes."},
@@ -443,11 +446,18 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
  if(SS.id!=="h"||!SK)h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
  if(SS.id==="h"){
-  h+='<b>Qui est qui</b><div class="ntR">Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.</div><div class="ntR">Nils Aveline — l\u2019ancien propriétaire du numéro. Agent d\u2019une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.</div><div class="ntR">Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.</div><div class="ntR">Yasmine — ta meilleure amie depuis l\u2019enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l\u2019appeler au premier détail bizarre.</div><div class="ntR">Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.</div><div class="ntR">Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.</div>';
+  h+='<b>Qui est qui</b>';
+  const WH=[["Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.",1],
+  ["Nils Aveline — l'ancien propriétaire du numéro. Agent d'une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.",s.piege||s.avou||s.mentir],
+  ["Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.",(s.trst||0)>0||s.avou||s.mentir],
+  ["Yasmine — ta meilleure amie depuis l'enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l'appeler au premier détail bizarre.",1],
+  ["Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.",s.cal_h8||s.cal_h8p],
+  ["Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.",s.pol]];
+  WH.forEach(x=>{if(x[1])h+='<div class="ntR">'+x[0]+'</div>'});
   h+='<b>Ce que tu sais</b>';
   NH(s).forEach(x=>{h+='<div class="ntR">'+x.tex+'</div>'});
  }}
- h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);
+ h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=h;$("app").append(o);try{noRubber(o)}catch(e){}
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
 const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].trim():x};
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
@@ -471,12 +481,11 @@ function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne 
 /* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t).replace(/\b(Désolé|éveillé|certain|seul|content|rentré|fatigué|prêt)\b/g,"$1e")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
- o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom. Comment t’appelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><div class="ngGen"><button id="ngF">♀ Une femme</button><button id="ngM">♂ Un homme</button></div><div class="ngThm"><button data-th="dark">🌑 Nuit</button><button data-th="light">🌤 Jour</button><button data-th="auto">🌓 Suit l’histoire</button></div><button class="ngGo">Continuer</button></div>';
+ o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom. Comment t’appelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><div class="ngGen"><button id="ngF">♀ Une femme</button><button id="ngM">♂ Un homme</button></div><button class="ngGo">Continuer</button></div>';
  document.body.append(o);
  const inp=o.querySelector("#ngName"),go=o.querySelector(".ngGo"),bf=o.querySelector("#ngF"),bm=o.querySelector("#ngM");let gen=null;
  bf.onclick=()=>{gen="f";bf.classList.add("sel");bm.classList.remove("sel")};
  bm.onclick=()=>{gen="m";bm.classList.add("sel");bf.classList.remove("sel")};
- o.querySelectorAll(".ngThm button").forEach(bt=>{if(bt.dataset.th===THM)bt.classList.add("sel");bt.onclick=()=>{THM=bt.dataset.th;try{localStorage.setItem("etl_theme",THM)}catch(e){}o.querySelectorAll(".ngThm button").forEach(x=>x.classList.remove("sel"));bt.classList.add("sel");thApply()}});
  go.onclick=()=>{const v=(inp.value||"").trim().slice(0,14);if(!v||!gen)return;try{st.pname=v;st.pf=gen==="f"?1:0;localStorage.setItem("etl_pname",v);localStorage.setItem("etl_pgen",gen)}catch(e){}try{hit(660,.05,.08)}catch(e){}cb();o.remove()}}
 /* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
 function reactOv(txt,btnLabel,done){
@@ -696,7 +705,7 @@ function guideOv(){
  +"<p><b>Le téléphone de démo</b> de la page d’accueil joue des extraits imaginaires, inventés pour donner le ton du jeu : rien de ce qui y apparaît ne fait partie des vraies histoires.</p>";
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="‹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
- o.append(b);document.body.append(o);
+ o.append(b);document.body.append(o);try{noRubber(o)}catch(e){}
  o.addEventListener("click",e2=>{if(e2.target===o)o.remove()});
 }
 function volToggle(){const vv=$("vol");if(vv&&vv.parentElement!==document.body)document.body.append(vv);vv.hidden=!vv.hidden}
@@ -737,7 +746,7 @@ function infoOv(){
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="\u2039 Reprendre la conversation";
  cb.onclick=()=>{o.remove()};b.append(cb);
- o.append(b);$("app").append(o);
+ o.append(b);$("app").append(o);try{noRubber(o)}catch(e){}
  o.addEventListener("click",e=>{if(e.target===o)o.remove()});
 }
 function startFromIntro(){unlock();menu();const d=$("in");if(d){d.classList.add("out");setTimeout(()=>{if(d.classList.contains("out"))d.remove()},1100)}}
@@ -754,14 +763,14 @@ function homeIntro(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
  const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
- row(c,"📖 Guide","Comment jouer, les boutons, la sauvegarde",()=>{guideOv()});row(c,"⚙ Paramètres de la partie","Thème, son, vitesse de lecture, plein écran, transfert",()=>{volToggle()});show(c);
+ row(c,"⚙ Paramètres de la partie","Thème, son, vitesse de lecture, plein écran, transfert",()=>{volToggle()});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
  s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);row(c,(i+1)+". "+h[0]+(ok?"":w?" · verrouillé":" · bientôt"),"",()=>{SC=i;$("nm").textContent=s.n;$("av").textContent=s.n[0];start()},!ok)});
  row(c,"‹ Retour","",menu);show(c)}
 function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
-const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();infoOv()});
+const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();if(typeof notesOv==="function")notesOv(false)});
 /* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&(e.target===vv||(!vv.contains(e.target)&&!$("set").contains(e.target))))vv.hidden=true});
@@ -884,7 +893,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
    if(!locked)b.onclick=()=>chap(s);list.append(b)});
-  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres de la partie</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob);const gb=document.createElement('button');gb.className='bk';gb.innerHTML='<h3>📖 Guide</h3><p>Comment jouer, les boutons, la sauvegarde</p>';gb.onclick=()=>{guideOv()};list.append(gb)};
+  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres de la partie</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob)};
   show(c);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){

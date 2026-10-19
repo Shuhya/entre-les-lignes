@@ -112,6 +112,7 @@ async function drive(){
   el=first("#awayOv");if(el){(first(".awGo",el)||el).click();await sleep(40);continue}
   el=first("#lkWake");if(el){el.click();await sleep(80);continue}
   el=first(".notif");if(el){el.click();await sleep(60);continue}
+ el=first(".rdOk");if(el){el.click();await sleep(60);continue}
   el=first("#incOv");if(el){const ab=first(".incAcc",el);if(ab)ab.click();await sleep(60);continue}
   el=first("#calOv");if(el){const chs=qa(el,".calCh button");if(chs.length){chs[0].click();await sleep(60);continue}
    const eb=first(".calEnd",el);if(eb&&!eb.hidden){eb.click();await sleep(60);continue}}
@@ -121,7 +122,7 @@ async function drive(){
    if(rows.length){rows[0].click();await sleep(80);continue}
    const scb=qa(scr,".scBtn");if(scb.length){const i2=node==="h1"?1:0;(scb[i2]||scb[0]).click();await sleep(80);continue}
   }
-  const ch=byId.ch;const btns=ch?ch.children.filter(x=>x.tagName==="BUTTON"&&!/finB/.test(x.className||"")):[];
+  const ch=byId.ch;const btns=ch?ch.children.filter(x=>x.tagName==="BUTTON"&&!/finB|rdOk/.test(x.className||"")):[];
   if(btns.length){const idx=(node&&CHO[node]!==undefined)?CHO[node]:0;btns[idx].click();await sleep(80);continue}
   if(first("#endOv"))break;
   el=first(".finB");if(el){el.click();await sleep(100);continue}

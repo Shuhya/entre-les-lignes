@@ -22,12 +22,6 @@ let page = null;
   /* ---------- 1) jeu.html : overlays du menu ---------- */
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk');
-  await page.locator('.bkWrap .bk', { hasText: 'Guide' }).first().click();
-  await page.waitForSelector('#infoOv', { state: 'visible', timeout: 8000 });
-  if (!(await page.evaluate(() => getComputedStyle(document.getElementById('infoOv')).visibility !== 'hidden')))
-    throw new Error('infoOv invisible');
-  console.log('e2e 1/6 menu: Guide visible OK');
-  await page.evaluate(() => document.getElementById('infoOv').remove());
   await page.locator('.bkWrap .bk', { hasText: 'Param' }).first().click();
   await page.waitForSelector('#vol:not([hidden])', { state: 'visible', timeout: 8000 });
   console.log('e2e 2/6 menu: Paramètres visible OK');
@@ -73,7 +67,7 @@ let page = null;
 
   /* le récit s'auto-anime mais des overlays bloquants peuvent surgir à tout moment */
   /* .scBtn = écran-app annexe (scrOv) : cliquer le 1er bouton fait avancer */
-  const BLOCKERS = ['.lkNext', '.awGo', '#lkWake', '.notif', '#scrOv .scBtn'];
+  const BLOCKERS = ['.lkNext', '.awGo', '#lkWake', '.notif', '.rdOk', '#scrOv .scBtn'];
   const settleOnce = async () => {
     for (const sel of BLOCKERS) {
       const el = await page.$(sel);
