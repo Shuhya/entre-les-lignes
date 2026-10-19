@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.123";
+const VER="2.124";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -919,10 +919,14 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   return out};
  const endsOf=s=>endsAll(s).length;
  function endsCard(s){const all=endsAll(s);let got=[];try{got=JSON.parse(localStorage.getItem('fe'+s.id)||'[]')}catch(e){}
-  const c=card('Fins \u2014 '+s.t);
-  all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('button');r.className='st endRow'+(ok?'':' lock');
-   r.innerHTML='<b>'+(ok?t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</b>';c.append(r)});
-  row(c,'\u2039 Retour','',()=>chap(s));show(c)}
+  const o=document.createElement('div');o.id='infoOv';
+  const c=document.createElement('div');c.className='ifCard';
+  const k=document.createElement('div');k.className='ifK';k.textContent='Fins';c.append(k);
+  const h2=document.createElement('h2');h2.textContent=s.t;c.append(h2);
+  all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('div');r.className='ifRow'+(ok?' on':' dim');
+   r.innerHTML='<span>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</span>';c.append(r)});
+  const bk2=document.createElement('button');bk2.className='ifBack';bk2.textContent='\u2039 Retour';bk2.onclick=()=>{o.remove();chap(s)};c.append(bk2);
+  document.body.append(o);o.append(c)}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]')).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
@@ -933,13 +937,23 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    nodeNow=null;
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
-   const c=card(s.t);
    const tot=endsOf(s),got=feN(s);
+   const o=document.createElement('div');o.id='infoOv';
+   const c=document.createElement('div');c.className='ifCard';
+   const k=document.createElement('div');k.className='ifK';k.textContent='Chapitres';c.append(k);
+   const h2=document.createElement('h2');h2.textContent=s.t;c.append(h2);
    s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);
-    const b=row(c,(i+1)+'. '+h[0]+(ok?'':w?' \u00B7 verrouill\u00E9':' \u00B7 bient\u00F4t'),'',()=>{SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()},!ok);
-    if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};b.after(rb)}});
-   if(s.id==='h'){const tot=endsOf(s),g0=feN(s);row(c,'\uD83C\uDFC1 Fins : '+Math.min(g0,tot)+' / '+tot,'Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore',()=>endsCard(s))}
-   row(c,'\u2039 Retour','',menu);show(c)};
+    const b=document.createElement('button');b.className='ifCh'+(ok?(i===SC?' on':''):' lock');b.disabled=!ok;
+    b.innerHTML='<span>'+(i+1)+'. '+h[0]+'</span><small>'+(ok?(i===SC?'en cours':'\u2713'):(w?'verrouill\u00E9':'bient\u00F4t'))+'</small>';
+    if(ok)b.onclick=()=>{o.remove();SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};
+    c.append(b);
+    if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='ifRep';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{o.remove();GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};c.append(rb)}});
+   if(s.id==='h'){const fl=document.createElement('button');fl.className='ifFins';
+    fl.innerHTML='\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'<small>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</small>';
+    fl.onclick=()=>{o.remove();endsCard(s)};c.append(fl)}
+   const bk2=document.createElement('button');bk2.className='ifBack';bk2.textContent='\u2039 Retour';bk2.onclick=()=>{o.remove();menu()};c.append(bk2);
+   try{document.querySelectorAll('.mnBack').forEach(x=>x.remove())}catch(e2){}
+   document.body.append(o);o.append(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
    const o=document.createElement('div');o.className='rsOv';
