@@ -75,7 +75,10 @@ let page = null;
   const settleOnce = async () => {
     for (const sel of BLOCKERS) {
       const el = await page.$(sel);
-      if (el && await el.isVisible()) { await el.click(); await page.waitForTimeout(600); return true; }
+      if (!el) continue;
+      try {
+        if (await el.isVisible()) { await el.click(); await page.waitForTimeout(700); return true; }
+      } catch (e) { /* élément détaché (animation) : réessayé au tour suivant */ }
     }
     return false;
   };
