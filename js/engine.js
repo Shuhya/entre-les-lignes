@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.116";
+const VER="2.117";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -881,7 +881,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  const oldFin=fin;fin=function(v){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  const oldMenu=menu;
- menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;ck();amb(null);$('ov').hidden=true;
+ menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
   const c=card('Choisis une histoire');
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   STORIES.forEach((s,i)=>{
