@@ -16,6 +16,7 @@ const PRE = [
   "./assets/audio/pluie.mp3",
   "./assets/img/echantillon.jpg",
   "./assets/img/fond-ecran.jpg",
+  "./assets/img/fond-ecran-f.jpg",
   "./assets/img/surveillance.svg",
   "./assets/img/surveillance-f.svg"
 ];
