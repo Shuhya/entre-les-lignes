@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.127";
+const VER="2.128";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -104,11 +104,12 @@ async function play(id,r=run){
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
  if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>incCallOv(n,q));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
- if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!q.includes(n.k)){q.push(n.k);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
+ if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");const fn0=n.f||n.k;if(!q.includes(fn0)){q.push(fn0);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
- for(const[w,x0]of n.m||[]){const x=String(x0).replace(/%N%/g,(st&&st.pname)||"toi");STATS.msgs++;if(w!=="a")veil(0);
+ const MG=[];{let ag=null;for(const it of(n.m||[])){STATS.msgs++;if(it&&it[0]==="a"){(ag=ag||[]).push(String(it[1]).replace(/%N%/g,(st&&st.pname)||"toi"))}else{if(ag){MG.push(["a",ag]);ag=null}MG.push(it)}}if(ag)MG.push(["a",ag])}
+ for(const[w,x0]of MG){const x=Array.isArray(x0)?x0:String(x0).replace(/%N%/g,(st&&st.pname)||"toi");if(w!=="a")veil(0);
   if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv([gf(x)],"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
@@ -309,15 +310,15 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
 function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.push(h[1])});
  const FL=["jea","aveu","malik","bloq"];
  while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
-  const t=n.k||(n.e&&n.e[0]);if(t&&!out.includes(t))out.push(t);
+  const t=n.f||(n.e&&n.e[0])||n.k;if(t&&!out.includes(t))out.push(t);
   (n.c||[]).forEach(c2=>{if(c2[1])q.push(c2[1])});if(typeof n.x==="string")q.push(n.x);
   if(typeof n.j==="function"){
-   for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c2=0;c2<2;c2++)for(let d=0;d<2;d++){
-    const st={int:a*3,pov:b*2,prm:c2*2};if(d)FL.forEach(f=>st[f]=1);
+   for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c2=0;c2<2;c2++)for(let d=0;d<2;d++)for(let p2=0;p2<2;p2++)for(let tr2=0;tr2<4;tr2++)for(let me2=0;me2<2;me2++){
+    const st={int:a*3,pov:b*2,prm:c2*2};if(d)FL.forEach(f=>st[f]=1);if(p2)st.piege=1;if(me2)st.mentir=1;if(tr2)st.trst=tr2;
     try{const t=n.j(st);if(t&&S[t]&&!seen[t])q.push(t)}catch(e){}}}}
  return out}
 function endsTotal(s){return endsList(s).length}
-function endScreen(t,x,seen){const tot=endsTotal(SS);
+function endScreen(t,x,seen){const tot=endsTotal(SS);seen=(seen||[]).filter(t2=>endsList(SS).includes(t2));
  const o=document.createElement("div");o.id="endOv";
  const c=document.createElement("div");c.className="card";
  const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
@@ -342,8 +343,9 @@ c.append(fd);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
  o.append(c);document.body.append(o);
  }
-function fin([t,x],skip){st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[t];
- try{localStorage.setItem("pg"+SS.id,JSON.stringify(PG));k=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!k.includes(t)){k.push(t);localStorage.setItem("fe"+SS.id,JSON.stringify(k))}}catch(e){}
+function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[fn];
+ try{localStorage.setItem("pg"+SS.id,JSON.stringify(PG));k=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!k.includes(fn)){k.push(fn);localStorage.setItem("fe"+SS.id,JSON.stringify(k))}}catch(e){}
+ k=k.filter(t2=>endsList(SS).includes(t2));
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.6),i*160));
  const nx=(SS.ch[SC+1]||[])[1],ok=!!S[nx],r=run;
  setTimeout(()=>{if(r!=run)return;
@@ -740,7 +742,7 @@ function infoOv(){
   const meta=document.createElement("div");meta.className="ifMeta";
   meta.innerHTML="\u23F1 "+fmtT(STATS.t)+" de lecture \u00B7 \uD83D\uDCAC "+STATS.msgs+" messages<small>toutes tes parties, sur cet appareil</small>";
   b.append(meta);
-  const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);g0=(JSON.parse(localStorage.getItem("fe"+SS.id)||"[]")).length}catch(e){}
+  const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);if(M.feN)g0=M.feN(SS)}catch(e){}
   if(tot>1){const fl=document.createElement("button");fl.className="ifBtn";
    fl.innerHTML="\uD83C\uDFC1 Fins : "+Math.min(g0,tot)+" / "+tot+" — touche pour les voir";
    fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};b.append(fl)}
@@ -919,21 +921,16 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   try{const u=new SpeechSynthesisUtterance(String(txt).replace(/\n+/g,'. '));u.lang='fr-FR';u.rate=.95;u.onend=()=>{proEl=null};
    speechSynthesis.cancel();speechSynthesis.speak(u);proEl='synth'}catch(e){}};
  const oldChap=chap;
- const proOf=s=>s.prologue||null; const endsAll=s=>{const seen={},q=[],out=[];s.ch.forEach(h=>{if(h[1])q.push(h[1])});
-  while(q.length){const id=q.shift();if(!S[id]||seen[id])continue;seen[id]=1;const n=S[id];
-   if(n.e||n.k){const t=(n.e&&n.e[0])||'Fin sans titre';if(!out.includes(t))out.push(t)}
-   (n.c||[]).forEach(c=>{if(c[1])q.push(c[1])});if(typeof n.x==='string')q.push(n.x);
-   if(typeof n.j==='function'){try{const t=n.j({});if(t)q.push(t)}catch(e){}}}
-  return out};
+ const proOf=s=>s.prologue||null; const endsAll=s=>endsList(s);
  const endsOf=s=>endsAll(s).length;
- function endsCard(s){const all=endsAll(s);let got=[];try{got=JSON.parse(localStorage.getItem('fe'+s.id)||'[]')}catch(e){}
+ function endsCard(s){const all=endsAll(s);let got=[];try{got=JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>all.includes(t))}catch(e){}
   const c=card('Fins \u2014 '+s.t);
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('button');r.className='bk'+(ok?' open':' lock');r.disabled=!ok;
    r.innerHTML='<h3>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</h3>';list.append(r)});
   const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>chap(s);c.append(bk3);
   show(c)}
- const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]')).length}catch(e){return 0}};
+ const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
  chap=function(s){GHOST=false;SS=s;
