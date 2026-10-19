@@ -38,10 +38,11 @@ const { chromium } = require('playwright');
   await page.locator('.bkWrap .bk.open').first().click();
   console.log('e2e 3/6: carte histoire cliquée');
 
-  await page.waitForSelector('#calOv', { timeout: 12000 });
-  await page.locator('#calOv .calCh button').first().click()
-    .catch(() => page.locator('#calOv button', { hasText: /premi|reprendr|continuer|lire/i }).first().click());
-  console.log('e2e 4/6: chapitre choisi');
+  /* chap(s) affiche une carte de chapitres (rows '1. …'), PAS l'overlay #calOv (appel) */
+  const ch1 = page.locator('button', { hasText: /^1\. / }).first();
+  await ch1.waitFor({ state: 'visible', timeout: 12000 });
+  await ch1.click();
+  console.log('e2e 4/6: chapitre 1 choisi');
 
   const pro = await page.$('.proSkip');
   if (pro) { await pro.click(); console.log('e2e: prologue passé'); }
