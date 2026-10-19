@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Entre les lignes — des histoires qui s'écrivent en messages</title>
+<meta name="description" content="Un téléphone qui vibre. Des messages qui arrivent. Quelqu’un attend une réponse — la tienne. Chaque mot peut sauver, ou faire taire.">
+<meta property="og:title" content="Entre les lignes">
+<meta property="og:description" content="Un téléphone qui vibre. Des messages qui arrivent. Quelqu’un attend une réponse — la tienne. Chaque mot peut sauver, ou faire taire.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shuhya.github.io/entre-les-lignes/">
+<meta property="og:image" content="https://shuhya.github.io/entre-les-lignes/assets/img/menu.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0a0d16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1024'/%3E%3Crect x='14' y='8' width='36' height='48' rx='6' fill='none' stroke='%23ffd166' stroke-width='3'/%3E%3Ccircle cx='32' cy='46' r='2.5' fill='%23ffd166'/%3E%3C/svg%3E">
+<style>
+:root{--card:#1c1c1f;--her:#2a2a2e;--hx:#f2f2f4;--tx:#f2f2f4;--mu:#98989f;--gold:#ffd166}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff;background:#000;overflow:hidden}
+#in{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden}
+#bgi{position:absolute;inset:0;background:#000 url('assets/img/menu.jpg') center/cover no-repeat;background-position:62% center;opacity:0;transition:opacity 1.4s ease;will-change:transform,opacity;transform:translateZ(0)}
+#in.on #bgi{opacity:1;animation:kb 26s linear forwards}
+#amb{position:absolute;inset:0;z-index:1;background:var(--ambImg,none),var(--ambA,#141d33);background-size:cover,no-repeat;background-position:center,center;opacity:.16;mix-blend-mode:soft-light;pointer-events:none}
+html.ambN{--ambImg:url("assets/amb/night.jpg")}
+html.ambA{--ambImg:url("assets/amb/dawn.jpg")}
+html.ambD{--ambImg:url("assets/amb/day.jpg")}
+html.ambC{--ambImg:url("assets/amb/dusk.jpg")}
+#in:after{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(70% 60% at 50% 50%,#000d 0%,#0009 55%,#0003 100%)}
+#in .tx{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;width:min(420px,84vw);text-align:center}
+#in .tx>*{opacity:0;animation:txin .9s both}
+#in .tx h1{animation-delay:.15s}#in .tx .lead{animation-delay:.45s}#in .tx p:not(.lead):not(.metaL){animation-delay:.7s}#in .tx p.metaL{animation-delay:.9s}#in .tx .goRow{animation-delay:1.1s}
+#in h1{font:400 clamp(34px,9vw,54px)/1.05 Georgia,serif;margin:0 0 10px}
+#in p{margin:0 0 22px;color:#ffffffc0;font-size:15.5px;line-height:1.6}
+#in p.lead{color:#fff;font-size:17px;margin:0 0 16px}
+#in p.metaL{font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:#ffd166c9;margin:0 0 20px}
+#in .tx p:not(.lead){margin:0 0 14px}
+.goRow{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}
+#in a#go{display:inline-block;background:none;border:0;border-bottom:1px solid #fff9;color:#fff;font:inherit;padding:0 0 4px;letter-spacing:1px;text-decoration:none;cursor:pointer}
+#in a#go:hover{border-bottom-color:#fff}
+.lBtn{background:none;border:1px solid #ffd16645;color:#ffe9b0;font:inherit;font-size:12px;padding:7px 15px;border-radius:999px;letter-spacing:1.6px;text-transform:uppercase;cursor:pointer;transition:background .2s,border-color .2s}
+.lBtn:hover{background:#ffd1661a;border-color:#ffd166}
+.foot{position:fixed;z-index:21;bottom:14px;left:0;right:0;text-align:center;font-size:11.5px;color:#ffffff59;letter-spacing:.4px;pointer-events:none}
+@keyframes txin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes kb{from{transform:scale(1) translateZ(0)}to{transform:scale(1.08) translateZ(0)}}
+/* ---- téléphone démo : DA exacte du jeu (style.css répliqué) ---- */
+#demo{display:none;position:relative;z-index:2;flex:none}
+.dp{width:min(320px,26vw);aspect-ratio:9/17.5;max-height:82vh;border-radius:38px;border:1px solid #ffffff2e;background:#0b141a;box-shadow:0 30px 80px #000c,0 0 90px #ffd16612 inset;position:relative;overflow:hidden;opacity:0;animation:txin 1.2s 1.3s both}
+.dp .dpSb{position:absolute;top:0;left:0;right:0;height:30px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:10px;color:#f2f2f4;z-index:3;background:#1c1c1f}
+.dp .dpNotch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:74px;height:16px;border-radius:9px;background:#000;z-index:4}
+.dp .dpHd{position:absolute;top:30px;left:0;right:0;display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid #333338;z-index:3;background:#1c1c1f}
+.dp[data-app="wa"] .dpHd{background:#0f2519;border-bottom-color:#1d3a2c}
+.dp .dpHd .dav{width:34px;height:34px;border-radius:50%;flex:none;display:block;object-fit:cover;background:#2a2a2e}
+.dp .dpHd b{font-size:13px;font-weight:600;color:#f2f2f4;display:block;line-height:1.25}
+.dp .dpHd small{font-size:9.5px;color:#98989f;display:block}
+.dp .dpCt{position:absolute;top:79px;left:0;right:0;bottom:78px;padding:12px 11px 14px;overflow:hidden;display:flex;flex-direction:column;gap:4px;justify-content:flex-end;z-index:2;background:#0b141a linear-gradient(#0006,#0009) center/cover}
+.dp[data-deco] .dpCt{background:#0b141a linear-gradient(#0006,#0009),url('assets/img/appart.jpg') center/cover}
+.dp .dpInp{position:absolute;left:0;right:0;bottom:30px;display:flex;align-items:center;gap:7px;padding:7px 9px 5px;background:#1c1c1f;border-top:1px solid #333338;z-index:3}
+.dp .dpInp .pl{width:26px;height:26px;border-radius:50%;background:#2a2a2e;display:grid;place-items:center;color:#98989f;flex:none}
+.dp .dpInp .fl{flex:1;border-radius:16px;background:#2a2a2e;padding:6px 11px;color:#98989f;font-size:12.5px}
+.dp .dpInp .sd{background:#3e91ff;color:#fff}
+.dp .dpNav{position:absolute;left:0;right:0;bottom:0;height:30px;display:flex;justify-content:space-around;align-items:center;background:#1c1c1f;color:#98989f;z-index:3}
+.dp .dpNav span{display:grid;place-items:center;height:100%;padding:0 18px}
+.dm{max-width:76%;padding:8px 13px;border-radius:19px;font-size:12.5px;line-height:1.45;animation:dIn .22s ease both;white-space:pre-line;overflow-wrap:anywhere}
+.dm.th{background:#2a2a2e;color:#f2f2f4;align-self:flex-start;border-bottom-left-radius:5px}
+.dm.me{background:#0a84ff;color:#fff;align-self:flex-end;border-bottom-right-radius:5px;margin-top:5px}
+.dp[data-app="wa"] .dm.th{background:#1f3d2c;color:#e9f2e6}
+.dp[data-app="wa"] .dm.me{background:#0b6b4f}
+.dm.ts{align-self:center;background:none;color:#ffffff52;font-size:9.5px;letter-spacing:.6px;padding:2px}
+.dm.nar{align-self:center;background:#ffffff0a;color:#ffffffa8;font-style:italic;font-size:11px;text-align:center;border-radius:12px;padding:7px 13px;line-height:1.55;max-width:88%}
+.dm.sys{align-self:center;background:none;color:#ffd166b9;font-size:9px;letter-spacing:1.4px;text-transform:uppercase;text-align:center;padding:4px}
+.dpTy{align-self:flex-start;background:#2a2a2e;border-radius:19px;border-bottom-left-radius:5px;padding:10px 14px;display:flex;gap:4px;animation:dIn .22s both}
+.dp[data-app="wa"] .dpTy{background:#1f3d2c}
+.dpTy i{width:6px;height:6px;border-radius:50%;background:#98989f;animation:ty 1.1s infinite}
+.dpTy i:nth-child(2){animation-delay:.18s}.dpTy i:nth-child(3){animation-delay:.36s}
+.dpCh{align-self:stretch;display:flex;flex-direction:column;gap:6px;animation:dIn .3s both;padding-top:6px}
+.dpCh button{background:#2a2a2e;border:0;color:#f2f2f4;font:inherit;font-size:12px;padding:9px 13px;border-radius:19px;cursor:default;text-align:left;line-height:1.4;transition:border-color .3s,transform .3s,opacity .3s;overflow-wrap:anywhere}
+.dpCh button.pick{border:1px solid #ffd166;transform:scale(1.02)}
+.dpCh button.fade{opacity:.35}
+/* notif : copie exacte .notif du jeu */
+.dpNt{position:absolute;top:calc(12px + 10px);left:12px;right:12px;z-index:30;display:flex;gap:11px;align-items:center;background:#1d2029f2;border:1px solid #ffffff2e;border-radius:16px;padding:11px 14px;color:#fff;box-shadow:0 14px 44px #000c;backdrop-filter:blur(10px);cursor:pointer;animation:ntIn .45s cubic-bezier(.2,.9,.3,1.2)}
+.dpNt.out{animation:ntOut .35s both}
+@keyframes ntIn{from{transform:translateY(-80px);opacity:0}to{transform:none;opacity:1}}
+@keyframes ntOut{from{transform:none;opacity:1}to{transform:translateY(-80px);opacity:0}}
+.dpNt .nIc{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-size:19px}
+.dpNt b{font-size:13.5px;display:block}
+.dpNt small{color:#ffffffa8;font-size:12.5px;display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@keyframes dIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes ty{0%,100%{opacity:.25}50%{opacity:1}}
+/* ---- 2 affichages ---- */
+@media(min-width:900px){
+ #in{display:flex;align-items:center;justify-content:center;gap:6vw;padding:0 4vw}
+ #in:after{background:linear-gradient(90deg,#000e 0%,#0009 55%,#0006 100%)}
+ #in .tx{position:relative;left:auto;top:auto;transform:none;width:min(480px,42vw);text-align:left}
+ #demo{display:block}
+ .goRow{justify-content:flex-start}
+}
+@media(max-width:899px){
+ #in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+ #in .tx{position:relative;left:auto;top:auto;transform:none;width:min(420px,88vw)}
+ #demo{display:block}
+ .dp{width:auto;height:min(40vh,340px);aspect-ratio:auto;border-radius:30px;max-height:none}
+}
+@media(max-width:899px) and (max-height:640px){#demo{display:none}}
+@media(prefers-reduced-motion:reduce){#in.on #bgi{animation:none}.dp{animation:none;opacity:1}}
+/* ---- overlay parametres / guide (DA du jeu) ---- */
+@keyframes lFo{from{opacity:0}to{opacity:1}}
+@keyframes lCIn{from{transform:translateY(10px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.lOv{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:radial-gradient(140% 100% at 50% 42%,#0e1522e8 0%,#040406e0 62%,#040406cc 100%);backdrop-filter:blur(8px);animation:lFo .4s ease}
+.lCard{position:relative;width:min(430px,92vw);max-height:82vh;overflow:auto;background:radial-gradient(130% 90% at 50% 0%,#0e1522 0%,#040406 100%);border:1px solid #ffd16633;border-radius:18px;padding:26px 24px 20px;color:#e8e6df;font-family:Georgia,serif;box-shadow:0 24px 60px #000c;animation:lCIn .4s ease}
+.lClose{position:absolute;top:12px;right:12px;width:34px;height:34px;border:1px solid #ffffff22;border-radius:50%;background:#ffffff0d;color:#e8e6df;font-size:14px;line-height:1;cursor:pointer}
+.lClose:hover{background:#ffffff1a}
+.lK{margin:2px 0 6px;color:#ffd166;font:600 12px/1.2 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase}
+.lCard h2{margin:0 0 10px;font-size:26px;font-weight:400;color:#f3efe4}
+.lRow{padding:14px 0;border-top:1px solid #ffffff14}
+.lRow b{display:block;font:600 14px/1.3 system-ui,sans-serif;color:#f3efe4}
+.lRow small{display:block;margin:4px 0 10px;color:#9a958a;font:12px/1.5 system-ui,sans-serif}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;padding:9px 10px;border:1px solid #ffffff22;border-radius:999px;background:#ffffff0a;color:#e8e6df;font:600 13px system-ui,sans-serif;cursor:pointer}
+.seg button.sel{background:#ffd166;border-color:#ffd166;color:#1c1408}
+.lNote{margin-top:14px;padding-top:12px;border-top:1px solid #ffffff14;color:#9a958a;font:12px/1.5 system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div id="in" class="on">
+<div id="bgi"></div>
+<div id="amb"></div>
+<div class="tx">
+  <h1>Entre les lignes</h1>
+  <p class="lead">Des histoires qui se lisent en messages — et dont tu écris la suite.</p>
+  <p>Un téléphone vibre. Des messages arrivent, des conversations s’ouvrent — et quelque part derrière l’écran, quelqu’un attend une réponse. La tienne. Chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours.</p>
+  <p class="metaL">Des conversations à lire · des choix à porter · chaque réponse compte</p>
+  <div class="goRow">
+    <a id="go" href="jeu.html">Commencer ›</a>
+    <button class="lBtn" id="lSet">Paramètres</button>
+    <button class="lBtn" id="lGuide">Guide</button>
+  </div>
+</div>
+<div id="demo"><div class="dp" id="dpPhone" data-app="wa" data-deco="1">
+  <div class="dpNotch"></div>
+  <div class="dpSb"><span id="dpClk">21h47</span><span>5G · 78 %</span></div>
+  <div class="dpHd"><img class="dav" id="dpAv" alt=""><span><b id="dpNm">…</b><small id="dpSt">en ligne</small></span></div>
+  <div id="dpNtHost"></div>
+  <div class="dpCt" id="dpCt"></div>
+  <div class="dpInp"><span class="pl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span><span class="fl">Envoyer un message</span><span class="pl sd"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l7 6-7 6"/></svg></span></div>
+  <div class="dpNav"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.2"/></svg></span><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></span></div>
+</div></div>
+</div>
+<div class="foot">Entre les lignes · un jeu narratif de Dylan Gaucher</div>
+<script>
+if("serviceWorker" in navigator){var __etlHad=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",function(){if(__etlHad&&!window.__etlRl){window.__etlRl=1;location.reload()}});addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+</script>
+<script>
+/* ---- téléphone démo : 3 extraits imaginaires (aucun personnage réel du jeu) ---- */
+(function(){
+ var ct=document.getElementById("dpCt"),nm=document.getElementById("dpNm"),st=document.getElementById("dpSt"),av=document.getElementById("dpAv"),clk=document.getElementById("dpClk"),ph=document.getElementById("dpPhone"),nth=document.getElementById("dpNtHost");
+ if(!ct)return;
+ var RM=false;try{RM=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+ var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms)})};
+ var AV={juno:"assets/img/demo/juno.jpg",masque:"assets/img/demo/masque.jpg",papa:"assets/img/demo/papa.jpg"};
+ var DEMOS=[
+  {app:"wa",deco:1,av:"juno",hd:"Juno",sub:"en ligne",clk:"21h47",steps:[
+   {k:"nar",x:"21h47. Juno a déménagé aujourd’hui. Elle devrait dormir, pas écrire."},
+   {k:"t"},{k:"h",x:"Le camion est parti. SAUF que le gars de la boîte me fait signer un papier… avec TON nom dessus ??"},
+   {k:"c",o:["C’est une erreur. Ne signe rien.","Signe d’abord, on verra après."],p:0},
+   {k:"t"},{k:"h",x:"Trop tard, j’ai signé. Et là le téléphone s’est allumé tout seul et a écrit « merci »."},
+   {k:"sys",x:"Ce que tu réponds change la suite — vraiment"}]},
+  {app:"sms",deco:0,av:"masque",hd:"Numéro masqué",sub:"SMS",clk:"03h12",notif:{ic:"📱",bg:"#6b5bd6",nm:"Numéro masqué",txt:"SMS · Nouveau message"},steps:[
+   {k:"nar",x:"03h12. Un SMS sans nom. Ça arrive, les erreurs d’opérateur. En théorie."},
+   {k:"t"},{k:"h",x:"Tu dors ? Regarde la fenêtre d’en face. La lumière clignote trois fois. Puis s’arrête."},
+   {k:"c",o:["Ne pas regarder. Fermer les rideaux.","Regarder."],p:1},
+   {k:"t"},{k:"h",x:"Elle s’est rallumée. Une fois, maintenant. Tu crois que c’est un code ?"}]},
+  {app:"wa",deco:1,av:"papa",hd:"Papa",sub:"en ligne",clk:"22h03",steps:[
+   {k:"h",x:"Je sais que je radote. Mais appelle-moi quand tu veux, hein. Même à 4h du matin."},
+   {k:"t"},{k:"c",o:["Je sais, papa. Merci.","Je t’appelle demain, promis."],p:0},
+   {k:"nar",x:"Certaines histoires commencent par un SMS à 3h du matin. D’autres par un « je sais, papa ». Tu écris la tienne."}]}
+ ];
+ function el(cls,txt){var d=document.createElement("div");d.className=cls;if(txt!==undefined)d.textContent=txt;ct.append(d);return d}
+ var STOP=false;document.addEventListener("visibilitychange",function(){STOP=document.hidden});
+ async function runDemo(D){
+  ph.dataset.app=D.app;if(D.deco)ph.dataset.deco="1";else ph.removeAttribute("data-deco");
+  nm.textContent=D.hd;st.textContent=D.sub;av.src=AV[D.av];clk.textContent=D.clk;ct.innerHTML="";nth.innerHTML="";
+  if(D.notif){
+   var nEl=document.createElement("div");nEl.className="dpNt";
+   nEl.innerHTML='<div class="nIc" style="background:'+D.notif.bg+'">'+D.notif.ic+'</div><div><b>'+D.notif.nm+'</b><small>'+D.notif.txt+'</small></div>';
+   nth.append(nEl);await sleep(2400);nEl.classList.add("out");await sleep(400);nEl.remove()}
+  for(var i=0;i<D.steps.length;i++){
+   while(STOP)await sleep(600);
+   var s=D.steps[i];
+   if(s.k==="t"){var nx=D.steps[i+1];var ty=el("dpTy");ty.innerHTML="<i></i><i></i><i></i>";await sleep(900+Math.min(1200,nx&&nx.x?nx.x.length*14:0));ty.remove()}
+   else if(s.k==="h"){el("dm th",s.x);await sleep(600+s.x.length*34)}
+   else if(s.k==="nar"){el("dm nar",s.x);await sleep(700+s.x.length*30)}
+   else if(s.k==="sys"){el("dm sys",s.x);await sleep(1400)}
+   else if(s.k==="c"){
+    var box=el("dpCh");var bs=[];
+    s.o.forEach(function(t2){var b=document.createElement("button");b.type="button";b.textContent=t2;box.append(b);bs.push(b)});
+    await sleep(1500);
+    bs[s.p].classList.add("pick");
+    bs.forEach(function(b,j){if(j!==s.p)b.classList.add("fade")});
+    await sleep(1000);
+    var picked=bs[s.p].textContent;box.remove();el("dm me",picked);await sleep(900)}
+  }
+  await sleep(2600);
+ }
+ async function loop(){
+  if(RM){var D=DEMOS[0];ph.dataset.app=D.app;nm.textContent=D.hd;st.textContent=D.sub;av.src=AV[D.av];clk.textContent=D.clk;
+   D.steps.forEach(function(s){if(s.k==="h")el("dm th",s.x);else if(s.k==="nar")el("dm nar",s.x);else if(s.k==="sys")el("dm sys",s.x)});
+   return}
+  var i=0;
+  for(;;){await runDemo(DEMOS[i]);i=(i+1)%DEMOS.length}
+ }
+ loop();
+})();
+(function(){try{const h=new Date().getHours();let a="#141d33",cl="ambD";if(h>=5&&h<9){a="#3a2438";cl="ambA"}else if(h>=17&&h<21){a="#33222b";cl="ambC"}else if(h>=21||h<5){a="#101828";cl="ambN"}document.documentElement.className=cl;document.documentElement.style.setProperty("--ambA",a)}catch(e){}})();
+/* ---- paramètres / guide : DA du jeu ---- */
+(function(){
+ function get(k,d){try{return localStorage.getItem(k)===null?d:localStorage.getItem(k)}catch(e){return d}}
+ function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+ function wide(){try{return innerWidth>=900}catch(e){return true}}
+ function ov(inner){var o=document.createElement("div");o.className="lOv";var c=document.createElement("div");c.className="lCard";c.innerHTML=inner;o.append(c);document.body.append(o);
+  o.addEventListener("click",function(e){if(e.target===o)o.remove()});return {o:o,c:c}}
+ function closeBtn(c){var b=c.querySelector(".lClose");b.onclick=function(){c.parentElement.remove()}}
+ document.getElementById("lSet").onclick=function(){
+  var v=get("view",wide()?"1":"0"),em=get("etl_emoji","on");
+  var x=ov('<button class="lClose" aria-label="Fermer">✕</button><p class="lK">Réglages</p><h2>Paramètres</h2>'
+   +'<div class="lRow"><b>Affichage du jeu</b><small>Comment le jeu s’ouvrira par défaut sur cet appareil — modifiable à tout moment depuis le jeu.</small>'
+   +'<div class="seg" id="segV"><button data-v="0">Téléphone</button><button data-v="1">PC</button></div></div>'
+   +'<div class="lRow"><b>Smileys dans les messages</b><small>Activer ou désactiver les emojis selon ton ton de lecture.</small>'
+   +'<div class="seg" id="segE"><button data-v="on">Activés</button><button data-v="off">Désactivés</button></div></div>'
+   +'<p class="lNote">Tes réglages sont enregistrés sur cet appareil, pas de compte. Le reste (thème nuit / jour, vitesse de lecture, volume, voix des appels) se règle depuis le ⚙ à l’intérieur du jeu.</p>');
+  closeBtn(x.c);
+  [["segV",v,"view"],["segE",em,"etl_emoji"]].forEach(function(cfg){
+   var id=cfg[0],cur=cfg[1],key=cfg[2];
+   x.c.querySelectorAll("#"+id+" button").forEach(function(b){
+    b.classList.toggle("sel",b.dataset.v===cur);
+    b.onclick=function(){set(key,b.dataset.v);x.c.querySelectorAll("#"+id+" button").forEach(function(y){y.classList.remove("sel")});b.classList.add("sel")}
+   })
+  });
+ };
+ document.getElementById("lGuide").onclick=function(){
+  var x=ov('<button class="lClose" aria-label="Fermer">✕</button><p class="lK">Guide</p><h2>Comment jouer</h2>'
+   +'<p><b>Lire.</b> Chaque histoire se déroule sur un téléphone : des messages arrivent, s’enchaînent, se contredisent. Photos, appels, fichiers — tout se lit comme une vraie messagerie.</p>'
+   +'<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>'
+   +'<p><b>Les boutons, une fois dans le jeu :</b></p>'
+   +'<p><b>‹</b> en haut à gauche : la bibliothèque — histoires, reprise de partie, réglages.<br>'
+   +'<b>⚙</b> : réglages — thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.<br>'
+   +'<b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>'
+   +'<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>'
+   +'<p><b>Le téléphone de démo</b> joue des extraits imaginaires, inventés pour te donner le ton du jeu : rien de ce qui y apparaît ne fait partie des vraies histoires.</p>');
+  closeBtn(x.c);
+ };
+})();
+</script>
+</body>
+</html>

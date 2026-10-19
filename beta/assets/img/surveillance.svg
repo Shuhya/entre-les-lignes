@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 540" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0f1e"/><stop offset=".55" stop-color="#111726"/><stop offset="1" stop-color="#171523"/></linearGradient>
+<radialGradient id="glow" cx=".46" cy=".2" r=".75"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".9"/><stop offset=".35" stop-color="#e0a24f" stop-opacity=".38"/><stop offset="1" stop-color="#e0a24f" stop-opacity="0"/></radialGradient>
+<linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#20242e"/><stop offset="1" stop-color="#12151c"/></linearGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="2.2"/></filter>
+<filter id="bl"><feGaussianBlur stdDeviation="5.5"/></filter>
+<filter id="gr"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0"/></filter>
+<radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".66"/></radialGradient>
+</defs>
+<rect width="720" height="540" fill="url(#sky)"/>
+<g filter="url(#soft)">
+<rect x="20" y="120" width="180" height="220" fill="#0d1220"/>
+<rect x="215" y="90" width="150" height="250" fill="#0f1424"/>
+<rect x="380" y="130" width="200" height="210" fill="#0c111d"/>
+<rect x="590" y="105" width="160" height="235" fill="#0e1322"/>
+<rect x="60" y="150" width="10" height="12" fill="#f4c06a" opacity=".8"/>
+<rect x="95" y="185" width="10" height="12" fill="#e8b45f" opacity=".6"/>
+<rect x="250" y="140" width="10" height="12" fill="#f0ba62" opacity=".75"/>
+<rect x="410" y="170" width="10" height="12" fill="#f4c06a" opacity=".55"/>
+<rect x="640" y="150" width="10" height="12" fill="#e0a24f" opacity=".7"/>
+<rect x="680" y="210" width="10" height="12" fill="#f4c06a" opacity=".45"/>
+</g>
+<rect y="340" width="720" height="200" fill="url(#road)"/>
+<rect y="336" width="720" height="5" fill="#2a2f3a" opacity=".8"/>
+<g filter="url(#soft)" opacity=".5">
+<rect x="40" y="392" width="120" height="9" rx="4" fill="#c9d4ee" opacity=".25"/>
+<rect x="300" y="410" width="140" height="9" rx="4" fill="#c9d4ee" opacity=".18"/>
+<rect x="520" y="440" width="150" height="9" rx="4" fill="#c9d4ee" opacity=".2"/>
+</g>
+<line x1="318" y1="120" x2="318" y2="345" stroke="#0b0e16" stroke-width="7"/>
+<rect x="306" y="112" width="24" height="12" rx="5" fill="#1a1f2b"/>
+<ellipse cx="330" cy="340" width="200" height="10" fill="#e8b45f" opacity=".2"/>
+<path d="M330 124 L470 345 L190 345 Z" fill="url(#glow)" opacity=".85"/>
+<g filter="url(#bl)">
+<ellipse cx="330" cy="342" rx="95" ry="12" fill="#f4c06a" opacity=".22"/>
+<g>
+<path d="M430 340 L432 300 L438 285 C438 275 442 270 442 262 L444 250 C444 246 448 244 450 248 L450 268 L454 262 L456 250 C457 245 461 245 461 251 L460 270 C461 274 462 280 461 288 L462 300 L464 340 Z" fill="#070a12"/>
+<path d="M432 300 C425 302 420 308 419 316 L418 340 L424 340 L426 318 Z" fill="#070a12"/>
+<path d="M462 302 C470 305 475 312 476 320 L477 340 L470 340 L468 320 Z" fill="#070a12"/>
+</g>
+</g>
+<rect x="0" y="0" width="720" height="540" fill="url(#vig)"/>
+<rect width="720" height="540" filter="url(#gr)" opacity=".9"/>
+<rect width="720" height="540" fill="#1a2f4a" opacity=".05"/>
+</svg>
