@@ -70,16 +70,50 @@ let page = null;
     console.log('e2e: téléphone déverrouillé');
   } catch (e) { /* pas de lock screen */ }
 
-  await page.waitForFunction(() => {
-    const c = document.getElementById('chat');
-    return c && c.children.length >= 2;
-  }, undefined, { timeout: 60000 });
+  /* le récit s'auto-anime mais des overlays bloquants peuvent surgir à tout moment */
+  const BLOCKERS = ['.lkNext', '.awGo', '#lkWake button', '.notif'];
+  const settleOnce = async () => {
+    for (const sel of BLOCKERS) {
+      const el = await page.$(sel);
+      if (el && await el.isVisible()) { await el.click(); await page.waitForTimeout(600); return true; }
+    }
+    return false;
+  };
+  const chatLen = () => page.evaluate(() => { const c = document.getElementById('chat'); return c ? c.children.length : 0; });
+
+  /* glitch puis 'Suivant ›' : .lkNext apparaît ~1.2s après Déverrouiller */
+  try {
+    await page.waitForSelector('.lkNext', { state: 'visible', timeout: 12000 });
+    await page.click('.lkNext');
+    console.log('e2e: hack passé (Suivant)');
+  } catch (e) { /* pas de glitch */ }
+
+  let ok = false;
+  for (let i = 0; i < 40; i++) {
+    await settleOnce();
+    if (await chatLen() >= 2) { ok = true; break; }
+    await page.waitForTimeout(1500);
+  }
+  if (!ok) throw new Error('chat vide après 60s (len=' + await chatLen() + ')');
   console.log('e2e 5/6: messages affichés dans le chat');
 
-  await page.waitForSelector('#ch button:not(.finB)', { timeout: 45000 });
-  const nBefore = await page.evaluate(() => document.getElementById('chat').children.length);
-  await page.locator('#ch button:not(.finB)').first().click();
-  await page.waitForFunction(n => document.getElementById('chat').children.length > n, nBefore, { timeout: 45000 });
+  ok = false;
+  for (let i = 0; i < 40; i++) {
+    await settleOnce();
+    const chBtn = await page.$('#ch button:not(.finB)');
+    if (chBtn && await chBtn.isVisible()) {
+      const nBefore = await chatLen();
+      await chBtn.click();
+      for (let j = 0; j < 30; j++) {
+        await settleOnce();
+        if (await chatLen() > nBefore) { ok = true; break; }
+        await page.waitForTimeout(1500);
+      }
+      break;
+    }
+    await page.waitForTimeout(1500);
+  }
+  if (!ok) throw new Error('premier choix sans effet (len=' + await chatLen() + ')');
   console.log('e2e 6/6: premier choix cliqué → bulle envoyée');
   const bubbles = await page.evaluate(() => document.getElementById('chat').children.length);
   if (bubbles < 3) throw new Error('trop peu de bulles après le choix : ' + bubbles);
@@ -103,10 +137,10 @@ let page = null;
 })().catch(e => {
   console.error('E2E FAIL:', e.message);
   if (errs.length) console.error('ERREURS PAGE:\n' + errs.join('\n'));
-  if (page) page.evaluate(() => {
-    console.log('DIAG chat=' + (document.getElementById('chat') || {}).children.length
-      + ' body=' + document.body.className
-      + ' ov=' + Array.from(document.querySelectorAll('body > div[id]')).map(d => d.id + (d.hidden ? ':h' : '')).join(','));
-  }).catch(() => {});
+  if (page) page.evaluate(() => JSON.stringify({
+    chat: document.getElementById('chat') ? document.getElementById('chat').children.length : -1,
+    body: document.body.className,
+    ovs: Array.from(document.querySelectorAll('div[id]')).map(d => d.id + (d.hidden ? ':h' : '')).join(',')
+  })).then(d => console.error('DIAG ' + d)).catch(() => {});
   setTimeout(() => process.exit(1), 500);
 });
