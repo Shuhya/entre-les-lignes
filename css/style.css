@@ -537,6 +537,7 @@ html.ambC{--ambImg:url("../assets/amb/dusk.jpg")}}
 .scQ{width:100%;text-align:center;font-style:italic;color:#9fb4d8;font-size:13.5px;margin:0 0 10px;letter-spacing:.2px}
 
 /* v2.75 : bulle prénom + genre */
+#nameGate,#bioOv{animation:none}
 .ngOv{position:fixed;inset:0;z-index:90;background:radial-gradient(140% 100% at 50% 42%,#101018 0%,#08090e 58%,#030305 100%);display:grid;place-items:center;animation:fo .4s}
 .ngCard{width:min(340px,86vw);text-align:center;color:#fff;font-family:Georgia,serif}
 .ngCard h2{font-size:24px;font-weight:400;margin:0 0 10px}

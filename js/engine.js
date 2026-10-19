@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.105";
+const VER="2.106";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -463,9 +463,9 @@ function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne 
  o.innerHTML='<div class="ngCard"><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><button class="ngGo bioGo">Reprendre le téléphone</button></div>';
  document.body.append(o);
  const P=o.querySelectorAll(".ngP");
- P[0].textContent=nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans, puis la Larme : une enquête allée trop près du réseau.";
- P[1].textContent="Elle devenait dangereuse. Ton chef t\'a ordonné d\'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant, une vie refaite. Eux n\'ont rien oublié — le hack de ces six derniers jours a commencé là.";
- o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}o.remove();cb&&cb()}}
+ P[0].textContent=nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans de service et une quête sur la Larme, la drogue de Vaubris.";
+ P[1].textContent="Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié — le hack de ces six derniers jours a commencé là.";
+ o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}cb&&cb();o.remove()}}
 /* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t).replace(/\b(Désolé|éveillé|certain|seul|content|rentré|fatigué|prêt)\b/g,"$1e")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
@@ -475,7 +475,7 @@ function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.cl
  bf.onclick=()=>{gen="f";bf.classList.add("sel");bm.classList.remove("sel")};
  bm.onclick=()=>{gen="m";bm.classList.add("sel");bf.classList.remove("sel")};
  o.querySelectorAll(".ngThm button").forEach(bt=>{if(bt.dataset.th===THM)bt.classList.add("sel");bt.onclick=()=>{THM=bt.dataset.th;try{localStorage.setItem("etl_theme",THM)}catch(e){}o.querySelectorAll(".ngThm button").forEach(x=>x.classList.remove("sel"));bt.classList.add("sel");thApply()}});
- go.onclick=()=>{const v=(inp.value||"").trim().slice(0,14);if(!v||!gen)return;try{st.pname=v;st.pf=gen==="f"?1:0;localStorage.setItem("etl_pname",v);localStorage.setItem("etl_pgen",gen)}catch(e){}try{hit(660,.05,.08)}catch(e){}o.remove();cb()}}
+ go.onclick=()=>{const v=(inp.value||"").trim().slice(0,14);if(!v||!gen)return;try{st.pname=v;st.pf=gen==="f"?1:0;localStorage.setItem("etl_pname",v);localStorage.setItem("etl_pgen",gen)}catch(e){}try{hit(660,.05,.08)}catch(e){}cb();o.remove()}}
 /* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
 function reactOv(txt,btnLabel,done){
  const o=document.createElement("div");o.className="proOv rxOv";
