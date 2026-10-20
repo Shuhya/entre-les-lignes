@@ -91,8 +91,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const first=s=>qa(doc.body,s)[0]||null;
 
 /* Choix par nœud — ROUTE=a piège/MMS/h8p/h11p ; ROUTE=b honnête/trst élevé/h8/h11w (+h9z bonne nuit) */
-const CHO_A={h1:1,h2:0,h3a:0,h3l1:0,h3y:0,h3y2:0,h3y3:0,h4:2,h5b:1,h6:0,h7h:0,h9:0,h9a:0,h9b:0,h10:1,h9y:0};
-const CHO_B={h1:1,h2:1,h3b:1,h3l2:0,h3y:0,h3y2:0,h3y3:0,h4:1,h5b:1,h6:0,h7h:0,h9:1,h9y:1,h9z:0,h10:1};
+const CHO_A={h1:1,h2:0,h3a:0,h3l1:0,h3y:0,h4:2,h5b:1,h6:0,h7h:0,h9:0,h9a:0,h9b:0,h10:1,h9y:0};
+const CHO_B={h1:1,h2:1,h3b:1,h3l2:0,h3y:0,h4:1,h5b:1,h6:0,h7h:0,h9:1,h9y:1,h9z:0,h10:1};
 const CHO=ROUTE==="b"?CHO_B:CHO_A;
 const EXPECT_END=ROUTE==="b"?"h11w":"h11p";
 const seen={mms:false,nodes:new Set()};
