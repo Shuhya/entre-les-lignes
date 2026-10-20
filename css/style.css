@@ -423,7 +423,7 @@ body.pc .b{max-width:58%}
 .trSep{font-size:11.5px;color:#8fa5c5;text-align:center;margin:14px 0 4px;letter-spacing:.5px}
 
 /* ---- intro chapitre 1 : écran noir / déverrouillage / freeze hack ---- */
-#lockOv{position:absolute;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:opacity .65s}
+#lockOv{position:absolute;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .65s}
 #lockOv.off{opacity:0;pointer-events:none}
 #lockOv canvas.lkFx{position:absolute;inset:0;width:100%;height:100%}
 #lockOv .lkMid{position:relative;z-index:2;text-align:center;color:#fff;opacity:0;animation:lkIn .7s .9s forwards}
