@@ -81,18 +81,12 @@ const log = m => console.log('e2e-chaos: ' + m);
   };
 
   /* ---- settle : fermer ce que le chaos a ouvert, puis jouer ---- */
+  const menuOn = () => page.evaluate(() => { const m = document.getElementById('mn'); return !!(m && m.classList.contains('on')); }).catch(() => false);
   const settle = async () => {
-    /* accueil (mnBack) : relancer puis reprendre */
-    if (await vis('#in') && !(await page.evaluate(() => document.body.classList.contains('play')))) {
-      await clickIf('#in #go') || await clickIf('#in button');
-      await page.waitForTimeout(400);
-    }
-    /* menu bibliothèque ouvert : Reprendre */
-    if (await page.evaluate(() => { const m = document.getElementById('mn'); return !!(m && m.classList.contains('on')); }).catch(() => false)) {
-      await clickIf('#mn .bk.open');
-      await page.waitForTimeout(400);
-    }
     if (await clickIf('#notesOv #ntB2') || await clickIf('#notesOv .ahBack')) { await page.waitForTimeout(300); return true; }
+    /* écran-app annexe (threads / accueil apps) : ‹ bibliothèque revient à la conversation */
+    if (await vis('#appHome') || await vis('#thrOv')) { await clickIf('#bk'); await page.waitForTimeout(300); return true; }
+    /* rsOv AVANT le menu : « Reprendre la conversation » (transfert/reprise) */
     if (await vis('.rsOv')) {
       const rp = page.locator('.rsOv button', { hasText: /Reprendre/ }).first();
       if (await rp.count()) { try { await rp.click({ timeout: 3000 }); } catch (e) { const rb = page.locator('.rsOv button', { hasText: /Retour/ }).first(); if (await rb.count()) await rb.click({ timeout: 3000 }).catch(() => {}); } }
@@ -100,6 +94,18 @@ const log = m => console.log('e2e-chaos: ' + m);
     }
     if (await clickIf('#infoOv .ifBack')) { await page.waitForTimeout(300); return true; }
     { const v = await page.$('#vol'); if (v && !(await v.isHidden())) { await clickIf('#set'); await page.waitForTimeout(200); return true; } }
+    /* accueil (mnBack) : relancer puis reprendre */
+    if (await vis('#in') && !(await page.evaluate(() => document.body.classList.contains('play')))) {
+      await clickIf('#in #go') || await clickIf('#in button');
+      await page.waitForTimeout(400);
+    }
+    /* menu bibliothèque ouvert : carte histoire (reprise via chap → rsOv),
+       sinon carte chapitres (row « 1. ») — sinon on resterait bloqué dessus */
+    if (await menuOn()) {
+      if (await clickIf('#mn .bk.open')) { await page.waitForTimeout(400); return true; }
+      const r1 = page.locator('#mn button', { hasText: /^1\. / }).first();
+      if (await r1.count()) { try { await r1.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
+    }
     /* overlays bloquants du récit */
     const BLOCKERS = ['.lkNext', '.awGo', '#lkWake', '.notif', '.rdOk',
       '#scrOv .scRow.go:not(.read)', '#scrOv .scBtn', '#incOv .incAcc',
@@ -150,6 +156,7 @@ const log = m => console.log('e2e-chaos: ' + m);
   if (page) page.evaluate(() => JSON.stringify({
     chat: document.getElementById('chat') ? document.getElementById('chat').children.length : -1,
     body: document.body.className,
+    /* eslint-disable-next-line no-undef */
     node: typeof nodeNow !== 'undefined' ? nodeNow : '?',
     ovs: Array.from(document.querySelectorAll('div[id]')).map(d => d.id + (d.hidden ? ':h' : '')).join(',')
   })).then(d => console.error('DIAG ' + d)).catch(() => {});
