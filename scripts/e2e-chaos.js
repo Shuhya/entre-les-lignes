@@ -31,7 +31,7 @@ const log = m => console.log('e2e-chaos: ' + m);
   const b = await chromium.launch();
   const ctx = await b.newContext({ acceptDownloads: true });
   page = await ctx.newPage();
-  page.on('pageerror', e => errs.push('pageerror: ' + e.message));
+  page.on('pageerror', e => errs.push('pageerror: ' + e.message + '\n    stack: ' + String(e.stack || '').split('\n').slice(0, 4).join(' | ')));
   page.setDefaultTimeout(15000);
   const root = 'file://' + path.resolve(__dirname, '..');
 
@@ -159,8 +159,21 @@ const log = m => console.log('e2e-chaos: ' + m);
   }
   if (!ended) throw new Error('BUDGET dépassé sans écran de fin (chat=' + (await chatLen()) + ', it=' + it + ')');
   log('ÉCRAN DE FIN ATTEINT — chapitre 1 terminé malgré le chaos');
-  const finTxt = await page.evaluate(() => { const o = document.getElementById('endOv'); return o ? o.textContent : document.body.textContent.slice(0, 200); });
-  if (!/fin de chapitre|J'ai tout lu/i.test(finTxt)) { errs.push('écran de fin anormal : ' + finTxt.slice(0, 120)); }
+  /* si on s'est arrêté sur .finB (pas encore #endOv), le cliquer pour atteindre l'écran de fin */
+  if (!(await vis('#endOv'))) { await clickIf('.finB'); try { await page.waitForSelector('#endOv', { timeout: 8000 }); } catch (e) {} }
+  const finTxt = await page.evaluate(() => { const o = document.getElementById('endOv'); return o ? o.textContent : ''; });
+  if (!finTxt) errs.push('écran de fin absent (ni #endOv ni .finB cliquable)');
+  else if (!/fin de chapitre|Chapitre 1/i.test(finTxt)) errs.push('écran de fin anormal : ' + finTxt.slice(0, 120));
+  /* traque des erreurs page : où vit le symbole fautif ? */
+  if (errs.some(x => x.startsWith('pageerror'))) {
+    const hunt = await page.evaluate(() => {
+      const out = [];
+      document.querySelectorAll('script').forEach((s, i) => { if ((s.textContent || '').includes('addRow')) out.push('script#' + i + (s.src ? '@' + s.src : ' inline')); });
+      document.querySelectorAll('*').forEach(el => { for (const a of el.attributes || []) if (String(a.value).includes('addRow')) out.push('attr ' + el.tagName + ' ' + a.name); });
+      return out.join(' ; ') || 'addRow introuvable (ni scripts ni attributs)';
+    }).catch(() => 'hunt KO');
+    errs.push('CHASSE addRow: ' + hunt);
+  }
 
   /* reprise post-fin : le menu doit rester utilisable (pas d'overlay orphelin) */
   await page.evaluate(() => { const o = document.getElementById('endOv'); if (o) o.remove(); });
