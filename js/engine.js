@@ -1,7 +1,7 @@
 const DEF_AV={'':AVF1,h:AVF3};
 let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},nodeNow=null;
 const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
-/* ---- stats de lecture (locales, agrégées) — portée GLOBALE : utilisées par start() et play() ---- */
+/* ---- stats de lecture (locales, agrégées) — portée GLOBALE : utilisées par start() et play() ---- */
 let PROD=0; /* prologue déjà affiché par introH (v2.51) — évite le double affichage dans play() */
 let STATS={t:0,msgs:0,runs:0};try{STATS=Object.assign(STATS,JSON.parse(localStorage.getItem("etl_stats")||"{}"))}catch(e){}
 let statsMark=Date.now();
@@ -18,8 +18,8 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.169";
-/* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
+const VER="2.170";
+/* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
 let THM="dark";try{THM=localStorage.getItem("etl_theme")||"dark"}catch(e){}console.log("Entre les lignes · v"+VER);
@@ -121,8 +121,8 @@ async function play(id,r=run){
  noteTick();
  mkCh(id);
  if(n.fx)filesOv(n);else if(n.vw)vwOv(n);
- $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
-/* ---- Apps natives : explorateur de fichiers & viewers plein ecran ---- */
+ $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"Fin de ce segment.";$("chat").scrollTop=1e9}
+/* ---- Apps natives : explorateur de fichiers & viewers plein ecran ---- */
 function fxClear(){document.querySelectorAll(".fxOv").forEach(x=>x.remove())}
 function fxShell(title,innerHTML){
  const o=document.createElement("div");o.className="fxOv";
@@ -145,7 +145,7 @@ function filesOv(n){
  if(typeof n.fxF==="number"){fxBack(o,(n.c&&n.c[n.fxF]&&n.c[n.fxF][0])||"Ne rien ouvrir",()=>{fxClear();const b=$("ch").children[n.fxF];if(b)b.click()})}}
 function fxLock(nm){
  fxClear();
- const o=fxShell('🔒 '+nm,'<div class="fxBody"><div class="fxLockIc">🔒</div><p class="fxBig">chimere_v3.gpg</p><p class="fxDim">Chiffré 4096 bits — clé introuvable.</p><p class="fxDim">Le fichier reste muré. Il ne s\u2019ouvrira pas.</p></div>');
+ const o=fxShell('🔒 '+nm,'<div class="fxBody"><div class="fxLockIc">🔒</div><p class="fxBig">chimere_v3.gpg</p><p class="fxDim">Chiffré 4096 bits. Clé introuvable.</p><p class="fxDim">Le fichier reste muré. Il ne s\u2019ouvrira pas.</p></div>');
  fxBack(o,"Retour aux fichiers",()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]}));
  o.querySelector(".fxX").onclick=()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]})}
 function fxImg(nm){
@@ -153,7 +153,7 @@ function fxImg(nm){
  const o=fxShell('🗺 '+nm,'<div class="fxBody" style="padding:0"><div class="fxImg"></div></div>');
  const im=o.querySelector(".fxImg");
  im.style.backgroundImage=IMG.quai9?'url('+IMG.quai9+')':'';
- im.innerHTML='<span>Échelle ouest, quai 9 — le stylo rouge cerne une porte de service, flèche vers le hangar 44.</span>';
+ im.innerHTML='<span>Échelle ouest, quai 9. Le stylo rouge cerne une porte de service, flèche vers le hangar 44.</span>';
  fxBack(o,"Retour aux fichiers",()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]}));
  o.querySelector(".fxX").onclick=()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]})}
 let hz=null;
@@ -166,7 +166,7 @@ function vwOv(n){
   const o=fxShell('📄 '+nm,'<div class="fxPaper"></div>');
   const P=o.querySelector(".fxPaper");
   lines.forEach(function(ln){const p=document.createElement("p");p.className="vwL "+(ln[0]||"n");p.textContent=ln[1];P.append(p)});
-  const nb=document.createElement("div");nb.className="vwBar";nb.textContent="Bas de page — encadré deux fois au stylo rouge";P.append(nb);
+  const nb=document.createElement("div");nb.className="vwBar";nb.textContent="Bas de page, encadré deux fois au stylo rouge";P.append(nb);
   fxBack(o,n.vwBack?"‹ Revenir à l'archive":"✕ Refermer",function(){if(n.vwBack){veil(1);o.remove();const i2=(n.c||[]).findIndex(cc=>cc&&cc[1]===n.vwBack);if(i2>=0){const bb=$("ch").children[i2];if(bb){bb.click();return}}}o.remove()});if(n.vwBack){const xx=o.querySelector(".fxX");if(xx)xx.onclick=()=>{const fb2=o.querySelector(".fxFoot");if(fb2)fb2.click()}}
  }else if(kind==="wav"){
   const o=fxShell('🎧 '+nm,'<div class="fxBody vwPlay"><div class="wavArt">🎧</div><p class="fxBig">'+nm+'</p><p class="fxDim">0:47 · jamais écouté</p><div class="wavBar"><i></i></div><button class="wavBtn">▶ Lecture</button><div class="wavTx"></div></div>');
@@ -176,7 +176,7 @@ function vwOv(n){
    const total=47,dur=13000,t0=Date.now();
    const tick=setInterval(function(){if(!o.isConnected){clearInterval(tick);try{hissOff()}catch(e3){}return}const p=Math.min(1,(Date.now()-t0)/dur);bar.style.width=(p*100)+"%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:"+String(Math.floor(p*total)).padStart(2,"0")+" sur 0:47"},120);
    for(const ln of lines){const p=document.createElement("p");p.className="vwL "+(ln[0]||"q");p.textContent=ln[1];tx.append(p);try{if(ln[0]!=="i")callSpeak(ln[1],"Nils")}catch(e2){}await sl(dur/lines.length)}
-   clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 — fin de l\u2019enregistrement";btn.textContent="▶ Écouté";try{hissOff()}catch(e2){}};
+   clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 · fin de l\u2019enregistrement";btn.textContent="▶ Écouté";try{hissOff()}catch(e2){}};
   fxBack(o,n.vwBack?"‹ Revenir à l'archive":"✕ Refermer",function(){if(n.vwBack){veil(1);o.remove();const i2=(n.c||[]).findIndex(cc=>cc&&cc[1]===n.vwBack);if(i2>=0){const bb=$("ch").children[i2];if(bb){bb.click();return}}}o.remove()});if(n.vwBack){const xx=o.querySelector(".fxX");if(xx)xx.onclick=()=>{const fb2=o.querySelector(".fxFoot");if(fb2)fb2.click()}}
  }}
 
@@ -220,7 +220,7 @@ function transferOv(){
  const cp=document.createElement("button");cp.className="trBtn";cp.textContent="\u29B9 Copier le code";
  cp.onclick=()=>{try{navigator.clipboard.writeText(code);cp.textContent="\u2713 Copi\u00E9"}catch(e){ta.select();cp.textContent="S\u00E9lectionne et copie manuellement"}};
  c.append(cp);
- const sep=document.createElement("div");sep.className="trSep";sep.textContent="ou, sur cet appareil :";c.append(sep);
+ const sep=document.createElement("div");sep.className="trSep";sep.textContent="ou, sur cet appareil :";c.append(sep);
  const ta2=document.createElement("textarea");ta2.className="trTa";ta2.placeholder="Colle un code de partie ici";c.append(ta2);
  const ld=document.createElement("button");ld.className="trBtn ld";ld.textContent="\u21BB Charger ce code";
  ld.onclick=()=>loadCode(ta2.value.trim());
@@ -247,7 +247,7 @@ function telOv(T,done){const o=document.createElement("div");o.id="telOv";
  ph.innerHTML='<div class="lspTop"></div><div class="lspClock">'+T[0]+'</div><div class="lspSub">'+T[1]+'</div>'
  +'<div class="lspNotif"><i>💬</i><div><div class="lspNh"><b>'+T[2]+'</b><small>'+T[0]+'</small></div><p>'+T[3]+'</p></div></div>'
  +'<div class="lspBar"></div>';
- const cap=document.createElement("p");cap.className="lspCap";cap.textContent="Ton téléphone à toi — pas celui de Léo. Il vient de vibrer dans ta poche.";
+ const cap=document.createElement("p");cap.className="lspCap";cap.textContent="Ton téléphone à toi. Pas celui de Léo. Il vient de vibrer dans ta poche.";
  const b=document.createElement("button");b.textContent="Déverrouiller";b.onclick=()=>{o.remove();done()};
  o.append(ph,cap,b);document.body.append(o);
  beep(1319,.09,.05);setTimeout(()=>beep(1760,.11,.05),150);setTimeout(()=>beep(1760,.11,.04),900)}
@@ -330,13 +330,13 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);seen=(seen||[]).filter(t2=>
  const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 fin de chapitre";c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
  const fd=document.createElement("div");fd.className="endFins";
-if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes — "+seen.length+" / "+tot;fd.append(fl);
+if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes · "+seen.length+" / "+tot;fd.append(fl);
  const list=document.createElement("div");list.className="endFinsList";
  endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
   r.innerHTML=seen.includes(t)?"<span>\u2713</span>"+t.replace(/</g,"&lt;"):"<span>\uD83D\uDD12</span>"+t.replace(/</g,"&lt;");
   list.append(r)});
  fd.append(list)}
-else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";fd.append(vh)}
+else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";fd.append(vh)}
 c.append(fd);
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
@@ -352,8 +352,8 @@ function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1
  const cb=$("ch");cb.innerHTML="";
  const bb=document.createElement("button");bb.className="finB";
  bb.textContent=ok?"\u25B8 J'ai tout lu \u2014 chapitre suivant":"\u25B8 J'ai tout lu \u2014 bilan de l'histoire";
- bb.onclick=()=>{if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)};
- cb.append(bb);$("fl").textContent="\u2014 fin de ce segment \u2014";$("chat").scrollTop=1e9},900)}
+ bb.onclick=()=>{if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)};
+ cb.append(bb);$("fl").textContent="Fin de ce segment.";$("chat").scrollTop=1e9},900)}
 function addH(x){const d=add("h",x);
  if(CGP&&CGP.length>1){const i=x.indexOf(" : ");if(i>1&&i<22&&CGP.indexOf(x.slice(0,i))>=0){
   const nm=x.slice(0,i),ph=avOf(nm),av=document.createElement("span");
@@ -432,17 +432,17 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
 function NH(s){return[
  {id:"num",t:(s.piege||s.avou||s.mentir),tex:"Ton numéro était celui de Nils. Quelqu’un l’a volontairement remis dans le pool de recyclage."},
- {id:"piege",t:s.piege,tex:"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils — et un échantillon t’attend à 23h40."},
+ {id:"piege",t:s.piege,tex:"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils. Un échantillon t’attend à 23h40."},
  {id:"avou",t:s.avou,tex:"Cora sait que tu n’es pas Nils. Elle t’a appelé pour t’expliquer les règles."},
- {id:"pov",t:s.pov,tex:"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »"},
- {id:"prm",t:s.prm,tex:"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu’à C. »"},
- {id:"chim",t:(s.cal_h8||s.cal_h8p),tex:"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même."},
- {id:"mig",t:s.mig,tex:"Tu as suivi la migration : les 4,2 Go rapatriés sont maintenant dans ton téléphone."},
- {id:"trst",t:(s.trst||0)>=2,tex:"Cora te fait confiance — pour l’instant."},
+ {id:"pov",t:s.pov,tex:"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »"},
+ {id:"prm",t:s.prm,tex:"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu’à C. »"},
+ {id:"chim",t:(s.cal_h8||s.cal_h8p),tex:"CHIMÈRE v3, le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même."},
+ {id:"mig",t:s.mig,tex:"Tu as suivi la migration : les 4,2 Go rapatriés sont maintenant dans ton téléphone."},
+ {id:"trst",t:(s.trst||0)>=2,tex:"Cora te fait confiance... pour l’instant."},
  {id:"mentir",t:s.mentir,tex:"Tu as menti à Cora en improvisant. Elle t’a repéré en quatre minutes."},
- {id:"pol",t:s.pol,tex:"Tu as annoncé à Cora que tu irais à la police municipale. Elle t’a aiguillé vers le commandant Riffaud — en te demandant de ne jamais citer son nom."}
+ {id:"pol",t:s.pol,tex:"Tu as annoncé à Cora que tu irais à la police municipale. Elle t’a aiguillé vers le commandant Riffaud, en te demandant de ne jamais citer son nom."}
 ].filter(x=>x.t)}
-function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"))}}catch(e){}}
+function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"))}}catch(e){}}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
  $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
@@ -450,12 +450,12 @@ function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o
  else{const s=st||{};
  if(SS.id==="h"){
   h+='<b>Qui est qui</b>';
-  const WH=[["Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.",1],
-  ["Nils Aveline — l'ancien propriétaire du numéro. Agent d'une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.",s.piege||s.avou||s.mentir],
-  ["Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit court et sec, ne croit pas au hasard.",(s.trst||0)>0||s.avou||s.mentir],
-  ["Yasmine — ta meilleure amie depuis l'enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l'appeler au premier détail bizarre.",1],
-  ["Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.",s.cal_h8||s.cal_h8p],
-  ["Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.",s.pol]];
+  const WH=[["Toi · Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.",1],
+  ["Nils Aveline · l'ancien propriétaire du numéro. Agent d'une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.",s.piege||s.avou||s.mentir],
+  ["Cora (« C. ») · coéquipière de Nils. Appelle sur ligne chiffrée, écrit court et sec, ne croit pas au hasard.",(s.trst||0)>0||s.avou||s.mentir],
+  ["Yasmine · ta meilleure amie depuis l'enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l'appeler au premier détail bizarre.",1],
+  ["Mandragore · le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.",s.cal_h8||s.cal_h8p],
+  ["Commandant Riffaud · police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.",s.pol]];
   WH.forEach(x=>{if(x[1])h+='<div class="ntR">'+x[0]+'</div>'});
   h+='<b>Ce que tu sais</b>';
   NH(s).forEach(x=>{h+='<div class="ntR">'+x.tex+'</div>'});
@@ -467,8 +467,8 @@ const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].tri
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
  (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(gf(t));b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",gf(emojiClean(t)))}else if(rm!=="-"){tx();add("m",emojiClean(rm?unq(gf(rm)):unq(gf(t))))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);if(ef&&ef.lock){delete st.lock;await lockFx()}play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
- $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
-function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
+ $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"Fin de ce segment.";$("chat").scrollTop=1e9}
+function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer. Chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
  document.body.classList.add("play");$("mn").classList.remove("on");
@@ -476,13 +476,13 @@ function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hid
  if(SS.id==="h"&&!SC&&!st.pname&&!(window.__ghost&&window.__ghost()))nameGate(()=>bioOv(begin));else begin()}
 function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne inspectrice":"ancien inspecteur";
  const o=document.createElement("div");o.id="bioOv";o.className="proOv";
- o.innerHTML='<div class="proCard"><div class="proK">Toi</div><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><button class="proBtn bioGo">Suivant</button></div>';
+ o.innerHTML='<div class="proCard"><div class="proK">Toi</div><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><button class="proBtn bioGo">Suivant</button></div>';
  $("app").append(o);
  const P=o.querySelectorAll(".ngP");
  P[0].textContent=gf(nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans de service et une enquête sur la Larme, la drogue de Vaubris.");
- P[1].textContent=gf("Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié — le hack de ces six derniers jours a commencé là.");
+ P[1].textContent=gf("Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter. Tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié... le hack de ces six derniers jours a commencé là.");
  o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}cb&&cb();o.remove()}}
-/* ---- v2.75 : genre du joueur + prénom ---- */
+/* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t)
  .replace(/(?<![\p{L}])(Désolé|désolé|éveillé|certain|seul|content|rentré|fatigué|prêt|vivant|sûr|repéré|appelé|aiguillé)(?![\p{L}])/gu,"$1e")
  .replace(/(?<![\p{L}])curieux(?![\p{L}])/gu,"curieuse")
@@ -498,7 +498,7 @@ function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.cl
  bf.onclick=()=>{gen="f";bf.classList.add("open");bm.classList.remove("open")};
  bm.onclick=()=>{gen="m";bm.classList.add("open");bf.classList.remove("open")};
  go.onclick=()=>{const v=(inp.value||"").trim().slice(0,14);if(!v||!gen)return;try{st.pname=v;st.pf=gen==="f"?1:0;localStorage.setItem("etl_pname",v);localStorage.setItem("etl_pgen",gen)}catch(e){}try{hit(660,.05,.08)}catch(e){}cb();o.remove()}}
-/* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
+/* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
 function reactOv(txt,btnLabel,done){
  const o=document.createElement("div");o.className="proOv rxOv";
  o.innerHTML='<div class="proCard"><div class="proK">Toi</div><p class="rxP"></p><div class="proDots"><i class="on"></i></div><button class="proBtn" hidden>'+btnLabel+'</button></div>';
@@ -508,7 +508,7 @@ function reactOv(txt,btnLabel,done){
  const go=()=>{try{hit(660,.05,.08)}catch(x){}veil(1);o.remove();done&&done()};
  b.onclick=go;
 }
-/* ---- intro chapitre 1 : écran noir -> déverrouillage -> freeze hack (canvas 2D) ---- */
+/* ---- intro chapitre 1 : écran noir -> déverrouillage -> freeze hack (canvas 2D) ---- */
 async function introH(cb){
   if(S.h1&&S.h1.pro){await proCards(S.h1.pro,{instant:1,lastBtn:"Prendre le téléphone"});PROD=1}
   const RM=(()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(x){return false}})();
@@ -524,7 +524,7 @@ async function introH(cb){
   let done=false;
   const finish=()=>{if(done)return;done=true;o.classList.add("off");setTimeout(()=>{o.remove()},720);try{cb&&cb()}catch(x){}};
   let nextB=null;
-  const reactThen=()=>{if(done)return;finish()};/* reactOv("C'est quoi ce bordel…? Le téléphone est maudit, ou quoi ?","Reprendre le téléphone",finish)};*/
+  const reactThen=()=>{if(done)return;finish()};/* reactOv("C'est quoi ce bordel…? Le téléphone est maudit, ou quoi ?","Reprendre le téléphone",finish)};*/
   const showNext=()=>{if(done||nextB)return;nextB=document.createElement("button");nextB.className="lkNext";nextB.textContent="Suivant \u203a";nextB.onclick=e=>{e.stopPropagation();reactThen()};o.append(nextB)};
   const T0=new Date(2057,9,18,21,52,0);const clk=()=>{try{T0.setSeconds(T0.getSeconds()+3);q(".lkClock").textContent=T0.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=T0.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}catch(x){}};
   clk();const tick=setInterval(()=>{done?clearInterval(tick):clk()},1000);
@@ -543,7 +543,7 @@ async function introH(cb){
     c.globalAlpha=.15;
     for(let r=0;r<4;r++)for(let col=0;col<4;col++){c.fillStyle="#dbe7f8";c.fillRect(24+col*70,H*.42+r*62,44,44)}
     c.globalAlpha=1;
-    const lines=["SIM RECYCLÉE : 06 51 09 43 87","ANCIEN TITULAIRE : [DONNÉES EFFACÉES]","MIGRATION DES DONNÉES…","TERMINAL RÉATTRIBUÉ"];
+    const lines=["SIM RECYCLÉE : 06 51 09 43 87","ANCIEN TITULAIRE : [DONNÉES EFFACÉES]","MIGRATION DES DONNÉES…","TERMINAL RÉATTRIBUÉ"];
     const t0=performance.now();
     const step=()=>{
       if(done)return;
@@ -565,10 +565,10 @@ async function introH(cb){
     if(RM)setTimeout(reactThen,250);else glitch()};
 }
 
-/* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
-/* ---- v2.73 : voile anti-flash entre overlays (transitions propres) ---- */
+/* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
+/* ---- v2.73 : voile anti-flash entre overlays (transitions propres) ---- */
 function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=document.createElement("div");v.id="etlVeil";$("app").append(v)}v.classList.remove("off")}else if(v){v.classList.add("off");setTimeout(()=>{const x=document.getElementById("etlVeil");if(x&&x.classList.contains("off"))x.remove()},400)}}
-/* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
+/* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
  o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
@@ -592,14 +592,14 @@ async function awayOv(lines,LB){
    try{const q=String(L).match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm}}catch(e){}
    setTimeout(()=>{inn.append(p);requestAnimationFrame(()=>requestAnimationFrame(()=>p.classList.add("on")))},i2*650)});
   btn.textContent=LB||"Reprendre le t\u00E9l\u00E9phone";
-  /* v2.132 : bouton actif seulement apres apparition du texte — anti "pas le temps de lire" + anti double-tap qui saute la carte suivante */
+  /* v2.132 : bouton actif seulement apres apparition du texte — anti "pas le temps de lire" + anti double-tap qui saute la carte suivante */
   const awChars=lines.join("").length;
   const awWait=Math.max((lines.length-1)*450+900,Math.min(6500,900+awChars*22));
   btn.style.visibility="hidden";btn.disabled=true;
   const awT=setTimeout(()=>{if(done)return;btn.style.visibility="visible";btn.disabled=false;try{beep(880,.04,.03)}catch(e){}},awWait);
   btn.onclick=e=>{e.stopPropagation();if(btn.disabled)return;try{hit(660,.05,.08)}catch(e2){}clearTimeout(awT);close()};
 })}
-/* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
+/* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
 async function heliosTransfer(o){
  const btns=o.querySelector(".scBtns");btns.innerHTML="";
  const items=[["Photos & vidéos","2,1 Go"],["Sauvegardes de messages","1,4 Go"],["Documents","0,7 Go"]];
@@ -619,10 +619,10 @@ async function heliosTransfer(o){
  }
  const li=document.createElement("div");li.className="scLi dim";
  li.innerHTML='<span>Espace chiffré</span><small>en attente</small>';list.append(li);
- box.querySelector(".scStat").textContent="Transfert terminé : 4,2 Go récupérés";
+ box.querySelector(".scStat").textContent="Transfert terminé : 4,2 Go récupérés";
  try{hit(660,.06,.08);setTimeout(()=>hit(990,.08,.1),90)}catch(e){}
  await sl(900)}
-/* ---- écran contextuel IN-TÉLÉPHONE (v2.53) : interface dédiée au contexte (ex. HÉLIOS), à la façon du lock screen ---- */
+/* ---- écran contextuel IN-TÉLÉPHONE (v2.53) : interface dédiée au contexte (ex. HÉLIOS), à la façon du lock screen ---- */
 async function scrOv(n){
  try{if(st["scr_"+(nodeNow||"")]&&!n.scrf)return false}catch(e){}
  const spec=n.scr||{};
@@ -633,8 +633,8 @@ async function scrOv(n){
   const dn=spec.st==="done";
   const hm9=spec.ts?String(spec.ts).replace("h",":"):"";
   o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead hs"><span class="scIc"><svg viewBox="0 0 24 24" fill="none" stroke="#9fb4d8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H6a4.5 4.5 0 0 1-.9-8.9 7 7 0 0 1 13.3-1.4A4.6 4.6 0 0 1 17.5 19z"/></svg></span><b>HÉLIOS Cloud</b></div><div class="scBody">'
-  +(dn?'<p class="scSub">Migration terminée — 4 fichiers rapatriés<br>06 51 09 43 87 · Archive « N. A. » synchronisée</p>'
-      :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go</p>')
+  +(dn?'<p class="scSub">Migration terminée · 4 fichiers rapatriés<br>06 51 09 43 87 · Archive « N. A. » synchronisée</p>'
+      :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 · 4,2 Go</p>')
   +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>'+(dn?'✓ 2,1 Go':'2,1 Go')+'</small></div>'
   +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>'+(dn?'✓ 1,4 Go':'1,4 Go')+'</small></div>'
   +'<div class="scRow"><i>📄</i><span>Documents</span><small>'+(dn?'✓ 0,7 Go':'0,7 Go')+'</small></div>'
@@ -644,10 +644,10 @@ async function scrOv(n){
  else if(spec.k==="files"){
   map=spec.map||{};
   const head=document.createElement("div");head.className="scHead";
-  head.innerHTML='<span class="scIc">📂</span><b>Archive « N. A. »</b>';
+  head.innerHTML='<span class="scIc">📂</span><b>Archive « N. A. »</b>';
   const body=document.createElement("div");body.className="scBody";
   const sub=document.createElement("p");sub.className="scSub";
-  sub.innerHTML="4 éléments rapatriés du cloud de N. A.<br>La migration s'est terminée pendant l'appel.";
+  sub.innerHTML="4 éléments rapatriés du cloud de N. A.<br>La migration s'est terminée "+((st.cal_h8||st.cal_h8p||st.recall)?"pendant l'appel.":"cette nuit.");
   body.append(sub);
   (n.fx||[]).forEach(r=>{
    const ic=r[0],nm=r[1],ds=r[2],tgt=map[nm];
@@ -669,7 +669,7 @@ async function scrOv(n){
   note.textContent="Quatre fichiers qui ne sont pas à toi, maintenant dans ton téléphone.";
   body.append(note);
   o.append(head);o.append(body)}
- const btns=document.createElement("div");btns.className="scBtns";if(spec.k==="helios"){const q2=document.createElement("p");q2.className="scQ";q2.textContent=spec.st==="done"?"L'archive est synchronisée. Qu'en fais-tu ?":"Rapatrier tes données dans ton téléphone neuf ?";btns.append(q2)}o.append(btns);
+ const btns=document.createElement("div");btns.className="scBtns";if(spec.k==="helios"){const q2=document.createElement("p");q2.className="scQ";q2.textContent=spec.st==="done"?"L'archive est synchronisée. Qu'en fais-tu ?":"Rapatrier tes données dans ton téléphone neuf ?";btns.append(q2)}o.append(btns);
  app.append(o);
  if(spec.ts){const q=String(spec.ts).match(/^(\d{1,2})h(\d{2})$/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}}
  try{beep(520,.06,.05)}catch(e){}
@@ -697,7 +697,7 @@ const ck=()=>{if(SK)return;$("clk").textContent=new Date().toLocaleTimeString("f
 function card(h){const c=document.createElement("div");c.className="card";const e=document.createElement("h2");e.textContent=h;c.append(e);return c}
 function row(c,t,d,fn,off){const b=document.createElement("button");b.className="st";b.disabled=!!off;const a=document.createElement("b");a.textContent=t;b.append(a);if(d){const s=document.createElement("small");s.textContent=d;b.append(s)}b.onclick=fn;c.append(b);return b}
 function show(c){const m=$("mn");m.replaceChildren(c);m.classList.add("on");addBack(c)}
-/* Flèche « retour » en haut à gauche de chaque écran de base : reprend l'action de la ligne « ‹ Retour » de l'écran, sinon revient à l'accueil. */
+/* Flèche « retour » en haut à gauche de chaque écran de base : reprend l'action de la ligne « ‹ Retour » de l'écran, sinon revient à l'accueil. */
 let INTRO_HTML=(function(){const d=document.getElementById("in");return d?d.innerHTML:""})();
 function addBack(c){
   let fn=null;c.querySelectorAll("button.st,button.bk").forEach(b=>{if(/^\u2039\s*Retour/.test(b.textContent.trim()))fn=b.onclick});
@@ -712,14 +712,14 @@ function guideOv(){
  const k=document.createElement("div");k.className="ifK";k.textContent="Guide";b.append(k);
  const h2=document.createElement("h2");h2.textContent="Comment jouer";b.append(h2);
  const g=document.createElement("div");g.className="ifGuide";
- g.innerHTML="<p><b>Lire.</b> Chaque histoire se déroule sur un téléphone : des messages arrivent, s’enchaînent, se contredisent. Photos, appels, fichiers — tout se lit comme une vraie messagerie.</p>"
- +"<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>"
- +"<p><b>Les boutons, une fois dans le jeu :</b></p>"
- +"<p><b>‹</b> en haut à gauche : la bibliothèque — histoires, reprise de partie, réglages.<br>"
- +"<b>⚙</b> : paramètres de la partie — thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.<br>"
- +"<b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>"
- +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>"
- +"<p><b>Le téléphone de démo</b> de la page d’accueil joue des extraits imaginaires, inventés pour donner le ton du jeu : rien de ce qui y apparaît ne fait partie des vraies histoires.</p>";
+ g.innerHTML="<p><b>Lire.</b> Chaque histoire se déroule sur un téléphone : des messages arrivent, s’enchaînent, se contredisent. Photos, appels, fichiers, tout se lit comme une vraie messagerie.</p>"
+ +"<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>"
+ +"<p><b>Les boutons, une fois dans le jeu :</b></p>"
+ +"<p><b>‹</b> en haut à gauche : la bibliothèque · histoires, reprise de partie, réglages.<br>"
+ +"<b>⚙</b> : paramètres de la partie · thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.<br>"
+ +"<b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>"
+ +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil. Pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>"
+ +"<p><b>Le téléphone de démo</b> de la page d’accueil joue des extraits imaginaires, inventés pour donner le ton du jeu : rien de ce qui y apparaît ne fait partie des vraies histoires.</p>";
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="‹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
  o.append(b);document.body.append(o);try{noRubber(o)}catch(e){}
@@ -749,17 +749,17 @@ function infoOv(){
   b.append(meta);
   const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);if(M.feN)g0=M.feN(SS)}catch(e){}
   if(tot>1){const fl=document.createElement("button");fl.className="ifBtn";
-   fl.innerHTML="\uD83C\uDFC1 Fins : "+Math.min(g0,tot)+" / "+tot+" — touche pour les voir";
+   fl.innerHTML="\uD83C\uDFC1 Fins : "+Math.min(g0,tot)+" / "+tot+" · touche pour les voir";
    fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};b.append(fl)}
   else{const vh=document.createElement("div");vh.className="ifVar";
-   vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";
+   vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";
    b.append(vh)}
  }
  const nb2=document.createElement("button");nb2.className="finStat ifNotes";
- nb2.innerHTML="\uD83D\uDCDD Notes de l'enqu\u00EAte — qui est qui, ce que tu sais";
+ nb2.innerHTML="\uD83D\uDCDD Notes de l'enqu\u00EAte · qui est qui, ce que tu sais";
  nb2.onclick=()=>{o.remove();if(typeof notesOv==="function")notesOv(false)};b.append(nb2);
  const g=document.createElement("div");g.className="ifGuide";
- g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : la biblioth\u00E8que — histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages — th\u00E8me nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein \u00E9cran, transfert de sauvegarde.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche — o\u00F9 tu en es, tes fins, tes notes.</p><p><b>\uD83D\uDCDD</b> : les notes de l'enqu\u00EAte — qui est qui, ce que tu sais, tes preuves.</p>";
+ g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : la biblioth\u00E8que · histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages · th\u00E8me nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein \u00E9cran, transfert de sauvegarde.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche · o\u00F9 tu en es, tes fins, tes notes.</p><p><b>\uD83D\uDCDD</b> : les notes de l'enqu\u00EAte · qui est qui, ce que tu sais, tes preuves.</p>";
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="\u2039 Reprendre la conversation";
  cb.onclick=()=>{o.remove()};b.append(cb);
@@ -790,9 +790,9 @@ const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();if
 /* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&(e.target===vv||(!vv.contains(e.target)&&!$("set").contains(e.target))))vv.hidden=true});
-{const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
+{const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
- up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const tb2=$("thB");if(tb2){const THL={dark:"🌑 Nuit",auto:"🌓 Suit l’histoire",light:"🌤 Jour"};const upT=()=>{tb2.textContent="🌊 Thème : "+THL[THM]};tb2.onclick=()=>{THM=THM==="dark"?"auto":(THM==="auto"?"light":"dark");try{localStorage.setItem("etl_theme",THM)}catch(e){}thApply();upT()};upT()}}
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const tb2=$("thB");if(tb2){const THL={dark:"🌑 Nuit",auto:"🌓 Suit l’histoire",light:"🌤 Jour"};const upT=()=>{tb2.textContent="🌊 Thème : "+THL[THM]};tb2.onclick=()=>{THM=THM==="dark"?"auto":(THM==="auto"?"light":"dark");try{localStorage.setItem("etl_theme",THM)}catch(e){}thApply();upT()};upT()}}
 {const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"⛶ Quitter le plein écran":"⛶ Plein écran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
 $("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
 {const tr=$("trB");if(tr)tr.onclick=()=>{$("vol").hidden=true;transferOv()};}$("apps").onclick=()=>appHome();
@@ -812,7 +812,7 @@ addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:tr
  requestAnimationFrame(()=>$("in").classList.add("on"));
  setTimeout(()=>Object.values(IMG).forEach(u=>{const i=new Image();i.src=u;if(i.decode)i.decode().catch(()=>0)}),800)})();
 
-/* ---- Améliorations narratives : événements sonores et vraies pièces jointes visuelles ---- */
+/* ---- Améliorations narratives : événements sonores et vraies pièces jointes visuelles ---- */
 const addBase = add;
 function photoSvg(kind){
  const common='<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#aebbc3"/><stop offset="1" stop-color="#e9d9c8"/></linearGradient><linearGradient id="dark" x2="0" y2="1"><stop stop-color="#443d3c"/><stop offset="1" stop-color="#171b20"/></linearGradient><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values=".2 0 0 0 .4 .2 0 0 0 .4 .2 0 0 0 .4 0 0 0 .12 0"/></filter></defs>';
@@ -834,7 +834,7 @@ function addPhoto(kind,caption){
 }
 function arrivalCue(){
  if(!ac||!nz)return;
- // Pas sur sol dur : impacts doux et irréguliers, spatialisés par le filtre déjà utilisé.
+ // Pas sur sol dur : impacts doux et irréguliers, spatialisés par le filtre déjà utilisé.
  [0,390,820,1190,1580].forEach((delay,i)=>setTimeout(()=>{if(ac&&nz){hit(180+i*9,.11,.055,'lowpass',.008,1.4);tn(95,72,.075,.018,.01)}},delay));
 }
 add=function(c,x){
@@ -851,28 +851,28 @@ add=function(c,x){
 };
 
 
-/* ---- horloge glissante (v2.51) : hissée au top-level — play() top-level utilise clkSet/clkPlan, elles NE DOIVENT PAS rester dans l'IIFE sauvegarde (cf bug STATS v2.50) ---- */
-/* ---- horloge glissante : le temps du récit avance entre les messages ---- */
+/* ---- horloge glissante (v2.51) : hissée au top-level — play() top-level utilise clkSet/clkPlan, elles NE DOIVENT PAS rester dans l'IIFE sauvegarde (cf bug STATS v2.50) ---- */
+/* ---- horloge glissante : le temps du récit avance entre les messages ---- */
 const CLK={h:null,m:0},CLKBASE={h:null,m:0};let CLKMAX=null;
-/* ---- v2.82 : thème nuit/jour/auto (auto = suit l'horloge fiction) ---- */
+/* ---- v2.82 : thème nuit/jour/auto (auto = suit l'horloge fiction) ---- */
 
 function thEff(){if(THM!=="auto")return THM;let h=null;try{h=CLK.h}catch(e){}return(h!=null&&h>=8&&h<19)?"light":"dark"}
 function thApply(){try{document.documentElement.dataset.theme=thEff()}catch(e){}}
 thApply();
 function clkSet(hm){const q=String(hm).replace("h",":").split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null;thApply()}
 function clkNow(){return CLK.h==null?null:String(CLK.h).padStart(2,"0")+":"+String(CLK.m).padStart(2,"0")}
-/* borne : l'horloge ne dérive JAMAIS au-delà du prochain horodatage scénarisé (ni +30 min sans repère) */
+/* borne : l'horloge ne dérive JAMAIS au-delà du prochain horodatage scénarisé (ni +30 min sans repère) */
 function clkScan(id,cand){const n2=S[id];if(!n2)return;for(const[w,x]of n2.m||[]){const q=String(w==="n"?x:"").match(/(\d{1,2})h(\d{2})/);if(q){cand.push({h:+q[1],m:+q[2]});return}}}
 function clkPlan(n){CLKMAX=null;if(CLK.h==null||!n)return;
  const cur=CLK.h*60+CLK.m,seen=new Set(),q=[];
- /* BFS borné : le PREMIER horodatage le long de chaque chemin est le seul contraignant */
+ /* BFS borné : le PREMIER horodatage le long de chaque chemin est le seul contraignant */
  const push=(id,dp)=>{if(id&&S[id]&&!seen.has(id)&&dp<=6){seen.add(id);q.push({id,dp})}};
  (n.c||[]).forEach(ch=>ch&&push(ch[1],1));if(n.x)push(n.x,1);if(n.h)push(n.h,1);
  if(n.j){try{push(n.j(st),1)}catch(e){}try{const s2=JSON.parse(JSON.stringify(st));s2.piege=s2.piege?0:1;push(n.j(s2),1)}catch(e){}}
  while(q.length){
   const it=q.shift(),n2=S[it.id];let hasT=null;
   for(const[w,x]of n2.m||[]){const q2=String(w==="n"?x:"").match(/^(\d{1,2})h(\d{2})/);if(q2){hasT={h:+q2[1],m:+q2[2]};break}}
-  if(hasT){const v=hasT.h*60+hasT.m;if(v>cur&&(!CLKMAX||v<CLKMAX.h*60+CLKMAX.m))CLKMAX=hasT;continue} /* temps trouvé : chemin stoppé là */
+  if(hasT){const v=hasT.h*60+hasT.m;if(v>cur&&(!CLKMAX||v<CLKMAX.h*60+CLKMAX.m))CLKMAX=hasT;continue} /* temps trouvé : chemin stoppé là */
   (n2.c||[]).forEach(ch=>ch&&push(ch[1],it.dp+1));if(n2.x)push(n2.x,it.dp+1);if(n2.h)push(n2.h,it.dp+1);
   if(n2.j){try{push(n2.j(st),it.dp+1)}catch(e){}}
  }}
@@ -891,7 +891,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  const oldPlay=play;
  let preChat=null;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);preChat=$('chat').innerHTML;save();const v=await oldPlay(id,r);if(r!=run)return v;preChat=null;save();return v};
- const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
+ const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  const oldMenu=menu;
  menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
@@ -914,8 +914,8 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  function optCard(){
   const c=card('Options d\u2019affichage');
   const em=document.createElement('button');em.className='st';
-  em.innerHTML=emojiMode?'<b>Smileys : jeune & spontan\u00E9 \uD83D\uDE0A</b><small>Les conversations gardent leurs \u00E9motic\u00F4nes \u2014 plus vivantes, plus r\u00E9elles.</small>'
-   :'<b>Mode sobre : sans smileys \uD83D\uDCAC</b><small>Lecture plus dramatique \u2014 les \u00E9motic\u00F4nes sont retir\u00E9es des messages.</small>';
+  em.innerHTML=emojiMode?'<b>Smileys : jeune & spontan\u00E9 \uD83D\uDE0A</b><small>Les conversations gardent leurs \u00E9motic\u00F4nes \u2014 plus vivantes, plus r\u00E9elles.</small>'
+   :'<b>Mode sobre : sans smileys \uD83D\uDCAC</b><small>Lecture plus dramatique \u2014 les \u00E9motic\u00F4nes sont retir\u00E9es des messages.</small>';
   em.onclick=()=>{emojiMode=!emojiMode;try{localStorage.setItem('etl_emoji',emojiMode?'on':'off')}catch(e){};optCard()};
   c.append(em);
   row(c,'\u2039 Retour','',menu);show(c)}
@@ -954,7 +954,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
     list.append(b);
     if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};list.append(rb)}});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
-    fb.innerHTML='<h3>\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'</h3><p>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</p>';
+    fb.innerHTML='<h3>\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'</h3><p>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</p>';
     fb.onclick=()=>endsCard(s);list.append(fb)}
    const bk3=document.createElement('button');bk3.className='st back';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>menu();c.append(bk3);
    show(c)};
@@ -963,7 +963,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    const o=document.createElement('div');o.className='rsOv';
    const c=card(s.t);
    const lk=(t,d,fn,cls)=>{const b=document.createElement('button');b.className='bk'+(cls?' '+cls:'');b.innerHTML='<h3>'+t+'</h3><p>'+d+'</p>';b.onclick=fn;c.append(b);return b};
-   lk('Reprendre la conversation','Chapitre '+Math.min((v.chapter||0)+1,((s.ch&&s.ch.length)||1))+' / '+((s.ch&&s.ch.length)||1)+' · '+(()=>{try{const f=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');return f.length+' fin'+(f.length>1?'s':'')+' vue'+(f.length>1?'s':'')}catch(e){return ''}})()+' — arrêt le '+new Date(v.at).toLocaleString('fr-FR'),()=>{o.remove();resume(v)},'open');
+   lk('Reprendre la conversation','Chapitre '+Math.min((v.chapter||0)+1,((s.ch&&s.ch.length)||1))+' / '+((s.ch&&s.ch.length)||1)+' · '+(()=>{try{const f=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');return f.length+' fin'+(f.length>1?'s':'')+' vue'+(f.length>1?'s':'')}catch(e){return ''}})()+' · arrêt le '+new Date(v.at).toLocaleString('fr-FR'),()=>{o.remove();resume(v)},'open');
    const rb=lk('Recommencer cette histoire','Efface ta progression de cette histoire',()=>{
     if(!rb.dataset.armed){rb.dataset.armed='1';rb.querySelector('h3').textContent='Confirmer l\u2019effacement';rb.querySelector('p').textContent='Ton avancement sera perdu \u2014 reclique pour confirmer';return}
     o.remove();
@@ -980,7 +980,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    const w=document.createElement('div');w.className='proTxt';
    String(pro).split('\n\n').forEach(pp=>{const pe=document.createElement('p');pe.textContent=pp;w.append(pe)});
    c.append(w);
-   row(c,'\u25B6 '+(s.audio?'\u00C9couter la narration':'\u00C9couter (voix automatique)'),s.audio?'La narration enregistr\u00E9e de l\u2019histoire':'Aucun fichier joint : synth\u00E8se vocale du navigateur',()=>proPlay(s,pro));
+   row(c,'\u25B6 '+(s.audio?'\u00C9couter la narration':'\u00C9couter (voix automatique)'),s.audio?'La narration enregistr\u00E9e de l\u2019histoire':'Aucun fichier joint : synth\u00E8se vocale du navigateur',()=>proPlay(s,pro));
    row(c,'\u25B6 '+(resuming?'Reprendre':'Commencer'),resuming?'Ta partie t\u2019attend juste apr\u00E8s.':'D\u00E9couvre l\u2019histoire',goList);
    row(c,'\u2039 Retour','',menu);show(c)}
   else goList()};
@@ -993,7 +993,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
 })();
 
 
-/* Migration narrative : invalider les états de reprise créés par les versions incohérentes. */
+/* Migration narrative : invalider les états de reprise créés par les versions incohérentes. */
 try{
  const ver=localStorage.getItem('etl_story_schema');
  if(ver!=='2026-10-coherence-2'){
