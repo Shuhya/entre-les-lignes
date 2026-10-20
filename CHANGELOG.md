@@ -2,6 +2,7 @@
 
 Format court. Détail complet des versions dans les messages de commit.
 
+- **2.131** — E2E-chaos en CI (vrai Chromium) : chapitre 1 joué en entier avec clics imprévisibles (‹ bibliothèque, ⚙, 📖 notes, 📑 transfert, thème, voix, mnBack, clics ailleurs) + reprise systématique jusqu'à l'écran de fin ; anti-soft-lock (150 s sans progrès = échec), SEED reproductible.
 - **2.99** — E2E élargie (début de partie complet joué en vrai navigateur) + infrastructure beta (branche beta + miroir /beta/ pour tester avant la mise en ligne).
 - **2.98** — Fix ESLint restant : appel `save()` hors de portée dans l’écran de fin (code mort silencieux depuis la v2.83, le fin patché sauvegardait déjà) — retiré.
 - **2.97** — Fix : overlay Paramètres/Guide de la landing enfin stylé (il manquait tout le CSS, la fenêtre apparaissait sous l’écran d’intro) ; config ESLint par fichier (globals AVF/VOICES, monkey-patching autorisé).
