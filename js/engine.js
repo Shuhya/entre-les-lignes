@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.146";
+const VER="2.147";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -478,7 +478,7 @@ function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hid
 function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne inspectrice":"ancien inspecteur";
  const o=document.createElement("div");o.id="bioOv";o.className="ngOv";
  o.innerHTML='<div class="ngCard"><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><button class="ngGo bioGo">Suivant</button></div>';
- document.body.append(o);
+ $("app").append(o);
  const P=o.querySelectorAll(".ngP");
  P[0].textContent=gf(nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans de service et une enquête sur la Larme, la drogue de Vaubris.");
  P[1].textContent=gf("Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié — le hack de ces six derniers jours a commencé là.");
@@ -494,7 +494,7 @@ function gf(t){if(!st||!st.pf)return String(t);return String(t)
  .replace(/n'es pas lui/g,"n'es pas elle")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
  o.innerHTML='<div class="ngList"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom.</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><button class="bk ngBk" id="ngF"><h3>♀ Une femme</h3><p>L’histoire s’accorde au féminin.</p></button><button class="bk ngBk" id="ngM"><h3>♂ Un homme</h3><p>L’histoire s’accorde au masculin.</p></button><button class="ngGo">Continuer</button></div>';
- document.body.append(o);
+ $("app").append(o);
  const inp=o.querySelector("#ngName"),go=o.querySelector(".ngGo"),bf=o.querySelector("#ngF"),bm=o.querySelector("#ngM");let gen=null;
  bf.onclick=()=>{gen="f";bf.classList.add("open");bm.classList.remove("open")};
  bm.onclick=()=>{gen="m";bm.classList.add("open");bf.classList.remove("open")};

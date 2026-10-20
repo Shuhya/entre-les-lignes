@@ -833,3 +833,6 @@ html[data-theme="light"] .ifBack{color:#45505c;border-color:#00000022}
   #mn .card{max-width:540px}
   .rsOv .card{max-width:500px}
 }
+
+/* ---- v2.147 : nameGate/bioOv dans le telephone (comme proOv) ---- */
+.ngOv{position:absolute;inset:0;z-index:52;background:#070a12;animation:none}
