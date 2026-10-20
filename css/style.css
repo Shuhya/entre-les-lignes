@@ -548,6 +548,16 @@ body.pc .b{max-width:58%}
 .ngGen button.sel{border-color:#ffd166;background:#ffd16622;color:#ffe9b0}
 .ngGo{width:100%;background:#ffd166;border:0;border-radius:999px;color:#20180a;font:600 13.5px system-ui;letter-spacing:1.5px;padding:13px 0;cursor:pointer}
 
+/* ---- v2.137 : nameGate/bioOv a la DA du site + retour compact + menus adaptatifs ---- */
+.ngCard{border:1px solid #ffd1662e;background:linear-gradient(180deg,#ffffff05,#ffffff01);padding:30px 26px 24px}
+.ngCard h2{font:400 26px Georgia,serif;color:#fdfbf4;margin:0 auto 16px;letter-spacing:.3px;line-height:1.3}
+.ngP{font:400 14.5px/1.75 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-style:normal;color:#ffffffe6;letter-spacing:.1px}
+.ngGo{background:none;border:1px solid #ffd16659;color:#ffd166d9;font:600 13.5px system-ui;letter-spacing:2.5px;text-transform:uppercase}
+.ngGo:hover{border-color:#ffd166b0;color:#ffd166}
+.st.back{width:100%;border-bottom:0;border:1px solid #ffd1663d;background:none;border-radius:999px;text-align:center;padding:12px 0;margin-top:18px;color:#ffd166d9}
+.st.back b{font-size:13.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:inherit}
+.st.back:hover{border-color:#ffd166b0}
+
 /* v2.78 : lockWake realiste */
 #lkWake .lkSbar{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;justify-content:space-between;padding:0 24px;font:600 12px system-ui;color:#ffffff9e}
 #lkWake .lkTools{display:flex;gap:26px;margin-top:30px}
@@ -766,6 +776,14 @@ html[data-theme="light"] .ifBack{color:#45505c;border-color:#00000022}
 
 /* ---- v2.134 : overlays plein ecran adaptatifs sur grands ecrans ---- */
 @media (min-width:1200px) and (min-height:800px){
+  .bk{padding:17px 20px}
+  .bk h3{font-size:20px}
+  .bk p{font-size:13.5px}
+  .bk .bkF{font-size:12px}
+  .st b{font-size:20px}
+  .st small{font-size:13px}
+  #mn .card h2{font-size:26px}
+
   .ngCard{width:min(420px,86vw)}
   .ngCard h2{font-size:27px}
   .ngCard input{font:17px Georgia,serif;padding:13px 16px}
@@ -784,6 +802,11 @@ html[data-theme="light"] .ifBack{color:#45505c;border-color:#00000022}
   .volCard{width:min(480px,92vw)}
 }
 @media (min-width:1600px) and (min-height:900px){
+  .bk h3{font-size:21px}
+  .bk p{font-size:14px}
+  .st b{font-size:21px}
+  #mn .card h2{font-size:28px}
+
   .ngCard{width:min(460px,86vw)}
   .ngCard h2{font-size:29px}
   .ngP{font-size:16.5px}
