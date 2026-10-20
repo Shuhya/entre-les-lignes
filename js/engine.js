@@ -1,15 +1,15 @@
 const DEF_AV={'':AVF1,h:AVF3};
 let st,ac,mg,ag,sg,nz,bs,tm=[],CAPP="SMS",APPS_ON=0,PC=0,vo=0,VA=1,VS=.8,VV=1,run=0,SK=0,SS=STORIES[0],SC=0,PG={c:1,s:[]},nodeNow=null;
 const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
-/* ---- stats de lecture (locales, agrÃ©gÃ©es) â portÃ©e GLOBALE : utilisÃ©es par start() et play() ---- */
-let PROD=0; /* prologue dÃ©jÃ  affichÃ© par introH (v2.51) â Ã©vite le double affichage dans play() */
+/* ---- stats de lecture (locales, agrégées) — portée GLOBALE : utilisées par start() et play() ---- */
+let PROD=0; /* prologue déjà affiché par introH (v2.51) — évite le double affichage dans play() */
 let STATS={t:0,msgs:0,runs:0};try{STATS=Object.assign(STATS,JSON.parse(localStorage.getItem("etl_stats")||"{}"))}catch(e){}
 let statsMark=Date.now();
 function statsTick(){STATS.t+=Math.round((Date.now()-statsMark)/1000);statsMark=Date.now();try{localStorage.setItem("etl_stats",JSON.stringify(STATS))}catch(e){}}
 function fmtT(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?h+" h "+String(m).padStart(2,"0"):(m?m+" min":"moins d'une minute")}
 /* ---- audio ---- */
 try{const v=JSON.parse(localStorage.getItem("vol"));if(v){VA=v[0];VS=v[1];VV=v[2]}}catch(e){}
-function setV(){if(ag){ag.gain.value=VA;sg.gain.value=VS}try{localStorage.setItem("vol",JSON.stringify([VA,VS,VV]))}catch(e){}const sbE=$("sb");if(sbE)sbE.textContent=VA+VS+VV>0?"ð":"ð";const si=$("sbi");if(si)si.textContent=VA>0?"ð":"ð"}
+function setV(){if(ag){ag.gain.value=VA;sg.gain.value=VS}try{localStorage.setItem("vol",JSON.stringify([VA,VS,VV]))}catch(e){}const sbE=$("sb");if(sbE)sbE.textContent=VA+VS+VV>0?"🔊":"🔇";const si=$("sbi");if(si)si.textContent=VA>0?"🔊":"🔇"}
 let VA0=null;const togSnd=()=>{if(VA>0){VA0=VA;VA=0}else{VA=VA0||.8;VA0=null}setV()};
 function unlock(){if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.connect(ac.destination);ag=ac.createGain();sg=ac.createGain();ag.connect(mg);sg.connect(mg);nz=ac.createBuffer(1,ac.sampleRate*15,ac.sampleRate);const d=nz.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;setV()}catch(e){ac=0}}if(ac&&ac.resume)ac.resume()}
 function beep(f,d,v=.07,ty="sine"){if(!ac)return;try{const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(sg);o.start();o.stop(t+d)}catch(e){}}
@@ -19,10 +19,10 @@ function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=a
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
 const VER="2.132";
-/* ---- v2.85 : vrai tÃ©lÃ©phone = pas de nav du bas, sbar allÃ©gÃ©e (l'heure fiction reste) ---- */
+/* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
-let THM="dark";try{THM=localStorage.getItem("etl_theme")||"dark"}catch(e){}console.log("Entre les lignes Â· v"+VER);
+let THM="dark";try{THM=localStorage.getItem("etl_theme")||"dark"}catch(e){}console.log("Entre les lignes · v"+VER);
 function ambBg(){try{const h=new Date().getHours();let a="#141d33",b2="#0a0d16",cl="ambD";
  if(h>=5&&h<9){a="#3a2438";b2="#1a1f3f";cl="ambA"}else if(h>=17&&h<21){a="#33222b";b2="#1f1a26";cl="ambC"}
  else if(h>=21||h<5){a="#101828";b2="#070b14";cl="ambN"}
@@ -42,7 +42,7 @@ AM.quai9={b:["bandpass",320,.045,.6],e:[[14000,()=>hit(R(1500,2600),.14,R(.05,.1
 AM.ville={b:["lowpass",160,.04],e:[[18000,()=>hit(R(90,140),R(3,6),.05,"lowpass",1.2)],[37000,()=>{const f=R(600,720);tn(f,f*1.35,2.6,.012,.9);setTimeout(()=>tn(f*1.35,f,2.4,.01,.9),2800)}],[73000,()=>hit(R(2400,3400),.09,R(.02,.04),"highpass",.01,2)]]};
 const AUTOAMB={cafe:"cafe",bureau:"sombre",archives:"sombre",grange:"nuit",ormes:"nuit",champ:"nuit",voiture:"nuit",train:"gare",vaubris:"ville",appart:"appart",quai9:"quai9"};
 let RB=null,rb=null,rsrc=[],ambId=0;
-// b64: audio pluie dÃ©sormais chargÃ© depuis assets/audio/pluie.mp3
+// b64: audio pluie désormais chargé depuis assets/audio/pluie.mp3
 const rainBuf=()=>RB||(RB=fetch("assets/audio/pluie.mp3").then(r=>r.arrayBuffer()).then(ab=>new Promise(res=>{try{ac.decodeAudioData(ab,res,()=>res(null))}catch(e){res(null)}})).catch(()=>{RB=null;return null}));
 async function startRain(id,g){const buf=await rainBuf();if(!buf||id!=ambId)return;
  rb=ac.createGain();rb.gain.value=0;rb.connect(ag);rb.gain.setTargetAtTime(g||.55,ac.currentTime,1.2);
@@ -55,7 +55,7 @@ if(k=="aube"){startRain(ambId,.22);AM.foret.e.forEach(([ms,fn])=>{const go=()=>{
 const a=AM[k];if(!a)return;const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(),fr=a.b[1],bg=a.b[2];s.buffer=nz;s.loop=true;f.type=a.b[0];f.frequency.value=fr;f.Q.value=a.b[3]||1;g.gain.value=0;s.connect(f);f.connect(g);g.connect(ag);s.start(0,Math.random()*5);bs={s,g};
 const dr=()=>{const t=ac.currentTime;g.gain.setTargetAtTime(bg*R(.7,1.25),t,2.5);f.frequency.setTargetAtTime(fr*R(.85,1.2),t,2.5);tm.push(setTimeout(dr,R(3000,8000)))};dr();
 a.e.forEach(([ms,fn])=>{const go=()=>{fn();tm.push(setTimeout(go,ms*R(.4,1.6)))};tm.push(setTimeout(go,ms*R(.1,.8)))})}
-/* Mode smileys, dÃ©sactivable pour les rÃ©cits sÃ©rieux */
+/* Mode smileys, désactivable pour les récits sérieux */
 let emojiMode=true;try{emojiMode=localStorage.getItem("etl_emoji")!=="off"}catch(e){}
 let SPD=1;try{SPD=+localStorage.getItem("etl_spd")||1}catch(e){}
 function emojiClean(x){return emojiMode?x:x.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"")}
@@ -82,7 +82,7 @@ function fxRain(on){
   rfR=requestAnimationFrame(dr)};
  dr()}
 function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0002,#0004),url("+u+")":"";try{$("chat").classList.add("kb")}catch(e){}try{fxRain(false)}catch(e){}amb(k)}
-async function rdOk(){const b=document.createElement("button");b.className="rdOk";b.textContent="â J'ai tout lu";$("ch").append(b);await new Promise(r2=>{b.onclick=()=>{try{beep(660,.05,.06)}catch(e){}b.remove();r2()}})}
+async function rdOk(){const b=document.createElement("button");b.className="rdOk";b.textContent="✓ J'ai tout lu";$("ch").append(b);await new Promise(r2=>{b.onclick=()=>{try{beep(660,.05,.06)}catch(e){}b.remove();r2()}})}
 const noRubber=el=>{try{setTimeout(()=>{if(el&&el.scrollHeight<=el.clientHeight+8)el.style.overflowY="hidden"},0)}catch(e){}};
 async function play(id,r=run){
  const n=S[id];if(r!=run)return;
@@ -108,8 +108,8 @@ async function play(id,r=run){
  let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
  const MG=[];{let ag=null;for(const it of(n.m||[])){STATS.msgs++;if(it&&it[0]==="a"){(ag=ag||[]).push(String(it[1]).replace(/%N%/g,(st&&st.pname)||"toi"))}else{if(ag){MG.push(["a",ag]);ag=null}MG.push(it)}}if(ag)MG.push(["a",ag])}
  for(const[w,x0]of MG){const x=Array.isArray(x0)?x0:String(x0).replace(/%N%/g,(st&&st.pname)||"toi");if(w!=="a")veil(0);
-  if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(400)}else{$("st").textContent="Ã©critâ¦";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}}
-  else if(w=="s"){lab("sys",emojiClean("â¹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reÃ§ue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
+  if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(x));await sl(350)}}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
@@ -121,22 +121,22 @@ async function play(id,r=run){
  noteTick();
  mkCh(id);
  if(n.fx)filesOv(n);else if(n.vw)vwOv(n);
- $("fl").textContent=(n.c||[]).length?"Choisis une rÃ©ponse â":"â fin de ce segment â";$("chat").scrollTop=1e9}
+ $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
 /* ---- Apps natives : explorateur de fichiers & viewers plein ecran ---- */
 function fxClear(){document.querySelectorAll(".fxOv").forEach(x=>x.remove())}
 function fxShell(title,innerHTML){
  const o=document.createElement("div");o.className="fxOv";
- o.innerHTML='<div class="fxTop"><div class="fxT">'+title+'</div><button class="fxX" aria-label="Fermer">â</button></div>'+innerHTML;
+ o.innerHTML='<div class="fxTop"><div class="fxT">'+title+'</div><button class="fxX" aria-label="Fermer">✕</button></div>'+innerHTML;
  o.querySelector(".fxX").onclick=()=>o.remove();
  $("app").append(o);return o}
-function fxBack(o,label,fn){const b=document.createElement("button");b.className="fxFoot";b.innerHTML='â¹ '+(label||"Retour");b.onclick=fn;o.append(b);return b}
+function fxBack(o,label,fn){const b=document.createElement("button");b.className="fxFoot";b.innerHTML='‹ '+(label||"Retour");b.onclick=fn;o.append(b);return b}
 function filesOv(n){
  fxClear();
- const o=fxShell('ð '+(n.nm||"Fichiers"),'<div class="fxList"></div>');
+ const o=fxShell('📁 '+(n.nm||"Fichiers"),'<div class="fxList"></div>');
  const L=o.querySelector(".fxList");
  (n.fx||[]).forEach(it=>{const ic=it[0],nm=it[1],meta=it[2],act=it[3];
   const r=document.createElement("button");r.className="fxRow";
-  r.innerHTML='<span class="fxIc">'+ic+'</span><span class="fxNm"><b>'+nm+'</b><small>'+meta+'</small></span><span class="fxGo">âº</span>';
+  r.innerHTML='<span class="fxIc">'+ic+'</span><span class="fxNm"><b>'+nm+'</b><small>'+meta+'</small></span><span class="fxGo">›</span>';
   r.onclick=()=>{
    if(typeof act==="number"){fxClear();const b=$("ch").children[act];if(b)b.click();return}
    if(act==="png"){fxImg(nm);return}
@@ -145,15 +145,15 @@ function filesOv(n){
  if(typeof n.fxF==="number"){fxBack(o,(n.c&&n.c[n.fxF]&&n.c[n.fxF][0])||"Ne rien ouvrir",()=>{fxClear();const b=$("ch").children[n.fxF];if(b)b.click()})}}
 function fxLock(nm){
  fxClear();
- const o=fxShell('ð '+nm,'<div class="fxBody"><div class="fxLockIc">ð</div><p class="fxBig">chimere_v3.gpg</p><p class="fxDim">ChiffrÃ© 4096 bits â clÃ© introuvable.</p><p class="fxDim">Le fichier reste murÃ©. Il ne s\u2019ouvrira pas.</p></div>');
+ const o=fxShell('🔒 '+nm,'<div class="fxBody"><div class="fxLockIc">🔒</div><p class="fxBig">chimere_v3.gpg</p><p class="fxDim">Chiffré 4096 bits — clé introuvable.</p><p class="fxDim">Le fichier reste muré. Il ne s\u2019ouvrira pas.</p></div>');
  fxBack(o,"Retour aux fichiers",()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]}));
  o.querySelector(".fxX").onclick=()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]})}
 function fxImg(nm){
  fxClear();
- const o=fxShell('ðº '+nm,'<div class="fxBody" style="padding:0"><div class="fxImg"></div></div>');
+ const o=fxShell('🗺 '+nm,'<div class="fxBody" style="padding:0"><div class="fxImg"></div></div>');
  const im=o.querySelector(".fxImg");
  im.style.backgroundImage=IMG.quai9?'url('+IMG.quai9+')':'';
- im.innerHTML='<span>Ãchelle ouest, quai 9 â le stylo rouge cerne une porte de service, flÃ¨che vers le hangar 44.</span>';
+ im.innerHTML='<span>Échelle ouest, quai 9 — le stylo rouge cerne une porte de service, flèche vers le hangar 44.</span>';
  fxBack(o,"Retour aux fichiers",()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]}));
  o.querySelector(".fxX").onclick=()=>filesOv(S[nodeNow]||{nm:"Fichiers",fx:[]})}
 let hz=null;
@@ -163,21 +163,21 @@ function vwOv(n){
  fxClear();
  const kind=n.vw[0],nm=n.vw[1],lines=n.vw[2];
  if(kind==="txt"){
-  const o=fxShell('ð '+nm,'<div class="fxPaper"></div>');
+  const o=fxShell('📄 '+nm,'<div class="fxPaper"></div>');
   const P=o.querySelector(".fxPaper");
   lines.forEach(function(ln){const p=document.createElement("p");p.className="vwL "+(ln[0]||"n");p.textContent=ln[1];P.append(p)});
-  const nb=document.createElement("div");nb.className="vwBar";nb.textContent="Bas de page â encadrÃ© deux fois au stylo rouge";P.append(nb);
-  fxBack(o,n.vwBack?"â¹ Revenir Ã  l'archive":"â Refermer",function(){if(n.vwBack){veil(1);o.remove();const i2=(n.c||[]).findIndex(cc=>cc&&cc[1]===n.vwBack);if(i2>=0){const bb=$("ch").children[i2];if(bb){bb.click();return}}}o.remove()});if(n.vwBack){const xx=o.querySelector(".fxX");if(xx)xx.onclick=()=>{const fb2=o.querySelector(".fxFoot");if(fb2)fb2.click()}}
+  const nb=document.createElement("div");nb.className="vwBar";nb.textContent="Bas de page — encadré deux fois au stylo rouge";P.append(nb);
+  fxBack(o,n.vwBack?"‹ Revenir à l'archive":"✕ Refermer",function(){if(n.vwBack){veil(1);o.remove();const i2=(n.c||[]).findIndex(cc=>cc&&cc[1]===n.vwBack);if(i2>=0){const bb=$("ch").children[i2];if(bb){bb.click();return}}}o.remove()});if(n.vwBack){const xx=o.querySelector(".fxX");if(xx)xx.onclick=()=>{const fb2=o.querySelector(".fxFoot");if(fb2)fb2.click()}}
  }else if(kind==="wav"){
-  const o=fxShell('ð§ '+nm,'<div class="fxBody vwPlay"><div class="wavArt">ð§</div><p class="fxBig">'+nm+'</p><p class="fxDim">0:47 Â· jamais Ã©coutÃ©</p><div class="wavBar"><i></i></div><button class="wavBtn">â¶ Lecture</button><div class="wavTx"></div></div>');
+  const o=fxShell('🎧 '+nm,'<div class="fxBody vwPlay"><div class="wavArt">🎧</div><p class="fxBig">'+nm+'</p><p class="fxDim">0:47 · jamais écouté</p><div class="wavBar"><i></i></div><button class="wavBtn">▶ Lecture</button><div class="wavTx"></div></div>');
   const bar=o.querySelector(".wavBar i"),tx=o.querySelector(".wavTx"),btn=o.querySelector(".wavBtn");
   let played=false;
-  btn.onclick=async function(){if(played)return;played=true;try{hissOn()}catch(e2){}btn.textContent="â®â® Lecture en cours";btn.disabled=true;
+  btn.onclick=async function(){if(played)return;played=true;try{hissOn()}catch(e2){}btn.textContent="▮▮ Lecture en cours";btn.disabled=true;
    const total=47,dur=13000,t0=Date.now();
    const tick=setInterval(function(){if(!o.isConnected){clearInterval(tick);try{hissOff()}catch(e3){}return}const p=Math.min(1,(Date.now()-t0)/dur);bar.style.width=(p*100)+"%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:"+String(Math.floor(p*total)).padStart(2,"0")+" sur 0:47"},120);
    for(const ln of lines){const p=document.createElement("p");p.className="vwL "+(ln[0]||"q");p.textContent=ln[1];tx.append(p);try{if(ln[0]!=="i")callSpeak(ln[1],"Nils")}catch(e2){}await sl(dur/lines.length)}
-   clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 â fin de l\u2019enregistrement";btn.textContent="â¶ ÃcoutÃ©";try{hissOff()}catch(e2){}};
-  fxBack(o,n.vwBack?"â¹ Revenir Ã  l'archive":"â Refermer",function(){if(n.vwBack){veil(1);o.remove();const i2=(n.c||[]).findIndex(cc=>cc&&cc[1]===n.vwBack);if(i2>=0){const bb=$("ch").children[i2];if(bb){bb.click();return}}}o.remove()});if(n.vwBack){const xx=o.querySelector(".fxX");if(xx)xx.onclick=()=>{const fb2=o.querySelector(".fxFoot");if(fb2)fb2.click()}}
+   clearInterval(tick);bar.style.width="100%";const d=o.querySelector(".fxDim");if(d)d.textContent="0:47 — fin de l\u2019enregistrement";btn.textContent="▶ Écouté";try{hissOff()}catch(e2){}};
+  fxBack(o,n.vwBack?"‹ Revenir à l'archive":"✕ Refermer",function(){if(n.vwBack){veil(1);o.remove();const i2=(n.c||[]).findIndex(cc=>cc&&cc[1]===n.vwBack);if(i2>=0){const bb=$("ch").children[i2];if(bb){bb.click();return}}}o.remove()});if(n.vwBack){const xx=o.querySelector(".fxX");if(xx)xx.onclick=()=>{const fb2=o.querySelector(".fxFoot");if(fb2)fb2.click()}}
  }}
 
 async function proCards(P,opts){const pars=P.slice(1);if(!pars.length)return;const LAB=(opts&&opts.label)||"Prologue",LB=(opts&&opts.lastBtn)||"Reprendre le t\u00E9l\u00E9phone";
@@ -245,10 +245,10 @@ function ov(t,x,b,f,b2,f2){$("ot").textContent=t;$("ox").textContent=x;$("ob").t
 function telOv(T,done){const o=document.createElement("div");o.id="telOv";
  const ph=document.createElement("div");ph.className="lsp";
  ph.innerHTML='<div class="lspTop"></div><div class="lspClock">'+T[0]+'</div><div class="lspSub">'+T[1]+'</div>'
- +'<div class="lspNotif"><i>ð¬</i><div><div class="lspNh"><b>'+T[2]+'</b><small>'+T[0]+'</small></div><p>'+T[3]+'</p></div></div>'
+ +'<div class="lspNotif"><i>💬</i><div><div class="lspNh"><b>'+T[2]+'</b><small>'+T[0]+'</small></div><p>'+T[3]+'</p></div></div>'
  +'<div class="lspBar"></div>';
- const cap=document.createElement("p");cap.className="lspCap";cap.textContent="Ton tÃ©lÃ©phone Ã  toi â pas celui de LÃ©o. Il vient de vibrer dans ta poche.";
- const b=document.createElement("button");b.textContent="DÃ©verrouiller";b.onclick=()=>{o.remove();done()};
+ const cap=document.createElement("p");cap.className="lspCap";cap.textContent="Ton téléphone à toi — pas celui de Léo. Il vient de vibrer dans ta poche.";
+ const b=document.createElement("button");b.textContent="Déverrouiller";b.onclick=()=>{o.remove();done()};
  o.append(ph,cap,b);document.body.append(o);
  beep(1319,.09,.05);setTimeout(()=>beep(1760,.11,.05),150);setTimeout(()=>beep(1760,.11,.04),900)}
 const TTSOK=typeof speechSynthesis!=="undefined";
@@ -264,7 +264,7 @@ function incCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[
  const o=document.createElement("div");o.id="incOv";
  const av=document.createElement("div");av.className="calAv incAv";
  const ph=avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
- const tb=document.createElement("div");tb.className="incTb";const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub+" Â· appel entrantâ¦";tb.append(ne,se);
+ const tb=document.createElement("div");tb.className="incTb";const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub+" · appel entrant…";tb.append(ne,se);
  const bt=document.createElement("div");bt.className="incBtns";
  const dec=document.createElement("button");dec.className="incDec";dec.innerHTML='<i>\u{1F4F5}</i>';
  const acc=document.createElement("button");acc.className="incAcc";acc.innerHTML='<i>\u{1F4DE}</i>';
@@ -288,7 +288,7 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  $("app").append(o);
  beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),110);
  let q=lines.slice(),muted=false;
- const mb=document.createElement("button");mb.className="calMute";mb.textContent="ð";mb.onclick=()=>{muted=!muted;mb.textContent=muted?"ð":"ð";if(muted){try{callSpeakStop()}catch(e){}}};o.append(mb);
+ const mb=document.createElement("button");mb.className="calMute";mb.textContent="🔊";mb.onclick=()=>{muted=!muted;mb.textContent=muted?"🔇":"🔊";if(muted){try{callSpeakStop()}catch(e){}}};o.append(mb);
  const put=(L,raw)=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");if(raw)d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
  const typeIn=(d,txt,cb)=>{let i2=0;try{const iv=setInterval(()=>{i2+=2;d.textContent=txt.slice(0,i2);tr.scrollTop=1e9;if(i2>=txt.length){clearInterval(iv);cb()}},Math.max(8,12/SPD))}catch(e){d.textContent=txt;cb()}};
  const next=()=>{if(!q.length){inChoice=false;hint.hidden=true;eb.hidden=false;return}
@@ -329,9 +329,9 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);seen=(seen||[]).filter(t2=>
  c.append(ds);
  const st2=document.createElement("div");st2.className="endStats";
  const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
- bar(st.int,SS.id==="h"?"DiscrÃ©tion":"IntÃ©gritÃ©");bar(st.pov,"Preuves du rÃ©seau");bar(st.prm,"Preuves du meurtre");c.append(st2);
+ bar(st.int,SS.id==="h"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
  const fd=document.createElement("div");fd.className="endFins";
-if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes â "+seen.length+" / "+tot;fd.append(fl);
+if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes — "+seen.length+" / "+tot;fd.append(fl);
  const list=document.createElement("div");list.className="endFinsList";
  endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
   r.innerHTML=seen.includes(t)?"<span>\u2713</span>"+t.replace(/</g,"&lt;"):"<span>\uD83D\uDD12</span>"+t.replace(/</g,"&lt;");
@@ -339,7 +339,7 @@ if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couve
  fd.append(list)}
 else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";fd.append(vh)}
 c.append(fd);
- const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"âº Revivre le chapitre 1":"âº Revivre lâhistoire");b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
+ const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
  o.append(c);document.body.append(o);
  }
@@ -372,12 +372,12 @@ function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle(
  const av=$("av");if(!av)return;
  if(n.mem&&n.mem.length>1){av.className="av grp";av.style.backgroundImage="";av.textContent="";n.mem.forEach(m=>{const i=document.createElement("img");i.alt=m;i.src=AVGR[m[0]]||"";av.append(i)})}
  else if(n.mem){av.className="av";const ph=avOf(n.mem[0]);av.style.backgroundImage=ph?"linear-gradient(#0003,#0006),url("+ph+")":"";av.textContent=ph?"":n.mem[0][0]}
- else{const pn=AVN[n.nm];if(pn){av.className="av";av.style.backgroundImage="linear-gradient(#0003,#0006),url("+pn+")";av.textContent=""}else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="ð"}else setAv(SC?SS.n[0]:"\u{1F464}")}}}
+ else{const pn=AVN[n.nm];if(pn){av.className="av";av.style.backgroundImage="linear-gradient(#0003,#0006),url("+pn+")";av.textContent=""}else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="📁"}else setAv(SC?SS.n[0]:"\u{1F464}")}}}
 function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95);
- const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"ð":(wa?"ð¬":"ð±"),b=document.createElement("div");b.className="notif";
+ const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";
  const snd=n.nm||((n.prev||"").split(" : ")[0])||n.app;
  const avp=(typeof AVN!=="undefined"&&AVN[snd])||null;
- b.innerHTML='<div class="nIc'+(avp?' nAv':'')+'" style="'+(avp?'background-image:url('+avp+')':'background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6")))+'">'+(avp?'':ic)+'</div><i class="nAp" style="background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6"))+'">'+ic+'</i><div><b>'+snd+'</b><small>'+(snd!==n.app?n.app+" Â· maintenant":"maintenant")+'</small></div>';
+ b.innerHTML='<div class="nIc'+(avp?' nAv':'')+'" style="'+(avp?'background-image:url('+avp+')':'background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6")))+'">'+(avp?'':ic)+'</div><i class="nAp" style="background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6"))+'">'+ic+'</i><div><b>'+snd+'</b><small>'+(snd!==n.app?n.app+" · maintenant":"maintenant")+'</small></div>';
  $("app").append(b);let done=false;
  const open=()=>{if(done)return;done=true;if(n.prev)try{window.__noan=1}catch(e2){};b.remove();applyApp(n);setTimeout(res,400)};
  b.onclick=open})}
@@ -387,11 +387,11 @@ function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML
  const t=($("clk").textContent||"9:41").trim();
  o.innerHTML='<div class="ah-clock"><b>'+t+'</b><span>5G<i class="ah-bat"></i></span></div>'
  +'<h2>Applications</h2>'
- +'<div class="ah-search"><span>ð</span><input id="ahQ" placeholder="Rechercher" autocomplete="off"></div>'
+ +'<div class="ah-search"><span>🔍</span><input id="ahQ" placeholder="Rechercher" autocomplete="off"></div>'
  +'<div class="ah-grid">'
- +ic("SMS","#6b5bd6","ð±","Messages")+ic("WhatsApp","#0b6b4f","ð¬")+ic("Notes","#53455e","ð")+ic("Fichiers","#3a3f52","ð")
- +ic("","#2b6ea3","ð")+ic("","#42506e","ð¼ï¸")+ic("","#1f5f5b","ð§")+ic("","#5a4a2f","â°")+ic("","#31435e","ð¤ï¸")
- +'</div><div class="ah-dots"><i class="on"></i><i></i></div><button class="ahBack">â¹ Revenir Ã  la conversation</button>';
+ +ic("SMS","#6b5bd6","📱","Messages")+ic("WhatsApp","#0b6b4f","💬")+ic("Notes","#53455e","📝")+ic("Fichiers","#3a3f52","📁")
+ +ic("","#2b6ea3","📞")+ic("","#42506e","🖼️")+ic("","#1f5f5b","🎧")+ic("","#5a4a2f","⏰")+ic("","#31435e","🌤️")
+ +'</div><div class="ah-dots"><i class="on"></i><i></i></div><button class="ahBack">‹ Revenir à la conversation</button>';
  $("app").append(o);
  const q=o.querySelector("#ahQ");if(q)q.oninput=()=>{const v=q.value.trim().toLowerCase();o.querySelectorAll(".ah-app").forEach(a=>{a.style.display=(!v||a.textContent.toLowerCase().includes(v))?"":"none"})};
  o.querySelector(".ahBack").onclick=()=>{o.remove();applyApp(hdrOf(CAPP,CNM))};
@@ -400,7 +400,7 @@ function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML
   if((app==="WhatsApp"||app==="SMS")&&(THR[app]||[]).length>1)return thrOv(app);
   if(app===CAPP)return;
   goApp(app,(THR[app]||[])[0]||app)})}
-const hdrOf=(app,lbl)=>({app,nm:lbl&&lbl!==app?lbl:null,stx:app==="Fichiers"?"Archive Â· lecture seule":(app==="WhatsApp"?(lbl||""):"SMS"),mem:null});
+const hdrOf=(app,lbl)=>({app,nm:lbl&&lbl!==app?lbl:null,stx:app==="Fichiers"?"Archive · lecture seule":(app==="WhatsApp"?(lbl||""):"SMS"),mem:null});
 function goApp(app,lbl){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML};const t=APPH[app+"|"+lbl]||{};applyApp(hdrOf(app,lbl));
  $("chat").innerHTML=t.c||"";$("ch").innerHTML=t.h||"";
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
@@ -432,44 +432,44 @@ function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  o.querySelector("#thrB").onclick=()=>{o.remove();appHome()};
  o.querySelectorAll(".thrR").forEach(b=>b.onclick=()=>{o.remove();goApp(app,b.dataset.l)})}
 function NH(s){return[
- {id:"num",t:(s.piege||s.avou||s.mentir),tex:"Ton numÃ©ro Ã©tait celui de Nils. Quelquâun lâa volontairement remis dans le pool de recyclage."},
- {id:"piege",t:s.piege,tex:"Tu as confirmÃ© la Â« prise Â» du quai 9. Pour Mandragore, tu es Nils â et un Ã©chantillon tâattend Ã  23h40."},
- {id:"avou",t:s.avou,tex:"Cora sait que tu nâes pas Nils. Elle tâa appelÃ© pour tâexpliquer les rÃ¨gles."},
- {id:"pov",t:s.pov,tex:"Notes de Nils : container 44-B, quai 9, 250 kg de prÃ©curseur. Â« La Larme noyÃ©e dans le sucre brut. Â»"},
- {id:"prm",t:s.prm,tex:"Dernier message de Nils : Â« Ne fais pas confiance Ã  la police municipale. Ne fais confiance quâÃ  C. Â»"},
- {id:"chim",t:(s.cal_h8||s.cal_h8p),tex:"CHIMÃRE v3 â le dossier complet de Mandragore, chiffrÃ© 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clÃ©, c'est la ligne elle-mÃªme."},
- {id:"mig",t:s.mig,tex:"Tu as tout migrÃ© : les fichiers de Nils sont maintenant dans ton tÃ©lÃ©phone."},
- {id:"trst",t:(s.trst||0)>=2,tex:"Cora te fait confiance â pour lâinstant."},
- {id:"mentir",t:s.mentir,tex:"Tu as menti Ã  Cora en improvisant. Elle tâa repÃ©rÃ© en quatre minutes."},
- {id:"pol",t:s.pol,tex:"Tu as annoncÃ© Ã  Cora que tu irais Ã  la police municipale. Elle tâa aiguillÃ© vers le commandant Riffaud â en te demandant de ne jamais citer son nom."}
+ {id:"num",t:(s.piege||s.avou||s.mentir),tex:"Ton numéro était celui de Nils. Quelqu’un l’a volontairement remis dans le pool de recyclage."},
+ {id:"piege",t:s.piege,tex:"Tu as confirmé la « prise » du quai 9. Pour Mandragore, tu es Nils — et un échantillon t’attend à 23h40."},
+ {id:"avou",t:s.avou,tex:"Cora sait que tu n’es pas Nils. Elle t’a appelé pour t’expliquer les règles."},
+ {id:"pov",t:s.pov,tex:"Notes de Nils : container 44-B, quai 9, 250 kg de précurseur. « La Larme noyée dans le sucre brut. »"},
+ {id:"prm",t:s.prm,tex:"Dernier message de Nils : « Ne fais pas confiance à la police municipale. Ne fais confiance qu’à C. »"},
+ {id:"chim",t:(s.cal_h8||s.cal_h8p),tex:"CHIMÈRE v3 — le dossier complet de Mandragore, chiffré 4096 bits. Ne s'ouvre que depuis la ligne d'origine : la clé, c'est la ligne elle-même."},
+ {id:"mig",t:s.mig,tex:"Tu as tout migré : les fichiers de Nils sont maintenant dans ton téléphone."},
+ {id:"trst",t:(s.trst||0)>=2,tex:"Cora te fait confiance — pour l’instant."},
+ {id:"mentir",t:s.mentir,tex:"Tu as menti à Cora en improvisant. Elle t’a repéré en quatre minutes."},
+ {id:"pol",t:s.pol,tex:"Tu as annoncé à Cora que tu irais à la police municipale. Elle t’a aiguillé vers le commandant Riffaud — en te demandant de ne jamais citer son nom."}
 ].filter(x=>x.t)}
-function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Ãcrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"))}}catch(e){}}
+function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"))}}catch(e){}}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
- $("nm").textContent="Notes";$("st").textContent="Notes de l'enquÃªte";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="ð"}
+ $("nm").textContent="Notes";$("st").textContent="Notes de l'enquête";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent="📝"}
  let h='<h2>Notes de l\u2019enqu\u00EAte</h2>';
  if(SS.id!=="h"||!SK)h+='<p class="ntR">Pas encore de notes pour cette histoire.</p>';
  else{const s=st||{};
  if(SS.id==="h"){
   h+='<b>Qui est qui</b>';
-  const WH=[["Toi â Vaubris, 2057. Ton ancien numÃ©ro a Ã©tÃ© piratÃ© et vendu sur des forums. Le nouveau a appartenu Ã  un mort.",1],
-  ["Nils Aveline â l'ancien propriÃ©taire du numÃ©ro. Agent d'une unitÃ© qui ne figure sur aucun organigramme. Mort il y a trois semaines.",s.piege||s.avou||s.mentir],
-  ["Cora (Â« C. Â») â coÃ©quipiÃ¨re de Nils. Appelle sur ligne chiffrÃ©e, Ã©crit en minuscules, ne croit pas au hasard.",(s.trst||0)>0||s.avou||s.mentir],
-  ["Yasmine â ta meilleure amie depuis l'enfance. Elle a pleurÃ© dans le tram en lisant les commentaires sous ton ancien numÃ©ro. Tu lui as promis de l'appeler au premier dÃ©tail bizarre.",1],
-  ["Mandragore â le rÃ©seau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numÃ©ros suspects.",s.cal_h8||s.cal_h8p],
-  ["Commandant Riffaud â police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.",s.pol]];
+  const WH=[["Toi — Vaubris, 2057. Ton ancien numéro a été piraté et vendu sur des forums. Le nouveau a appartenu à un mort.",1],
+  ["Nils Aveline — l'ancien propriétaire du numéro. Agent d'une unité qui ne figure sur aucun organigramme. Mort il y a trois semaines.",s.piege||s.avou||s.mentir],
+  ["Cora (« C. ») — coéquipière de Nils. Appelle sur ligne chiffrée, écrit en minuscules, ne croit pas au hasard.",(s.trst||0)>0||s.avou||s.mentir],
+  ["Yasmine — ta meilleure amie depuis l'enfance. Elle a pleuré dans le tram en lisant les commentaires sous ton ancien numéro. Tu lui as promis de l'appeler au premier détail bizarre.",1],
+  ["Mandragore — le réseau qui noie la Larme dans le sucre brut. Quai 9, containers, faux ordres sur les numéros suspects.",s.cal_h8||s.cal_h8p],
+  ["Commandant Riffaud — police municipale de Vaubris. Dernier message de Nils : ne pas lui faire confiance.",s.pol]];
   WH.forEach(x=>{if(x[1])h+='<div class="ntR">'+x[0]+'</div>'});
   h+='<b>Ce que tu sais</b>';
   NH(s).forEach(x=>{h+='<div class="ntR">'+x.tex+'</div>'});
  }}
- h+='<button class="ahBack" id="ntB2">'+(fromApp?"â¹ Applications":"â¹ Revenir Ã  la conversation")+'</button>';o.innerHTML=gf(h);$("app").append(o);try{noRubber(o)}catch(e){}
+ h+='<button class="ahBack" id="ntB2">'+(fromApp?"‹ Applications":"‹ Revenir à la conversation")+'</button>';o.innerHTML=gf(h);$("app").append(o);try{noRubber(o)}catch(e){}
  o.querySelector("#ntB2").onclick=()=>{o.remove();if(fromApp)appHome();else applyApp(hdrOf(CAPP,CNM))}}
 async function lockFx(){const o=document.createElement("div");o.id="lockFx";$("app").append(o);try{hit(440,.5,.05,"lowpass",.02,.6)}catch(e){}await sl(520)}
-const unq=x=>{const m=String(x).match(/^\s*Â«([\s\S]*)Â»\s*$/);return m?m[1].trim():x};
+const unq=x=>{const m=String(x).match(/^\s*«([\s\S]*)»\s*$/);return m?m[1].trim():x};
 function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";const c=$("ch");c.innerHTML="";
  (n.c||[]).forEach(([t,nx,ef,rm])=>{const b=document.createElement("button");b.textContent=unq(gf(t));b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";if(rm==="!"){add("n",gf(emojiClean(t)))}else{tx();add("m",emojiClean(rm?unq(gf(rm)):unq(gf(t))))}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);if(ef&&ef.lock){delete st.lock;await lockFx()}play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
- $("fl").textContent=(n.c||[]).length?"Choisis une rÃ©ponse â":"â fin de ce segment â";$("chat").scrollTop=1e9}
-function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","ð¬ RÃ©ponds aux messages pour avancer â chaque choix compte. Le menu â¹ en haut Ã  gauche, les rÃ©glages âï¸ Ã  droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
+ $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"— fin de ce segment —";$("chat").scrollTop=1e9}
+function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer — chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";document.body.classList.remove("wa");APPH={};PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
  document.body.classList.add("play");$("mn").classList.remove("on");
@@ -480,26 +480,26 @@ function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne 
  o.innerHTML='<div class="ngCard"><h2>Qui es-tu ?</h2><p class="ngP"></p><p class="ngP"></p><button class="ngGo bioGo">Suivant</button></div>';
  document.body.append(o);
  const P=o.querySelectorAll(".ngP");
- P[0].textContent=gf(nm+", "+insp+" Ã  la brigade urbaine de Vaubris. Six ans de service et une quÃªte sur la Larme, la drogue de Vaubris.");
- P[1].textContent=gf("Tu as Ã©tÃ© trop curieux pour les dealers. Ton chef t'a ordonnÃ© d'arrÃªter â tu as rendu ton badge plutÃ´t que te taire. Depuis : rÃ©parateur indÃ©pendant. Eux n'ont rien oubliÃ© â le hack de ces six derniers jours a commencÃ© lÃ .");
+ P[0].textContent=gf(nm+", "+insp+" à la brigade urbaine de Vaubris. Six ans de service et une quête sur la Larme, la drogue de Vaubris.");
+ P[1].textContent=gf("Tu as été trop curieux pour les dealers. Ton chef t'a ordonné d'arrêter — tu as rendu ton badge plutôt que te taire. Depuis : réparateur indépendant. Eux n'ont rien oublié — le hack de ces six derniers jours a commencé là.");
  o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}cb&&cb();o.remove()}}
-/* ---- v2.75 : genre du joueur + prÃ©nom ---- */
+/* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t)
- .replace(/(?<![\p{L}])(DÃ©solÃ©|dÃ©solÃ©|Ã©veillÃ©|certain|seul|content|rentrÃ©|fatiguÃ©|prÃªt|vivant|sÃ»r|repÃ©rÃ©|appelÃ©|aiguillÃ©)(?![\p{L}])/gu,"$1e")
+ .replace(/(?<![\p{L}])(Désolé|désolé|éveillé|certain|seul|content|rentré|fatigué|prêt|vivant|sûr|repéré|appelé|aiguillé)(?![\p{L}])/gu,"$1e")
  .replace(/(?<![\p{L}])curieux(?![\p{L}])/gu,"curieuse")
  .replace(/(?<![\p{L}])le flic(?![\p{L}])/gu,"la flic")
  .replace(/(?<![\p{L}])ancien inspecteur(?![\p{L}])/gu,"ancienne inspectrice")
- .replace(/(?<![\p{L}])rÃ©parateur indÃ©pendant(?![\p{L}])/gu,"rÃ©paratrice indÃ©pendante")
+ .replace(/(?<![\p{L}])réparateur indépendant(?![\p{L}])/gu,"réparatrice indépendante")
  .replace(/(?<![\p{L}])un ancien inspecteur(?![\p{L}])/gu,"une ancienne inspectrice")
  .replace(/n'es pas lui/g,"n'es pas elle")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
- o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">Lâhistoire va te parler, et elle aura besoin dâun nom. Comment tâappelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prÃ©nom" autocomplete="off"><div class="ngGen"><button id="ngF">â Une femme</button><button id="ngM">â Un homme</button></div><button class="ngGo">Continuer</button></div>';
+ o.innerHTML='<div class="ngCard"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom. Comment t’appelles-tu ?</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><div class="ngGen"><button id="ngF">♀ Une femme</button><button id="ngM">♂ Un homme</button></div><button class="ngGo">Continuer</button></div>';
  document.body.append(o);
  const inp=o.querySelector("#ngName"),go=o.querySelector(".ngGo"),bf=o.querySelector("#ngF"),bm=o.querySelector("#ngM");let gen=null;
  bf.onclick=()=>{gen="f";bf.classList.add("sel");bm.classList.remove("sel")};
  bm.onclick=()=>{gen="m";bm.classList.add("sel");bf.classList.remove("sel")};
  go.onclick=()=>{const v=(inp.value||"").trim().slice(0,14);if(!v||!gen)return;try{st.pname=v;st.pf=gen==="f"?1:0;localStorage.setItem("etl_pname",v);localStorage.setItem("etl_pgen",gen)}catch(e){}try{hit(660,.05,.08)}catch(e){}cb();o.remove()}}
-/* ---- rÃ©action du personnage (v2.55) : carte in-tÃ©lÃ©phone aprÃ¨s le hack ---- */
+/* ---- réaction du personnage (v2.55) : carte in-téléphone après le hack ---- */
 function reactOv(txt,btnLabel,done){
  const o=document.createElement("div");o.className="proOv rxOv";
  o.innerHTML='<div class="proCard"><div class="proK">Toi</div><p class="rxP"></p><div class="proDots"><i class="on"></i></div><button class="proBtn" hidden>'+btnLabel+'</button></div>';
@@ -510,23 +510,23 @@ function reactOv(txt,btnLabel,done){
  b.onclick=e=>{e.stopPropagation();go()};
  o.onclick=go;
 }
-/* ---- intro chapitre 1 : Ã©cran noir -> dÃ©verrouillage -> freeze hack (canvas 2D) ---- */
+/* ---- intro chapitre 1 : écran noir -> déverrouillage -> freeze hack (canvas 2D) ---- */
 async function introH(cb){
-  if(S.h1&&S.h1.pro){await proCards(S.h1.pro,{instant:1,lastBtn:"Prendre le tÃ©lÃ©phone"});PROD=1}
+  if(S.h1&&S.h1.pro){await proCards(S.h1.pro,{instant:1,lastBtn:"Prendre le téléphone"});PROD=1}
   const RM=(()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(x){return false}})();
   const app=$("app");
   const o=document.createElement("div");o.id="lockOv";
   o.innerHTML='<canvas class="lkFx"></canvas>'
    +'<div class="lkMid"><div class="lkClock">--:--</div><div class="lkDate"></div></div>'
-   +'<button class="lkGo">DÃ©verrouiller</button>'
-   +'<div class="lkHint">Le tÃ©lÃ©phone que tu viens de rÃ©cupÃ©rer.</div>';
+   +'<button class="lkGo">Déverrouiller</button>'
+   +'<div class="lkHint">Le téléphone que tu viens de récupérer.</div>';
   app.append(o);
   const q=s=>o.querySelector(s),cv=q(".lkFx"),ctx=cv.getContext("2d");
   let W,H;const fit=()=>{W=cv.width=app.clientWidth||innerWidth;H=cv.height=app.clientHeight||innerHeight};fit();
   let done=false;
   const finish=()=>{if(done)return;done=true;o.classList.add("off");setTimeout(()=>{o.remove()},720);try{cb&&cb()}catch(x){}};
   let nextB=null;
-  const reactThen=()=>{if(done)return;finish()};/* reactOv("C'est quoi ce bordelâ¦? Le tÃ©lÃ©phone est maudit, ou quoi ?","Reprendre le tÃ©lÃ©phone",finish)};*/
+  const reactThen=()=>{if(done)return;finish()};/* reactOv("C'est quoi ce bordel…? Le téléphone est maudit, ou quoi ?","Reprendre le téléphone",finish)};*/
   const showNext=()=>{if(done||nextB)return;nextB=document.createElement("button");nextB.className="lkNext";nextB.textContent="Suivant \u203a";nextB.onclick=e=>{e.stopPropagation();reactThen()};o.append(nextB)};
   const T0=new Date(2057,9,18,21,52,0);const clk=()=>{try{T0.setSeconds(T0.getSeconds()+3);q(".lkClock").textContent=T0.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});q(".lkDate").textContent=T0.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}catch(x){}};
   clk();const tick=setInterval(()=>{done?clearInterval(tick):clk()},1000);
@@ -545,7 +545,7 @@ async function introH(cb){
     c.globalAlpha=.15;
     for(let r=0;r<4;r++)for(let col=0;col<4;col++){c.fillStyle="#dbe7f8";c.fillRect(24+col*70,H*.42+r*62,44,44)}
     c.globalAlpha=1;
-    const lines=["SIM RECYCLÃE : 06 51 09 43 87","ANCIEN TITULAIRE : [DONNÃES EFFACÃES]","MIGRATION DES DONNÃESâ¦","TERMINAL RÃATTRIBUÃ"];
+    const lines=["SIM RECYCLÉE : 06 51 09 43 87","ANCIEN TITULAIRE : [DONNÉES EFFACÉES]","MIGRATION DES DONNÉES…","TERMINAL RÉATTRIBUÉ"];
     const t0=performance.now();
     const step=()=>{
       if(done)return;
@@ -567,12 +567,12 @@ async function introH(cb){
     if(RM)setTimeout(reactThen,250);else glitch()};
 }
 
-/* ---- Ã©vÃ©nement hors tÃ©lÃ©phone (v2.51) : Ã©cran noir + flou + narration ---- */
+/* ---- événement hors téléphone (v2.51) : écran noir + flou + narration ---- */
 /* ---- v2.73 : voile anti-flash entre overlays (transitions propres) ---- */
 function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=document.createElement("div");v.id="etlVeil";$("app").append(v)}v.classList.remove("off")}else if(v){v.classList.add("off");setTimeout(()=>{const x=document.getElementById("etlVeil");if(x&&x.classList.contains("off"))x.remove()},400)}}
-/* ---- v2.65 : rÃ©veil sur Ã©cran de verrouillage avec notification ---- */
+/* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>â® 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><i>'+((s&&s.ic)||"ð¬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span><b class="lkBadge">1</b></div><div class="lkTools"><i>ð¦</i><i>ð·</i></div><div class="lkHint">Appuie pour dÃ©verrouiller</div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><i>'+((s&&s.ic)||"💬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span><b class="lkBadge">1</b></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&IMG.fondec)||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
  const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
@@ -599,12 +599,12 @@ async function awayOv(lines,LB){
   const awT=setTimeout(()=>{if(done)return;btn.style.visibility="visible";btn.disabled=false;try{beep(880,.04,.03)}catch(e){}},awWait);
   btn.onclick=e=>{e.stopPropagation();if(btn.disabled)return;try{hit(660,.05,.08)}catch(e2){}clearTimeout(awT);close()};
 })}
-/* ---- animation de transfert HÃLIOS (v2.59) : item par item, barre de progression ---- */
+/* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
 async function heliosTransfer(o){
  const btns=o.querySelector(".scBtns");btns.innerHTML="";
- const items=[["Photos & vidÃ©os","2,1 Go"],["Sauvegardes de messages","1,4 Go"],["Documents","0,7 Go"]];
+ const items=[["Photos & vidéos","2,1 Go"],["Sauvegardes de messages","1,4 Go"],["Documents","0,7 Go"]];
  const box=document.createElement("div");box.className="scProg";
- box.innerHTML='<p class="scStat">Transfert des donnÃ©esâ¦</p><div class="scTrack"><i></i></div><div class="scList"></div>';
+ box.innerHTML='<p class="scStat">Transfert des données…</p><div class="scTrack"><i></i></div><div class="scList"></div>';
  btns.append(box);
  const bar=box.querySelector(".scTrack i"),list=box.querySelector(".scList");
  const per=1400;
@@ -613,16 +613,16 @@ async function heliosTransfer(o){
   li.innerHTML='<span>'+items[k][0]+'</span><small>0 %</small>';list.append(li);
   const sm=li.querySelector("small");
   await new Promise(res=>{const t0=performance.now();const tick=()=>{const pr=Math.min(1,(performance.now()-t0)/per);sm.textContent=Math.round(pr*100)+" %";if(pr>=1){res();return}requestAnimationFrame(tick)};tick()});
-  sm.textContent="â "+items[k][1];
+  sm.textContent="✓ "+items[k][1];
   bar.style.width=Math.round((k+1)/items.length*100)+"%";
   try{beep(880,.04,.05)}catch(e){}
  }
  const li=document.createElement("div");li.className="scLi dim";
- li.innerHTML='<span>Espace chiffrÃ©</span><small>en attente</small>';list.append(li);
- box.querySelector(".scStat").textContent="Transfert terminÃ© : 4,2 Go rÃ©cupÃ©rÃ©s";
+ li.innerHTML='<span>Espace chiffré</span><small>en attente</small>';list.append(li);
+ box.querySelector(".scStat").textContent="Transfert terminé : 4,2 Go récupérés";
  try{hit(660,.06,.08);setTimeout(()=>hit(990,.08,.1),90)}catch(e){}
  await sl(900)}
-/* ---- Ã©cran contextuel IN-TÃLÃPHONE (v2.53) : interface dÃ©diÃ©e au contexte (ex. HÃLIOS), Ã  la faÃ§on du lock screen ---- */
+/* ---- écran contextuel IN-TÉLÉPHONE (v2.53) : interface dédiée au contexte (ex. HÉLIOS), à la façon du lock screen ---- */
 async function scrOv(n){
  try{if(st["scr_"+(nodeNow||"")]&&!n.scrf)return false}catch(e){}
  const spec=n.scr||{};
@@ -632,28 +632,28 @@ async function scrOv(n){
  if(spec.k==="helios"){
   const dn=spec.st==="done";
   const hm9=spec.ts?String(spec.ts).replace("h",":"):"";
-  o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead hs"><span class="scIc"><svg viewBox="0 0 24 24" fill="none" stroke="#9fb4d8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H6a4.5 4.5 0 0 1-.9-8.9 7 7 0 0 1 13.3-1.4A4.6 4.6 0 0 1 17.5 19z"/></svg></span><b>HÃLIOS Cloud</b></div><div class="scBody">'
-  +(dn?'<p class="scSub">Migration terminÃ©e â 4 fichiers rapatriÃ©s<br>06 51 09 43 87 Â· Espace Â« N. A. Â» synchronisÃ©</p>'
-      :'<p class="scSub">DonnÃ©es en attente de transfert<br>06 51 09 43 87 â 4,2 Go</p>')
-  +'<div class="scRow"><i>ð¼ï¸</i><span>Photos &amp; vidÃ©os</span><small>'+(dn?'â 2,1 Go':'2,1 Go')+'</small></div>'
-  +'<div class="scRow"><i>ð¬</i><span>Sauvegardes de messages</span><small>'+(dn?'â 1,4 Go':'1,4 Go')+'</small></div>'
-  +'<div class="scRow"><i>ð</i><span>Documents</span><small>'+(dn?'â 0,7 Go':'0,7 Go')+'</small></div>'
-  +'<div class="scRow"><i>ð</i><span>Espace chiffrÃ©</span><small>'+(dn?'4 fichiers Â· verrouillÃ©s':'taille inconnue')+'</small></div>'
-  +(dn?'<p class="scNote">Les donnÃ©es de N. A. sont dans ton tÃ©lÃ©phone. Elles attendent.</p>':'')
+  o.innerHTML='<div class="scSbar"><span>'+hm9+'</span><i>5G</i><i>78%</i></div><div class="scHead hs"><span class="scIc"><svg viewBox="0 0 24 24" fill="none" stroke="#9fb4d8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H6a4.5 4.5 0 0 1-.9-8.9 7 7 0 0 1 13.3-1.4A4.6 4.6 0 0 1 17.5 19z"/></svg></span><b>HÉLIOS Cloud</b></div><div class="scBody">'
+  +(dn?'<p class="scSub">Migration terminée — 4 fichiers rapatriés<br>06 51 09 43 87 · Espace « N. A. » synchronisé</p>'
+      :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 — 4,2 Go</p>')
+  +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>'+(dn?'✓ 2,1 Go':'2,1 Go')+'</small></div>'
+  +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>'+(dn?'✓ 1,4 Go':'1,4 Go')+'</small></div>'
+  +'<div class="scRow"><i>📄</i><span>Documents</span><small>'+(dn?'✓ 0,7 Go':'0,7 Go')+'</small></div>'
+  +'<div class="scRow"><i>🔐</i><span>Espace chiffré</span><small>'+(dn?'4 fichiers · verrouillés':'taille inconnue')+'</small></div>'
+  +(dn?'<p class="scNote">Les données de N. A. sont dans ton téléphone. Elles attendent.</p>':'')
   +'</div>'}
  else if(spec.k==="files"){
   map=spec.map||{};
   const head=document.createElement("div");head.className="scHead";
-  head.innerHTML='<span class="scIc">ð</span><b>Archive Â« N. A. Â»</b>';
+  head.innerHTML='<span class="scIc">📂</span><b>Archive « N. A. »</b>';
   const body=document.createElement("div");body.className="scBody";
   const sub=document.createElement("p");sub.className="scSub";
-  sub.innerHTML="4 Ã©lÃ©ments rapatriÃ©s du cloud de N. A.<br>La migration s'est terminÃ©e pendant l'appel.";
+  sub.innerHTML="4 éléments rapatriés du cloud de N. A.<br>La migration s'est terminée pendant l'appel.";
   body.append(sub);
   (n.fx||[]).forEach(r=>{
    const ic=r[0],nm=r[1],ds=r[2],tgt=map[nm];
    const opd=st["op_"+nm];
    const rw=document.createElement("div");rw.className="scRow "+(tgt?"go":"dim")+(opd?" read":"");
-   rw.innerHTML='<i>'+ic+'</i><span>'+nm+'</span><small>'+(opd?"â lu Â· ":"")+ds+'</small>';
+   rw.innerHTML='<i>'+ic+'</i><span>'+nm+'</span><small>'+(opd?"✓ lu · ":"")+ds+'</small>';
    if(tgt)rw.onclick=async ev=>{ev.stopPropagation();if(o.dataset.done)return;o.dataset.done=1;
     const ch=(n.c||[]).find(cc=>cc&&cc[1]===tgt);
     if(ch)applyEf(ch[2]);
@@ -666,10 +666,10 @@ async function scrOv(n){
     await sl(300);play(tgt,run)};
    body.append(rw)});
   const note=document.createElement("p");note.className="scNote";
-  note.textContent="Quatre fichiers qui ne sont pas Ã  toi, maintenant dans ton tÃ©lÃ©phone.";
+  note.textContent="Quatre fichiers qui ne sont pas à toi, maintenant dans ton téléphone.";
   body.append(note);
   o.append(head);o.append(body)}
- const btns=document.createElement("div");btns.className="scBtns";if(spec.k==="helios"){const q2=document.createElement("p");q2.className="scQ";q2.textContent=spec.st==="done"?"L'archive est synchronisÃ©e. Qu'en fais-tu ?":"Rapatrier tes donnÃ©es dans ton tÃ©lÃ©phone neuf ?";btns.append(q2)}o.append(btns);
+ const btns=document.createElement("div");btns.className="scBtns";if(spec.k==="helios"){const q2=document.createElement("p");q2.className="scQ";q2.textContent=spec.st==="done"?"L'archive est synchronisée. Qu'en fais-tu ?":"Rapatrier tes données dans ton téléphone neuf ?";btns.append(q2)}o.append(btns);
  app.append(o);
  if(spec.ts){const q=String(spec.ts).match(/^(\d{1,2})h(\d{2})$/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}}
  try{beep(520,.06,.05)}catch(e){}
@@ -697,7 +697,7 @@ const ck=()=>{if(SK)return;$("clk").textContent=new Date().toLocaleTimeString("f
 function card(h){const c=document.createElement("div");c.className="card";const e=document.createElement("h2");e.textContent=h;c.append(e);return c}
 function row(c,t,d,fn,off){const b=document.createElement("button");b.className="st";b.disabled=!!off;const a=document.createElement("b");a.textContent=t;b.append(a);if(d){const s=document.createElement("small");s.textContent=d;b.append(s)}b.onclick=fn;c.append(b);return b}
 function show(c){const m=$("mn");m.replaceChildren(c);m.classList.add("on");addBack(c)}
-/* FlÃ¨che Â« retour Â» en haut Ã  gauche de chaque Ã©cran de base : reprend l'action de la ligne Â« â¹ Retour Â» de l'Ã©cran, sinon revient Ã  l'accueil. */
+/* Flèche « retour » en haut à gauche de chaque écran de base : reprend l'action de la ligne « ‹ Retour » de l'écran, sinon revient à l'accueil. */
 let INTRO_HTML=(function(){const d=document.getElementById("in");return d?d.innerHTML:""})();
 function addBack(c){
   let fn=null;c.querySelectorAll("button.st,button.bk").forEach(b=>{if(/^\u2039\s*Retour/.test(b.textContent.trim()))fn=b.onclick});
@@ -712,16 +712,16 @@ function guideOv(){
  const k=document.createElement("div");k.className="ifK";k.textContent="Guide";b.append(k);
  const h2=document.createElement("h2");h2.textContent="Comment jouer";b.append(h2);
  const g=document.createElement("div");g.className="ifGuide";
- g.innerHTML="<p><b>Lire.</b> Chaque histoire se dÃ©roule sur un tÃ©lÃ©phone : des messages arrivent, sâenchaÃ®nent, se contredisent. Photos, appels, fichiers â tout se lit comme une vraie messagerie.</p>"
- +"<p><b>RÃ©pondre.</b> Aux moments clÃ©s, des choix apparaissent. Il nây a pas de bonne rÃ©ponse : chaque mot que tu tapes rapproche de la vÃ©ritÃ©â¦ ou la fait taire pour toujours. Certains choix se rejouent, dâautres non.</p>"
+ g.innerHTML="<p><b>Lire.</b> Chaque histoire se déroule sur un téléphone : des messages arrivent, s’enchaînent, se contredisent. Photos, appels, fichiers — tout se lit comme une vraie messagerie.</p>"
+ +"<p><b>Répondre.</b> Aux moments clés, des choix apparaissent. Il n’y a pas de bonne réponse : chaque mot que tu tapes rapproche de la vérité… ou la fait taire pour toujours. Certains choix se rejouent, d’autres non.</p>"
  +"<p><b>Les boutons, une fois dans le jeu :</b></p>"
- +"<p><b>â¹</b> en haut Ã  gauche : la bibliothÃ¨que â histoires, reprise de partie, rÃ©glages.<br>"
- +"<b>â</b> : paramÃ¨tres de la partie â thÃ¨me nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein Ã©cran, transfert de sauvegarde.<br>"
- +"<b>ð</b> Ã  cÃ´tÃ© de lâheure : ta progression, tes fins, tes notes.</p>"
- +"<p><b>Ta progression est sauvegardÃ©e</b> automatiquement sur ton appareil â pas de compte, pas de serveur. Tu peux lâexporter (code ou fichier) depuis les rÃ©glages pour la poursuivre ailleurs.</p>"
- +"<p><b>Le tÃ©lÃ©phone de dÃ©mo</b> de la page dâaccueil joue des extraits imaginaires, inventÃ©s pour donner le ton du jeu : rien de ce qui y apparaÃ®t ne fait partie des vraies histoires.</p>";
+ +"<p><b>‹</b> en haut à gauche : la bibliothèque — histoires, reprise de partie, réglages.<br>"
+ +"<b>⚙</b> : paramètres de la partie — thème nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein écran, transfert de sauvegarde.<br>"
+ +"<b>📖</b> à côté de l’heure : ta progression, tes fins, tes notes.</p>"
+ +"<p><b>Ta progression est sauvegardée</b> automatiquement sur ton appareil — pas de compte, pas de serveur. Tu peux l’exporter (code ou fichier) depuis les réglages pour la poursuivre ailleurs.</p>"
+ +"<p><b>Le téléphone de démo</b> de la page d’accueil joue des extraits imaginaires, inventés pour donner le ton du jeu : rien de ce qui y apparaît ne fait partie des vraies histoires.</p>";
  b.append(g);
- const cb=document.createElement("button");cb.className="ifBack";cb.textContent="â¹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
+ const cb=document.createElement("button");cb.className="ifBack";cb.textContent="‹ Fermer";cb.onclick=()=>{o.remove()};b.append(cb);
  o.append(b);document.body.append(o);try{noRubber(o)}catch(e){}
  o.addEventListener("click",e2=>{if(e2.target===o)o.remove()});
 }
@@ -749,17 +749,17 @@ function infoOv(){
   b.append(meta);
   const M=window.etlMisc||{};let tot=0,g0=0;try{if(M.endsOf)tot=M.endsOf(SS);if(M.feN)g0=M.feN(SS)}catch(e){}
   if(tot>1){const fl=document.createElement("button");fl.className="ifBtn";
-   fl.innerHTML="\uD83C\uDFC1 Fins : "+Math.min(g0,tot)+" / "+tot+" â touche pour les voir";
+   fl.innerHTML="\uD83C\uDFC1 Fins : "+Math.min(g0,tot)+" / "+tot+" — touche pour les voir";
    fl.onclick=()=>{o.remove();if(M.endsCard)M.endsCard(SS)};b.append(fl)}
   else{const vh=document.createElement("div");vh.className="ifVar";
    vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";
    b.append(vh)}
  }
  const nb2=document.createElement("button");nb2.className="finStat ifNotes";
- nb2.innerHTML="\uD83D\uDCDD Notes de l'enqu\u00EAte â qui est qui, ce que tu sais";
+ nb2.innerHTML="\uD83D\uDCDD Notes de l'enqu\u00EAte — qui est qui, ce que tu sais";
  nb2.onclick=()=>{o.remove();if(typeof notesOv==="function")notesOv(false)};b.append(nb2);
  const g=document.createElement("div");g.className="ifGuide";
- g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : la biblioth\u00E8que â histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages â th\u00E8me nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein \u00E9cran, transfert de sauvegarde.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche â o\u00F9 tu en es, tes fins, tes notes.</p><p><b>\uD83D\uDCDD</b> : les notes de l'enqu\u00EAte â qui est qui, ce que tu sais, tes preuves.</p>";
+ g.innerHTML="<b>Les boutons</b><p><b>\u2039</b> en haut \u00E0 gauche : la biblioth\u00E8que — histoires, reprise de partie, r\u00E9glages.</p><p><b>\u2699</b> : r\u00E9glages — th\u00E8me nuit / jour / auto, volume, vitesse de lecture, voix des appels, plein \u00E9cran, transfert de sauvegarde.</p><p><b>\uD83D\uDCD5</b> \u00E0 c\u00F4t\u00E9 de l'heure : cette fiche — o\u00F9 tu en es, tes fins, tes notes.</p><p><b>\uD83D\uDCDD</b> : les notes de l'enqu\u00EAte — qui est qui, ce que tu sais, tes preuves.</p>";
  b.append(g);
  const cb=document.createElement("button");cb.className="ifBack";cb.textContent="\u2039 Reprendre la conversation";
  cb.onclick=()=>{o.remove()};b.append(cb);
@@ -778,22 +778,22 @@ function homeIntro(){
   $("mn").classList.remove("on");amb(null);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add("on")))}
 function menu(){veil(0);run++;SK=0;ck();amb(null);$("ov").hidden=true;$("vol").hidden=true;document.body.classList.remove("wa");
- const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes Â· v"+VER;c.append(vd);
- row(c,"â ParamÃ¨tres de la partie","ThÃ¨me, son, vitesse de lecture, plein Ã©cran, transfert",()=>{volToggle()});show(c);
+ const c=card("Choisis une histoire");STORIES.forEach(s=>{const lk=s.id!=="h";const b=row(c,s.t,s.d,()=>chap(s),lk);if(lk)b.disabled=true});const vd=document.createElement("div");vd.className="verTag";vd.textContent="Entre les lignes · v"+VER;c.append(vd);
+ row(c,"⚙ Paramètres de la partie","Thème, son, vitesse de lecture, plein écran, transfert",()=>{volToggle()});show(c);
  setTimeout(()=>{if($("mn").classList.contains("on")){document.body.classList.remove("play");$("chat").innerHTML="";$("ch").innerHTML="";$("chat").style.backgroundImage=""}},700)}
 function chap(s){let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem("pg"+s.id))||P}catch(e){}PG=P;SS=s;
  const c=card(s.t);
- s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);row(c,(i+1)+". "+h[0]+(ok?"":w?" Â· verrouillÃ©":" Â· bientÃ´t"),"",()=>{SC=i;$("nm").textContent=s.n;$("av").textContent=s.n[0];start()},!ok)});
- row(c,"â¹ Retour","",menu);show(c)}
+ s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);row(c,(i+1)+". "+h[0]+(ok?"":w?" · verrouillé":" · bientôt"),"",()=>{SC=i;$("nm").textContent=s.n;$("av").textContent=s.n[0];start()},!ok)});
+ row(c,"‹ Retour","",menu);show(c)}
 function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();if(typeof notesOv==="function")notesOv(false)});
-/* ---- boutons et dÃ©marrage ---- */
+/* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&(e.target===vv||(!vv.contains(e.target)&&!$("set").contains(e.target))))vv.hidden=true});
-{const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"ðï¸":"ð")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activÃ©es":"dÃ©sactivÃ©es"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
+{const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
- up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const tb2=$("thB");if(tb2){const THL={dark:"ð Nuit",auto:"ð Suit lâhistoire",light:"ð¤ Jour"};const upT=()=>{tb2.textContent="ð ThÃ¨me : "+THL[THM]};tb2.onclick=()=>{THM=THM==="dark"?"auto":(THM==="auto"?"light":"dark");try{localStorage.setItem("etl_theme",THM)}catch(e){}thApply();upT()};upT()}}
-{const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"â¶ Quitter le plein Ã©cran":"â¶ Plein Ã©cran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
+ up();tb.onclick=()=>{TTS_ON=!TTS_ON;try{localStorage.setItem("etl_tts",TTS_ON?"on":"off")}catch(e){}up()}}}{const tb2=$("thB");if(tb2){const THL={dark:"🌑 Nuit",auto:"🌓 Suit l’histoire",light:"🌤 Jour"};const upT=()=>{tb2.textContent="🌊 Thème : "+THL[THM]};tb2.onclick=()=>{THM=THM==="dark"?"auto":(THM==="auto"?"light":"dark");try{localStorage.setItem("etl_theme",THM)}catch(e){}thApply();upT()};upT()}}
+{const fb=$("fsB");if(fb){const FS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);const canFs=document.documentElement&&(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);fb.style.display=canFs?"":"none";const upFs=()=>{fb.textContent=FS()?"⛶ Quitter le plein écran":"⛶ Plein écran"};fb.onclick=()=>{const d=document.documentElement;if(FS()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}else{const rq=d.requestFullscreen||d.webkitRequestFullscreen;if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}};["fullscreenchange","webkitfullscreenchange"].forEach(ev=>{try{document.addEventListener(ev,upFs)}catch(e){}});upFs()}}
 $("ntB").onclick=()=>{$("vol").hidden=true;if(typeof notesOv==="function")notesOv(false)};
 {const tr=$("trB");if(tr)tr.onclick=()=>{$("vol").hidden=true;transferOv()};}$("apps").onclick=()=>appHome();
 [["v1",x=>VA=x/100],["v2",x=>VS=x/100]].forEach(([i,f])=>{$(i).value=[VA,VS,VV][+i[1]-1]*100;$(i).oninput=e=>{f(+e.target.value);setV()}});$("v3").value=SPD*100;$("v3").oninput=e=>{SPD=+e.target.value/100;try{localStorage.setItem("etl_spd",SPD)}catch(e){}};setV();
@@ -812,7 +812,7 @@ addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:tr
  requestAnimationFrame(()=>$("in").classList.add("on"));
  setTimeout(()=>Object.values(IMG).forEach(u=>{const i=new Image();i.src=u;if(i.decode)i.decode().catch(()=>0)}),800)})();
 
-/* ---- AmÃ©liorations narratives : Ã©vÃ©nements sonores et vraies piÃ¨ces jointes visuelles ---- */
+/* ---- Améliorations narratives : événements sonores et vraies pièces jointes visuelles ---- */
 const addBase = add;
 function photoSvg(kind){
  const common='<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#aebbc3"/><stop offset="1" stop-color="#e9d9c8"/></linearGradient><linearGradient id="dark" x2="0" y2="1"><stop stop-color="#443d3c"/><stop offset="1" stop-color="#171b20"/></linearGradient><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values=".2 0 0 0 .4 .2 0 0 0 .4 .2 0 0 0 .4 0 0 0 .12 0"/></filter></defs>';
@@ -827,23 +827,23 @@ function photoSvg(kind){
 function addPhoto(kind,caption){
  const card=document.createElement('div');card.className='photo-attachment';
  const img=document.createElement('img');img.className='photo-art';img.alt=caption;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(photoSvg(kind));
- const meta=document.createElement('div');meta.className='photo-meta';meta.innerHTML='<span class="camera">â§</span><span>PiÃ¨ce jointe Â· photo</span><span style="margin-left:auto">Maintenant</span>';
+ const meta=document.createElement('div');meta.className='photo-meta';meta.innerHTML='<span class="camera">▧</span><span>Pièce jointe · photo</span><span style="margin-left:auto">Maintenant</span>';
  const cap=document.createElement('div');cap.className='photo-caption';cap.textContent=caption;
  card.append(img,meta,cap);$('chat').append(card);$('chat').scrollTop=1e9;
  if(ac){tn(1450,900,.07,.025,.005);setTimeout(()=>tn(900,1250,.045,.018,.005),65)}
 }
 function arrivalCue(){
  if(!ac||!nz)return;
- // Pas sur sol dur : impacts doux et irrÃ©guliers, spatialisÃ©s par le filtre dÃ©jÃ  utilisÃ©.
+ // Pas sur sol dur : impacts doux et irréguliers, spatialisés par le filtre déjà utilisé.
  [0,390,820,1190,1580].forEach((delay,i)=>setTimeout(()=>{if(ac&&nz){hit(180+i*9,.11,.055,'lowpass',.008,1.4);tn(95,72,.075,.018,.01)}},delay));
 }
 add=function(c,x){
  const d=addBase(c,x);
  if(c==='n' && typeof x==='string'){
-  if(/(?:descend la passerelle|arrive devant toi|s'approche de toi|s'approche du quai|marche vers toi|vient vers toi|ses pas rÃ©sonnent|bruits? de pas|arrive en marchant|marche Ã  cÃ´tÃ© de moi|court avec un parapluie|des pas rÃ©sonnent)/i.test(x))arrivalCue();
-  if(/photo floue arrive|une photo\s*:|une photo arrive|photo :|photo de Camille et LÃ©o|photo avec Camille/i.test(x)){ 
-   const kind=/robe bleu nuit|Ã©tiquette Ã©crite Ã  la main/i.test(x)?'dress':/parapluie rouge|grande porte de bois|grande porte de lâÃ©glise/i.test(x)?'church':/escalier roulant|hublot|chaussures/i.test(x)?'plane':/plage|Ã©tÃ©|rit aux Ã©clats|Camille et LÃ©o/i.test(x)?'beach':'generic';
-   const caption=kind==='dress'?'Une robe bleu nuit prÃ©parÃ©e pour la cÃ©rÃ©monie, avec une Ã©tiquette manuscrite.':kind==='church'?'Un parapluie rouge devant la porte de lâÃ©glise, flou sous la pluie.':kind==='plane'?'Ses chaussures dans lâavion, un morceau de hublot et le ciel pÃ¢le.':kind==='beach'?'Une photo dâÃ©tÃ© au bord de lâeau, Camille sourit Ã  cÃ´tÃ© de LÃ©o.':'Photo reÃ§ue';
+  if(/(?:descend la passerelle|arrive devant toi|s'approche de toi|s'approche du quai|marche vers toi|vient vers toi|ses pas résonnent|bruits? de pas|arrive en marchant|marche à côté de moi|court avec un parapluie|des pas résonnent)/i.test(x))arrivalCue();
+  if(/photo floue arrive|une photo\s*:|une photo arrive|photo :|photo de Camille et Léo|photo avec Camille/i.test(x)){ 
+   const kind=/robe bleu nuit|étiquette écrite à la main/i.test(x)?'dress':/parapluie rouge|grande porte de bois|grande porte de l’église/i.test(x)?'church':/escalier roulant|hublot|chaussures/i.test(x)?'plane':/plage|été|rit aux éclats|Camille et Léo/i.test(x)?'beach':'generic';
+   const caption=kind==='dress'?'Une robe bleu nuit préparée pour la cérémonie, avec une étiquette manuscrite.':kind==='church'?'Un parapluie rouge devant la porte de l’église, flou sous la pluie.':kind==='plane'?'Ses chaussures dans l’avion, un morceau de hublot et le ciel pâle.':kind==='beach'?'Une photo d’été au bord de l’eau, Camille sourit à côté de Léo.':'Photo reçue';
    addPhoto(kind,caption);
   }
  }
@@ -851,35 +851,35 @@ add=function(c,x){
 };
 
 
-/* ---- horloge glissante (v2.51) : hissÃ©e au top-level â play() top-level utilise clkSet/clkPlan, elles NE DOIVENT PAS rester dans l'IIFE sauvegarde (cf bug STATS v2.50) ---- */
-/* ---- horloge glissante : le temps du rÃ©cit avance entre les messages ---- */
+/* ---- horloge glissante (v2.51) : hissée au top-level — play() top-level utilise clkSet/clkPlan, elles NE DOIVENT PAS rester dans l'IIFE sauvegarde (cf bug STATS v2.50) ---- */
+/* ---- horloge glissante : le temps du récit avance entre les messages ---- */
 const CLK={h:null,m:0},CLKBASE={h:null,m:0};let CLKMAX=null;
-/* ---- v2.82 : thÃ¨me nuit/jour/auto (auto = suit l'horloge fiction) ---- */
+/* ---- v2.82 : thème nuit/jour/auto (auto = suit l'horloge fiction) ---- */
 
 function thEff(){if(THM!=="auto")return THM;let h=null;try{h=CLK.h}catch(e){}return(h!=null&&h>=8&&h<19)?"light":"dark"}
 function thApply(){try{document.documentElement.dataset.theme=thEff()}catch(e){}}
 thApply();
 function clkSet(hm){const q=String(hm).replace("h",":").split(":");CLK.h=+q[0];CLK.m=+q[1];CLKBASE.h=CLK.h;CLKBASE.m=CLK.m;CLKMAX=null;thApply()}
 function clkNow(){return CLK.h==null?null:String(CLK.h).padStart(2,"0")+":"+String(CLK.m).padStart(2,"0")}
-/* borne : l'horloge ne dÃ©rive JAMAIS au-delÃ  du prochain horodatage scÃ©narisÃ© (ni +30 min sans repÃ¨re) */
+/* borne : l'horloge ne dérive JAMAIS au-delà du prochain horodatage scénarisé (ni +30 min sans repère) */
 function clkScan(id,cand){const n2=S[id];if(!n2)return;for(const[w,x]of n2.m||[]){const q=String(w==="n"?x:"").match(/(\d{1,2})h(\d{2})/);if(q){cand.push({h:+q[1],m:+q[2]});return}}}
 function clkPlan(n){CLKMAX=null;if(CLK.h==null||!n)return;
  const cur=CLK.h*60+CLK.m,seen=new Set(),q=[];
- /* BFS bornÃ© : le PREMIER horodatage le long de chaque chemin est le seul contraignant */
+ /* BFS borné : le PREMIER horodatage le long de chaque chemin est le seul contraignant */
  const push=(id,dp)=>{if(id&&S[id]&&!seen.has(id)&&dp<=6){seen.add(id);q.push({id,dp})}};
  (n.c||[]).forEach(ch=>ch&&push(ch[1],1));if(n.x)push(n.x,1);if(n.h)push(n.h,1);
  if(n.j){try{push(n.j(st),1)}catch(e){}try{const s2=JSON.parse(JSON.stringify(st));s2.piege=s2.piege?0:1;push(n.j(s2),1)}catch(e){}}
  while(q.length){
   const it=q.shift(),n2=S[it.id];let hasT=null;
   for(const[w,x]of n2.m||[]){const q2=String(w==="n"?x:"").match(/^(\d{1,2})h(\d{2})/);if(q2){hasT={h:+q2[1],m:+q2[2]};break}}
-  if(hasT){const v=hasT.h*60+hasT.m;if(v>cur&&(!CLKMAX||v<CLKMAX.h*60+CLKMAX.m))CLKMAX=hasT;continue} /* temps trouvÃ© : chemin stoppÃ© lÃ  */
+  if(hasT){const v=hasT.h*60+hasT.m;if(v>cur&&(!CLKMAX||v<CLKMAX.h*60+CLKMAX.m))CLKMAX=hasT;continue} /* temps trouvé : chemin stoppé là */
   (n2.c||[]).forEach(ch=>ch&&push(ch[1],it.dp+1));if(n2.x)push(n2.x,it.dp+1);if(n2.h)push(n2.h,it.dp+1);
   if(n2.j){try{push(n2.j(st),it.dp+1)}catch(e){}}
  }}
 setInterval(()=>{if(!SK||CLK.h==null)return;
  const cur=CLK.h*60+CLK.m,base=CLKBASE.h*60+CLKBASE.m;
  if(CLKMAX){if(cur>=CLKMAX.h*60+CLKMAX.m-1)return}          /* stoppe juste avant le prochain horodatage */
- else if(cur-base>=30)return;                                  /* dÃ©rive max 30 min sans repÃ¨re */
+ else if(cur-base>=30)return;                                  /* dérive max 30 min sans repère */
  CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
 
 /* Sauvegarde de reprise */
@@ -908,7 +908,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
     else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
    if(!locked)b.onclick=()=>chap(s);list.append(b)});
-  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>â ParamÃ¨tres de la partie</h3><p>ThÃ¨me, son, vitesse de lecture, plein Ã©cran, transfert</p>';ob.onclick=volToggle;list.append(ob)};
+  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres de la partie</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob)};
   show(c);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){
@@ -933,7 +933,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('button');r.className='bk'+(ok?' open':' lock');r.disabled=!ok;
    r.innerHTML='<h3>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</h3>';list.append(r)});
-  const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>â¹ Retour</b>';bk3.onclick=()=>chap(s);c.append(bk3);
+  const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>chap(s);c.append(bk3);
   show(c)}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
@@ -956,14 +956,14 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
     fb.innerHTML='<h3>\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'</h3><p>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</p>';
     fb.onclick=()=>endsCard(s);list.append(fb)}
-   const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>â¹ Retour</b>';bk3.onclick=()=>menu();c.append(bk3);
+   const bk3=document.createElement('button');bk3.className='st';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>menu();c.append(bk3);
    show(c)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
    const o=document.createElement('div');o.className='rsOv';
    const c=card(s.t);
    const lk=(t,d,fn,cls)=>{const b=document.createElement('button');b.className='bk'+(cls?' '+cls:'');b.innerHTML='<h3>'+t+'</h3><p>'+d+'</p>';b.onclick=fn;c.append(b);return b};
-   lk('Reprendre la conversation','Chapitre '+Math.min((v.chapter||0)+1,((s.ch&&s.ch.length)||1))+' / '+((s.ch&&s.ch.length)||1)+' Â· '+(()=>{try{const f=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');return f.length+' fin'+(f.length>1?'s':'')+' vue'+(f.length>1?'s':'')}catch(e){return ''}})()+' â arrÃªt le '+new Date(v.at).toLocaleString('fr-FR'),()=>{o.remove();resume(v)},'open');
+   lk('Reprendre la conversation','Chapitre '+Math.min((v.chapter||0)+1,((s.ch&&s.ch.length)||1))+' / '+((s.ch&&s.ch.length)||1)+' · '+(()=>{try{const f=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');return f.length+' fin'+(f.length>1?'s':'')+' vue'+(f.length>1?'s':'')}catch(e){return ''}})()+' — arrêt le '+new Date(v.at).toLocaleString('fr-FR'),()=>{o.remove();resume(v)},'open');
    const rb=lk('Recommencer cette histoire','Efface ta progression de cette histoire',()=>{
     if(!rb.dataset.armed){rb.dataset.armed='1';rb.querySelector('h3').textContent='Confirmer l\u2019effacement';rb.querySelector('p').textContent='Ton avancement sera perdu \u2014 reclique pour confirmer';return}
     o.remove();
@@ -993,7 +993,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
 })();
 
 
-/* Migration narrative : invalider les Ã©tats de reprise crÃ©Ã©s par les versions incohÃ©rentes. */
+/* Migration narrative : invalider les états de reprise créés par les versions incohérentes. */
 try{
  const ver=localStorage.getItem('etl_story_schema');
  if(ver!=='2026-10-coherence-2'){
@@ -1001,7 +1001,6 @@ try{
    localStorage.setItem('etl_story_schema','2026-10-coherence-2');
  }
 }catch(e){}
-
 
 
 
