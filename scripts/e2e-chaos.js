@@ -29,7 +29,7 @@ const log = m => console.log('e2e-chaos: ' + m);
 
 (async () => {
   const b = await chromium.launch();
-  const ctx = await b.newContext();
+  const ctx = await b.newContext({ acceptDownloads: true });
   page = await ctx.newPage();
   page.on('pageerror', e => errs.push('pageerror: ' + e.message));
   page.setDefaultTimeout(15000);
@@ -135,9 +135,18 @@ const log = m => console.log('e2e-chaos: ' + m);
   const t0 = Date.now();
   let lastProgress = Date.now();
   let lastChat = await chatLen();
-  let it = 0, ended = false;
+  let it = 0, ended = false, navRecoveries = 0;
   while (Date.now() - t0 < BUDGET_MS) {
     it++;
+    /* sentinelle navigation : un export blob / import de sauvegarde peut faire
+       quitter jeu.html — le « joueur » rouvre le jeu puis Reprend sa partie */
+    if (!/jeu\.html/.test(page.url())) {
+      log('navigation inattendue vers ' + page.url() + ' — retour au jeu');
+      navRecoveries++;
+      await page.goto(root + '/jeu.html');
+      await page.waitForTimeout(800);
+      lastProgress = Date.now();
+    }
     if (it % 6 === 3) await chaosTick();
     await settle();
     if (await vis('.finB') || await vis('#endOv')) { ended = true; break; } /* écran de fin atteint */
@@ -159,7 +168,7 @@ const log = m => console.log('e2e-chaos: ' + m);
 
   if (errs.length) { console.error('ERREURS PAGE:\n' + errs.join('\n')); process.exit(1); }
   await b.close();
-  console.log('E2E-CHAOS OK (SEED=' + SEED + ') — ' + it + ' itérations, ' + chaosClicks + ' clics de chaos, fin du chapitre 1 atteinte, 0 erreur page');
+  console.log('E2E-CHAOS OK (SEED=' + SEED + ') — ' + it + ' itérations, ' + chaosClicks + ' clics de chaos, fin du chapitre 1 atteinte, ' + navRecoveries + ' navigations récupérées, 0 erreur page');
   process.exit(0);
 })().catch(e => {
   console.error('E2E-CHAOS FAIL (SEED=' + SEED + '):', e.message);
@@ -170,6 +179,6 @@ const log = m => console.log('e2e-chaos: ' + m);
     /* eslint-disable-next-line no-undef */
     node: typeof nodeNow !== 'undefined' ? nodeNow : '?',
     ovs: Array.from(document.querySelectorAll('div[id]')).map(d => d.id + (d.hidden ? ':h' : '')).join(',')
-  })).then(d => console.error('DIAG ' + d)).catch(() => {});
+  })).then(d => console.error('DIAG ' + d + ' url=' + page.url())).catch(() => {});
   setTimeout(() => process.exit(1), 500);
 });
