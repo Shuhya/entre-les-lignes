@@ -763,3 +763,34 @@ html[data-theme="light"] .ifCh{color:#1a2030;border-bottom-color:#00000014}
 html[data-theme="light"] .ifCh small{color:#45505c}
 html[data-theme="light"] .ifRep{background:#0000000a;color:#45505c}
 html[data-theme="light"] .ifBack{color:#45505c;border-color:#00000022}
+
+/* ---- v2.134 : overlays plein ecran adaptatifs sur grands ecrans ---- */
+@media (min-width:1200px) and (min-height:800px){
+  .ngCard{width:min(420px,86vw)}
+  .ngCard h2{font-size:27px}
+  .ngCard input{font:17px Georgia,serif;padding:13px 16px}
+  .ngP{font-size:15.5px;margin-bottom:24px}
+  .ngGo{font-size:14.5px;padding:14px 0}
+  .proCard{width:min(480px,86vw)}
+  .proCard h2{font-size:29px;max-width:380px}
+  .proCard p{font-size:16px;max-width:420px}
+  .proCard .proK{font-size:11px}
+  .proBtn{font-size:14.5px}
+  #endOv .card{max-width:540px}
+  #endOv h2{font-size:33px}
+  .endTxt{font-size:16px}
+  #mn .card{max-width:500px}
+  .rsOv .card{max-width:480px}
+  .volCard{width:min(480px,92vw)}
+}
+@media (min-width:1600px) and (min-height:900px){
+  .ngCard{width:min(460px,86vw)}
+  .ngCard h2{font-size:29px}
+  .ngP{font-size:16.5px}
+  .proCard{width:min(520px,86vw)}
+  .proCard h2{font-size:31px;max-width:420px}
+  .proCard p{font-size:17px;max-width:460px}
+  #endOv .card{max-width:580px}
+  #mn .card{max-width:540px}
+  .rsOv .card{max-width:500px}
+}
