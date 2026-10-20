@@ -117,8 +117,8 @@ const log = m => console.log('e2e-chaos: ' + m);
       const r1 = page.locator('#mn button', { hasText: /^1\. / }).first();
       if (await r1.count()) { try { await r1.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
     }
-    /* overlays bloquants du récit */
-    const BLOCKERS = ['.lkNext', '.awGo', '#lkWake', '.notif', '.rdOk',
+    /* overlays bloquants du récit (proSkip = cartes de fin de chapitre) */
+    const BLOCKERS = ['.proSkip', '.lkNext', '.awGo', '#lkWake', '.notif', '.rdOk',
       '#scrOv .scRow.go:not(.read)', '#scrOv .scBtn', '#incOv .incAcc',
       '#calOv .calCh button', '#calOv .calEnd:not([hidden])'];
     for (const sel of BLOCKERS) {
