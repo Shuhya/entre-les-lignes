@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.132";
+const VER="2.133";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -573,7 +573,7 @@ function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=docum
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
  o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><i>'+((s&&s.ic)||"💬")+'</i><span><b>'+(s&&s.nm||"")+'</b>'+(s&&s.txt||"")+'</span><b class="lkBadge">1</b></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
- try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&IMG.fondec)||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
+ try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
  const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
  await new Promise(res=>{o.onclick=()=>{veil(1);try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{var d=document.getElementById("lkDim");if(d)d.remove()}catch(e){}res()},420)}})}
