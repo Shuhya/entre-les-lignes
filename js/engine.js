@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.165";
+const VER="2.166";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -491,7 +491,7 @@ function gf(t){if(!st||!st.pf)return String(t);return String(t)
  .replace(/(?<![\p{L}])ancien inspecteur(?![\p{L}])/gu,"ancienne inspectrice")
  .replace(/(?<![\p{L}])réparateur indépendant(?![\p{L}])/gu,"réparatrice indépendante")
  .replace(/(?<![\p{L}])un ancien inspecteur(?![\p{L}])/gu,"une ancienne inspectrice")
- .replace(/(?<![\p{L}])d'un coéquipier(?![\p{L}])/gu,"d'une coéquipière").replace(/(?<![\p{L}])coéquipier(?![\p{L}])/gu,"coéquipière").replace(/(?<![\p{L}])d'un ancien flic(?![\p{L}])/gu,"d'une ancienne flic").replace(/n'es pas lui/g,"n'es pas elle")}
+ .replace(/(?<![\p{L}])d’un coéquipier(?![\p{L}])/gu,"d’une coéquipière").replace(/(?<![\p{L}])coéquipier(?![\p{L}])/gu,"coéquipière").replace(/(?<![\p{L}])d’un ancien flic(?![\p{L}])/gu,"d’une ancienne flic").replace(/n'es pas lui/g,"n'es pas elle")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
  o.innerHTML='<div class="ngList"><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom.</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><button class="bk ngBk" id="ngF"><h3>♀ Une femme</h3><p>L’histoire s’accorde au féminin.</p></button><button class="bk ngBk" id="ngM"><h3>♂ Un homme</h3><p>L’histoire s’accorde au masculin.</p></button><button class="ngGo">Continuer</button></div>';
  $("app").append(o);
