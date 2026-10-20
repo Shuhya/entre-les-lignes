@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.149";
+const VER="2.150";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -341,7 +341,7 @@ else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="
 c.append(fd);
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
- o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
+ try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }
 function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[fn];
  try{localStorage.setItem("pg"+SS.id,JSON.stringify(PG));k=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!k.includes(fn)){k.push(fn);localStorage.setItem("fe"+SS.id,JSON.stringify(k))}}catch(e){}
@@ -573,7 +573,7 @@ function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=docum
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
  o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div><b class="lkBadge">1</b></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
- try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkTop b"),tm=o.querySelector(".lkTop small"),tx=o.querySelector(".lkTx");const nm=s&&s.nm||"";tb.textContent=nm;tm.textContent=(s&&s.t)||"";tx.textContent=s&&s.txt||"";
+ try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkTop b"),tm=o.querySelector(".lkTop small"),tx=o.querySelector(".lkTx");const pn=(st&&st.pname)||"toi";const nm=s&&s.nm||"";tb.textContent=nm.replace(/%N%/g,pn);tm.textContent=(s&&s.t)||"";tx.textContent=String(s&&s.txt||"").replace(/%N%/g,pn);
  if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.style.backgroundImage="url("+AVN[nm]+")"}else ic.textContent=(s&&s.ic)||"💬"}catch(e){}
  const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
