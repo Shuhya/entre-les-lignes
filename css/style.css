@@ -492,7 +492,7 @@ body.pc .b{max-width:58%}
 #scrOv .scLi.dim{opacity:.6}
 
 /* v2.63 : bulle photo MMS */
-.b.h.pm{padding:3px;max-width:82%}.b.h.pm img{max-width:100%;max-height:280px;border-radius:12px;display:block}
+.b.h.pm{padding:3px;max-width:82%}.b.h.pm img{max-width:100%;max-height:280px;border-radius:12px;display:block}.b.m.pm{padding:3px;max-width:82%}.b.m.pm img{max-width:100%;max-height:280px;border-radius:12px;display:block}
 
 /* v2.65 : réveil écran de verrouillage + notification — v2.133 : fondu in/out, wallpaper genre visible, notif façon Samsung */
 #lkWake{position:absolute;inset:0;background:linear-gradient(180deg,#000000b3,#000000e6 78%);z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px system-ui,sans-serif;color:#dfe7f3;cursor:pointer;animation:fo .6s ease}
@@ -570,7 +570,7 @@ body.pc .b{max-width:58%}
 
 
 /* ---- v2.81 : MMS téléchargé, pluie animée, ken-burns décors (PC) ---- */
-.b.h.pm img{animation:pmIn 1.1s ease both}
+.b.h.pm img{animation:pmIn 1.1s ease both}.b.m.pm img{animation:pmIn 1.1s ease both}
 @keyframes pmIn{from{filter:blur(7px);transform:scale(.985);opacity:.25}to{filter:blur(0);transform:none;opacity:1}}
 #fxRain{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8;opacity:.5}
 body.pc #chat.kb{animation:chatkb 48s ease-in-out infinite alternate}
