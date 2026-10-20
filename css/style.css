@@ -863,3 +863,11 @@ html[data-theme="light"] #notesOv .ntR{color:#1a2030e0;background:#0000000a}
 
 /* v2.161 : hint lockWake recentré en bas, au-dessus des icônes */
 #lkWake .lkHint{position:absolute;left:0;right:0;bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0;text-align:center;z-index:1}
+
+/* v2.167 : fond telephone verrouille derriere le bilan de fin */
+#lkBg{position:absolute;inset:0;z-index:70;background:linear-gradient(180deg,#000000b3,#000000e6 78%),#02040a;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px system-ui,sans-serif;color:#dfe7f3;pointer-events:none;animation:fo .6s ease}
+#lkBg .lkWp{position:absolute;inset:0;background:center/cover no-repeat;opacity:.52;filter:saturate(.92)}
+#lkBg .lkClock{position:relative;font-size:42px;font-weight:700;letter-spacing:1px;margin-bottom:34px;z-index:1}
+#lkBg .lkDate{position:relative;font-size:13px;opacity:.65;margin:-28px 0 32px;z-index:1}
+#lkBg .lkTools{position:relative;display:flex;gap:26px;z-index:1}
+#lkBg .lkTools i{font-style:normal;width:44px;height:44px;border-radius:50%;background:#ffffff14;border:1px solid #ffffff24;display:grid;place-items:center;font-size:18px;box-shadow:0 2px 10px #0006}

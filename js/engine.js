@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.166";
+const VER="2.167";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -318,6 +318,11 @@ function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.
     try{const t=n.j(st);if(t&&S[t]&&!seen[t])q.push(t)}catch(e){}}}}
  return out}
 function endsTotal(s){return endsList(s).length}
+function lockBgOn(){try{const app=$("app");const o=document.createElement("div");o.id="lkBg";
+ o.innerHTML='<div class="lkWp"></div><div class="lkClock">'+(($("clk")&&$("clk").textContent)||"23:07")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkTools"><i>🔦</i><i>📷</i></div>';
+ const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")";
+ app.append(o)}catch(e){}}
+function lockBgOff(){try{const e=document.getElementById("lkBg");if(e)e.remove()}catch(e){}}
 function endScreen(t,x,seen){const tot=endsTotal(SS);seen=(seen||[]).filter(t2=>endsList(SS).includes(t2));
  const o=document.createElement("div");o.id="endOv";
  const c=document.createElement("div");c.className="card";
@@ -327,10 +332,7 @@ function endScreen(t,x,seen){const tot=endsTotal(SS);seen=(seen||[]).filter(t2=>
  const ds=document.createElement("div");ds.className="endDossier";
  ds.innerHTML="<span>\u23F1 "+fmtT(STATS.t)+" de lecture</span><span>\uD83D\uDCAC "+STATS.msgs+" messages lus</span><span>\uD83D\uDCDA "+(STATS.runs||1)+" passage"+(STATS.runs>1?"s":"")+"</span>";
  c.append(ds);
- const st2=document.createElement("div");st2.className="endStats";
- const bar=(v,l)=>{const b=document.createElement("div");b.className="ntB";b.innerHTML="<span>"+l+"</span><i style='width:"+Math.min(100,(v||0)*33)+"%'></i>";st2.append(b)};
- bar(st.int,SS.id==="h"?"Discrétion":"Intégrité");bar(st.pov,"Preuves du réseau");bar(st.prm,"Preuves du meurtre");c.append(st2);
- const fd=document.createElement("div");fd.className="endFins";
+  const fd=document.createElement("div");fd.className="endFins";
 if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes — "+seen.length+" / "+tot;fd.append(fl);
  const list=document.createElement("div");list.className="endFinsList";
  endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
@@ -339,8 +341,8 @@ if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couve
  fd.append(list)}
 else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";fd.append(vh)}
 c.append(fd);
- const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{o.remove();SC=0;start()};c.append(b1);
- const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{o.remove();menu()};c.append(b2);
+ const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
+ const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
  try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }
 function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[fn];
@@ -349,7 +351,7 @@ function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.6),i*160));
  const nx=(SS.ch[SC+1]||[])[1],ok=!!S[nx],r=run;
  setTimeout(()=>{if(r!=run)return;
-  if(skip){endScreen(t,x,k);return}
+  if(skip){lockBgOn();endScreen(t,x,k);return}
  const cb=$("ch");cb.innerHTML="";
  const bb=document.createElement("button");bb.className="finB";
  bb.textContent=ok?"\u25B8 J'ai tout lu \u2014 chapitre suivant":"\u25B8 J'ai tout lu \u2014 bilan de l'histoire";
@@ -892,7 +894,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  const oldPlay=play;
  let preChat=null;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);preChat=$('chat').innerHTML;save();const v=await oldPlay(id,r);if(r!=run)return v;preChat=null;save();return v};
- const oldFin=fin;fin=function(v){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v);save()};
+ const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  const oldMenu=menu;
  menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
