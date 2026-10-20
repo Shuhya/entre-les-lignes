@@ -5,7 +5,7 @@ const ETL_INV=st=>[st.prm&&"la dernière voix de Nils",st.pov&&"son carnet de no
 const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],P=x=>["p",x],PM=x=>["pm",x],A=x=>["a",x],K=()=>["x",""];
 const S={
 h1:{w:"appart",pro:["Numéro attribué",
-"Vaubris, 2057.\nIl y a six jours, ton numéro a fuité sur des forums.\nDes inconnus appelaient la nuit — ils savaient ton nom, et ce que tu cherchais.\nTa plainte dort dans un tiroir, comme l'affaire que tu n'as jamais pu classer.\nCe soir, tu as payé pour tout changer : une ligne vierge, un téléphone sorti du carton.\n« Tout est remis à zéro », a dit le vendeur.\nIl a oublié une chose.\nCe numéro aurait dû rester bloqué pour toujours : avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
+"Vaubris, 2057.\nIl y a six jours, ton numéro a fuité sur des forums.\nDes inconnus appelaient la nuit — ils savaient ton nom, et ce que tu cherchais.\nTa plainte dort dans un tiroir, comme l'affaire que tu n'as jamais pu classer.\nCe soir, tu as payé pour tout changer : une ligne vierge, un téléphone sorti du carton. « Tout est remis à zéro », a dit le vendeur.\nIl a oublié une chose.\nCe numéro aurait dû rester bloqué pour toujours : avant toi, il appartenait à quelqu'un qui est mort il y a vingt-trois jours."],
 out:["« C'est quoi ce bordel… ? » Le téléphone s'ouvre sur une application que tu n'as jamais installée : HÉLIOS Cloud. Elle tourne déjà, toute seule, comme si elle t'attendait.",
 "4,2 Go de données attendent d'être rapatriés dans ce téléphone neuf. Les tiennes, forcément — qui d'autre ? HÉLIOS propose de tout récupérer. À toi de décider."],
 scr:{k:"helios",ts:"21h58"},
