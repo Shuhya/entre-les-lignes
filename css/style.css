@@ -860,3 +860,6 @@ html[data-theme="light"] #notesOv .ntCard h2{color:#1a1a1a}
 html[data-theme="light"] #notesOv .ntR{color:#1a2030e0;background:#0000000a}
 /* v2.157 : bouton fin au-dessus du voile (z-index 29) */
 .finB{position:relative;z-index:30}
+
+/* v2.161 : hint lockWake recentré en bas, au-dessus des icônes */
+#lkWake .lkHint{position:absolute;left:0;right:0;bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0;text-align:center;z-index:1}
