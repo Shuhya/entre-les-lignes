@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.151";
+const VER="2.152";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -571,7 +571,7 @@ async function introH(cb){
 function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=document.createElement("div");v.id="etlVeil";$("app").append(v)}v.classList.remove("off")}else if(v){v.classList.add("off");setTimeout(()=>{const x=document.getElementById("etlVeil");if(x&&x.classList.contains("off"))x.remove()},400)}}
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div><b class="lkBadge">1</b></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
  try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkTop b"),tm=o.querySelector(".lkTop small"),tx=o.querySelector(".lkTx");const pn=(st&&st.pname)||"toi";const nm=s&&s.nm||"";tb.textContent=nm.replace(/%N%/g,pn);tm.textContent=(s&&s.t)||"";tx.textContent=String(s&&s.txt||"").replace(/%N%/g,pn);
  if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.style.backgroundImage="url("+AVN[nm]+")"}else ic.textContent=(s&&s.ic)||"💬"}catch(e){}
