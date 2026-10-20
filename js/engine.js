@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.172";
+const VER="2.173";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -81,7 +81,7 @@ function fxRain(on){
   D.forEach(d=>{d.y+=d.v/H*1.6;if(d.y>1.05){d.y=-.05;d.x=Math.random()}x.beginPath();x.moveTo(d.x*W,d.y*H);x.lineTo((d.x-.004)*W,(d.y+d.l)*H);x.stroke()});
   rfR=requestAnimationFrame(dr)};
  dr()}
-function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];const bg=document.getElementById("chatBg")||$("chat");bg.style.backgroundImage=u?"linear-gradient(#0002,#0004),url("+u+")":"";try{bg.classList.add("kb")}catch(e){}try{fxRain(false)}catch(e){}amb(k)}
+function scene(k,nodeId){const u=(nodeId&&nodeBackgrounds[nodeId])||IMG[k];$("chat").style.backgroundImage=u?"linear-gradient(#0002,#0004),url("+u+")":"";try{$("chat").classList.add("kb")}catch(e){}try{fxRain(false)}catch(e){}amb(k)}
 async function rdOk(){const b=document.createElement("button");b.className="rdOk";b.textContent="✓ J'ai tout lu";$("ch").append(b);await new Promise(r2=>{b.onclick=()=>{try{beep(660,.05,.06)}catch(e){}b.remove();r2()}})}
 const noRubber=el=>{try{setTimeout(()=>{if(el&&el.scrollHeight<=el.clientHeight+8)el.style.overflowY="hidden"},0)}catch(e){}};
 async function play(id,r=run){
