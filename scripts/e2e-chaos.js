@@ -94,6 +94,17 @@ const log = m => console.log('e2e-chaos: ' + m);
     }
     if (await clickIf('#infoOv .ifBack')) { await page.waitForTimeout(300); return true; }
     { const v = await page.$('#vol'); if (v && !(await v.isHidden())) { await clickIf('#set'); await page.waitForTimeout(200); return true; } }
+    /* écrans plein écran Fichiers / archive / viewers (.fxOv) :
+       tantôt ouvrir un fichier, tantôt écouter le wav, tantôt refermer (‹ bas de l'écran) */
+    if (await vis('.fxOv')) {
+      const wav = page.locator('.fxOv .wavBtn').first();
+      if (await wav.count() && await wav.isVisible() && !(await wav.isDisabled())) {
+        try { await wav.click({ timeout: 3000 }); await page.waitForTimeout(500); return true; } catch (e) {}
+      }
+      if (rng() < 0.5 && (await clickIf('.fxOv .fxRow'))) { await page.waitForTimeout(500); return true; }
+      if (await clickIf('.fxOv .fxFoot')) { await page.waitForTimeout(500); return true; }
+      if (await clickIf('.fxOv .fxX')) { await page.waitForTimeout(400); return true; }
+    }
     /* accueil (mnBack) : relancer puis reprendre */
     if (await vis('#in') && !(await page.evaluate(() => document.body.classList.contains('play')))) {
       await clickIf('#in #go') || await clickIf('#in button');
