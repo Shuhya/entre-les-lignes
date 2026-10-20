@@ -858,3 +858,5 @@ html[data-theme="light"] #notesOv{background:radial-gradient(140% 100% at 50% 42
 html[data-theme="light"] #notesOv .ntCard{background:linear-gradient(#f7f7fa,#eceef2);color:#111;border-color:#00000024;box-shadow:0 24px 60px #0006}
 html[data-theme="light"] #notesOv .ntCard h2{color:#1a1a1a}
 html[data-theme="light"] #notesOv .ntR{color:#1a2030e0;background:#0000000a}
+/* v2.157 : bouton fin au-dessus du voile (z-index 29) */
+.finB{position:relative;z-index:30}
