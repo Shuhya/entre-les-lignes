@@ -31,7 +31,12 @@ const log = m => console.log('e2e-chaos: ' + m);
   const b = await chromium.launch();
   const ctx = await b.newContext({ acceptDownloads: true });
   page = await ctx.newPage();
-  page.on('pageerror', e => errs.push('pageerror: ' + e.message + '\n    stack: ' + String(e.stack || '').split('\n').slice(0, 4).join(' | ')));
+  /* pageerror : ne compter QUE les erreurs du jeu (jeu.html/landing) — la page
+     « index de répertoire » de Chromium (file://) a son propre script interne
+     (addRow…) qui lève des ReferenceError hors de notre contrôle */
+  page.on('pageerror', e => {
+    if (/jeu\.html|index\.html/.test(page.url())) errs.push('pageerror: ' + e.message + '\n    stack: ' + String(e.stack || '').split('\n').slice(0, 4).join(' | '));
+  });
   page.setDefaultTimeout(15000);
   const root = 'file://' + path.resolve(__dirname, '..');
 
@@ -117,8 +122,13 @@ const log = m => console.log('e2e-chaos: ' + m);
       const r1 = page.locator('#mn button', { hasText: /^1\. / }).first();
       if (await r1.count()) { try { await r1.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
     }
+    /* nameGate : après une reprise navigation le jeu peut redémarrer du début */
+    { const g = await page.$('#nameGate'); if (g && await g.isVisible()) {
+      try { await page.fill('#ngName', 'Sam'); const m = await page.$('#ngM'); if (m) await m.click(); await page.click('.ngGo'); } catch (e) {}
+      await page.waitForTimeout(300); return true;
+    } }
     /* overlays bloquants du récit (proSkip = cartes de fin de chapitre) */
-    const BLOCKERS = ['.proSkip', '.lkNext', '.awGo', '#lkWake', '.notif', '.rdOk',
+    const BLOCKERS = ['.proSkip', '.bioGo', '.lkNext', '.awGo', '#lockOv .lkGo', '#lkWake', '.notif', '.rdOk',
       '#scrOv .scRow.go:not(.read)', '#scrOv .scBtn', '#incOv .incAcc',
       '#calOv .calCh button', '#calOv .calEnd:not([hidden])'];
     for (const sel of BLOCKERS) {
