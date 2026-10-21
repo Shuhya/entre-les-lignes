@@ -20,6 +20,7 @@ const REVERT=[
   ['const STORIES:StoryMeta[]=[','const STORIES=['],
   ['j:(st:St)=>','j:st=>'],
   ['endc:(st:St)=>','endc:st=>'],
+  ['(_,i):[string,string]=>','(_,i)=>'],
 ];
 let back=ts.slice(cut), pairsOK=true;
 for(const [tsFrag,jsFrag] of REVERT){

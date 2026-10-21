@@ -1,4 +1,7 @@
-/// <reference path="./types.ts" />
+/* story.ts — SOURCE TypeScript des données narratives (miroir typé de js/story.js).
+   Étape 1 migration TS+Vite : js/story.js reste le fichier servi en production ;
+   ce fichier est sa source typée. scripts/check-ts-mirror.js vérifie la cohérence en CI. */
+import type {Msg,Src,St,Story,StoryMeta} from "./types";
 /* story.ts — SOURCE TypeScript des données narratives (miroir typé de js/story.js).
    Étape 1 migration TS+Vite : js/story.js reste le fichier servi en production ;
    ce fichier est sa source typée. scripts/check-ts-mirror.js vérifie la cohérence en CI. */
@@ -100,5 +103,5 @@ h11w:{w:"vaubris",app:"WhatsApp",nm:"Cora",out:["23h07. Dans trente-trois minute
 h11f:{w:"vaubris",app:"WhatsApp",nm:"Cora",out:["23h07. Dans trente-trois minutes, quelqu'un attendra Nils au pied de l'échelle ouest, quai 9. Tu ne bouges pas : elle a dit de ne pas sortir. La ville, elle, ne s'arrête pas : sirènes au nord, comme chaque soir.","Tu ne dors pas. Tu regardes le plafond, ce téléphone qui n'est déjà plus tout à fait à toi, et le souvenir de quatre minutes : le temps qu'il lui a fallu pour te repérer."],endc:(st:St)=>"Le chapitre 1 s'achève ici.\nDehors, la pluie reprend sur Vaubris. Cora veille sur ce numéro, et tu ne sais pas encore si c'est une bonne nouvelle.\nCe que tu emportes : "+ETL_INV(st)+"\nDemain, 12h15, square des Tanneurs, le banc face au kiosque.",f:"Le mensonge",k:"Chapitre 1 · Le numéro d'un mort"},
 h11:{w:"vaubris",app:"WhatsApp",nm:"Cora",out:["23h07. Dans trente-trois minutes, quelqu'un attendra Nils au pied de l'échelle ouest, quai 9. Tu ne bouges pas : Cora a dit de ne pas sortir. La ville, elle, ne s'arrête pas : sirènes au nord, comme chaque soir.","Tu ne dors pas. Tu regardes le plafond, et ce téléphone qui n'est déjà plus tout à fait à toi : un dossier chiffré que tu ne peux pas ouvrir, une ville que tu ne regarderas plus jamais de la même manière."],endc:(st:St)=>"Le chapitre 1 s'achève ici.\nDehors, la pluie reprend sur Vaubris. Tu ne regarderas plus jamais cette ville de la même manière. Prends ton parapluie.\nCe que tu emportes : "+ETL_INV(st)+"\nDemain, 12h15, square des Tanneurs, le banc face au kiosque.",f:"La nuit sans sommeil",k:"Chapitre 1 · Le numéro d'un mort"}
 } satisfies Story;
-const C=(a:StoryMeta[])=>a.concat(Array.from({length:10-a.length},(_,i)=>["Chapitre "+(a.length+i+1),"-"]));
+const C=(a:StoryMeta[])=>a.concat(Array.from({length:10-a.length},(_,i):[string,string]=>["Chapitre "+(a.length+i+1),"-"]));
 const STORIES:StoryMeta[]=[{id:"h",n:"Cora",num:"06 51 09 43 87",t:"Le Numéro du mort",d:"2057. Ton numéro recyclé appartenait à un agent assassiné. Son dossier peut faire tomber Mandragore, et tout le monde le cherche.",ch:[["Numéro attribué","h1"]]}];
