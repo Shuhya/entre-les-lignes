@@ -1,6 +1,3 @@
 dist/
 dist-vite/
 node_modules/
-
-# re-trigger CI (verification typecheck du fix 6cf2803)
-# test PUT contents
