@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Validation projet : syntaxe + BFS complet (choix/x/h/j multi-états) + mojibake.
    Utilisé par la CI (.github/workflows/ci.yml) — exit 1 si erreur. */
-const fs=require('fs'),vm=require('vm');
+const fs=require('fs'),vm=require('vm'),cp=require('child_process');
 let fail=0;
 const step=(ok,msg)=>{console.log((ok?'  ✓ ':'  ✗ ')+msg);if(!ok)fail=1};
 
@@ -45,5 +45,13 @@ let refsOK=true;
   const bad=(t.match(/\?v=(\d+\.\d+)/g)||[]).filter(v=>v!=='?v='+ver);
   if(bad.length){refsOK=false;console.log('    '+f+' : refs périmées '+bad.join(','));}});
 step(refsOK,'refs ?v= cohérentes avec VER='+ver);
+
+/* 5. miroir TypeScript (étape 1 migration TS+Vite) */
+if(fs.existsSync('ts/story.ts')){
+  console.log('— Miroir TS');
+  const r=cp.spawnSync(process.execPath,['scripts/check-ts-mirror.js'],{encoding:'utf8'});
+  console.log((r.stdout||r.stderr||'').trim());
+  step(r.status===0,'ts/story.ts en cohérence avec js/story.js');
+}
 
 process.exit(fail);

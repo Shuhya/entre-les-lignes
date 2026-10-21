@@ -1,1 +1,3 @@
 dist/
+dist-vite/
+node_modules/
