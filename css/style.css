@@ -875,7 +875,7 @@ html[data-theme="light"] #notesOv .ntR{color:#1a2030e0;background:#0000000a}
 /* v2.174 : fond de page aux photos d'ambiance horaires - regle append, le reste du CSS est intact */
 html:not([data-theme="light"]) body{background:linear-gradient(180deg,rgba(5,7,12,.35),rgba(5,7,12,.6)),var(--ambImg,none),radial-gradient(1200px 800px at 70% -10%,var(--ambA,#141d33) 0%,var(--ambB,#0a0d16) 55%,#05070c 100%);background-size:cover,cover,cover;background-position:center,center,center;background-repeat:no-repeat,no-repeat,no-repeat}
 
-/* v2.175 : les choix flottent par-dessus la conversation (overlay bas) - #chat garde sa hauteur, le fond ne bouge plus */
-#ch{position:absolute;left:0;right:0;bottom:0;z-index:6}
-#app:has(#ch:not(:empty)) #chat{padding-bottom:min(46%,230px)}
-#ch button{backdrop-filter:blur(3px)}
+/* v2.178 : fond de conversation sur #app (taille fixe) - l'image ne bouge plus quand les choix apparaissent ; choix de retour dans le flux normal */
+#chat{background:transparent}
+body.wa #chat{background-color:transparent}
+body.wa #app{background-color:#0b141a}
