@@ -53,5 +53,11 @@ if(fs.existsSync('ts/story.ts')){
   console.log((r.stdout||r.stderr||'').trim());
   step(r.status===0,'ts/story.ts en cohérence avec js/story.js');
 }
+if(fs.existsSync('ts/engine')){
+  console.log('— Miroir TS engine');
+  const r2=cp.spawnSync(process.execPath,['scripts/build-engine-from-ts.js'],{encoding:'utf8'});
+  console.log((r2.stdout||r2.stderr||'').trim());
+  step(r2.status===0,'ts/engine/ (16 sections) en cohérence avec js/engine.js');
+}
 
 process.exit(fail);
