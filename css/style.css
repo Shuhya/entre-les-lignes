@@ -879,3 +879,6 @@ html:not([data-theme="light"]) body{background:linear-gradient(180deg,rgba(5,7,1
 #chat{background:transparent}
 body.wa #chat{background-color:transparent}
 body.wa #app{background-color:#0b141a}
+
+/* v2.180 : decor de conversation - UNE SEULE image etiree (cover/no-repeat) sur #app, plus de mosaique */
+#app{background:#0e0b14 center/cover no-repeat}
