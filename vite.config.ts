@@ -1,8 +1,16 @@
-/* vite.config.ts — Infra Vite (étape finale de la migration, PAS encore active en production).
-   Plan validé : build vérifié dans dist-vite/ sans changer les fichiers servis par GitHub Pages
-   tant que la sortie n'est pas validée. Statut : inert — ne pas brancher la CI dessus avant l'étape build. */
+/* vite.config.ts — Infra Vite (étape 4 : build vérifié en CI dans dist-vite/,
+   PAS encore branché en production — GitHub Pages sert toujours la racine du repo).
+   Inputs explicites : index.html (landing) + jeu.html (le jeu).
+   Le bundle réel (modules ES + hash de cache) viendra avec l'étape 5 (bascule Pages). */
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  build: { target: 'es2020', outDir: 'dist-vite', emptyOutDir: true }
+  build: {
+    target: 'es2020',
+    outDir: 'dist-vite',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: { index: 'index.html', jeu: 'jeu.html' }
+    }
+  }
 });
