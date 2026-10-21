@@ -11,5 +11,5 @@
     "checkJs": false,
     "types": []
   },
-  "include": ["ts/**/*.ts"]
+  "include": ["ts/types.ts", "ts/story.ts"]  /* ts/engine/ sera typé à l'étape 4 : sections JS pures pour l'instant */
 }

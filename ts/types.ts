@@ -46,6 +46,12 @@ export interface Node {
   inc?: 1;                /* appel entrant */
   call?: [string, string, Array<CallLine>]; /* [nom affiché, sous-titre, lignes] */
   endc?: (st: St) => string | string; /* écran de fin de chapitre */
+  fx?: Array<[string, string, string, number | string]>; /* explorateur Fichiers : [icône, nom, meta, action (index de choix | "gpg"|"png")] */
+  fxF?: number;           /* index du choix « footer » de l'explorateur Fichiers */
+  vw?: [string, string, Array<[string, string]>]; /* viewer plein écran : [kind txt|wav, nom du fichier, lignes [style, texte]] */
+  vwBack?: string;        /* nœud de retour du viewer (‹ Revenir à l'archive) */
+  scrf?: 1;               /* flag écran Fichiers déjà parcouru (h9f2) */
+
   e?: string[];           /* fin d'histoire [clé, texte] */
   k?: string;             /* titre de fin enregistré */
   f?: string;             /* variante de fin */
