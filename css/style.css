@@ -872,3 +872,5 @@ html[data-theme="light"] #notesOv .ntR{color:#1a2030e0;background:#0000000a}
 #lkBg .lkTools{position:relative;display:flex;gap:26px;z-index:1}
 #lkBg .lkTools i{font-style:normal;width:44px;height:44px;border-radius:50%;background:#ffffff14;border:1px solid #ffffff24;display:grid;place-items:center;font-size:18px;box-shadow:0 2px 10px #0006}
 
+/* v2.174 : fond de page aux photos d'ambiance horaires - regle append, le reste du CSS est intact */
+html:not([data-theme="light"]) body{background:linear-gradient(180deg,rgba(5,7,12,.35),rgba(5,7,12,.6)),var(--ambImg,none),radial-gradient(1200px 800px at 70% -10%,var(--ambA,#141d33) 0%,var(--ambB,#0a0d16) 55%,#05070c 100%);background-size:cover,cover,cover;background-position:center,center,center;background-repeat:no-repeat,no-repeat,no-repeat}
