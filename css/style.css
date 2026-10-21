@@ -882,3 +882,7 @@ body.wa #app{background-color:#0b141a}
 
 /* v2.180 : decor de conversation - UNE SEULE image etiree (cover/no-repeat) sur #app, plus de mosaique */
 #app{background:#0e0b14 center/cover no-repeat}
+
+/* v2.186 : choix de type action en italique (règle : action ≠ message) */
+#ch button.act{font-style:italic}
+#ch button i{font-style:italic}
