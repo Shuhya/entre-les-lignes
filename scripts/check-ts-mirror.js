@@ -16,7 +16,7 @@ const REVERT=[
   ['const ETL_INV=(st:St):string=>','const ETL_INV=st=>'],
   ['const H=(x:string):Msg=>["h",x],N=(x:string):Msg=>["n",x],Sy=(x:string):Msg=>["s",x],P=(x:Src):Msg=>["p",x],PM=(x:Src):Msg=>["pm",x],A=(x:string|Src):Msg=>["a",x],K=():Msg=>["x",""];',
    'const H=x=>["h",x],N=x=>["n",x],Sy=x=>["s",x],P=x=>["p",x],PM=x=>["pm",x],A=x=>["a",x],K=()=>["x",""];'],
-  ['} satisfies Story;\nconst C=(a:StoryMeta[])=>','};\nconst C=a=>'],
+  ['} satisfies Story;\nconst C=(a:Array<[string,string]>)=>','};\nconst C=a=>'],
   ['const STORIES:StoryMeta[]=[','const STORIES=['],
   ['j:(st:St)=>','j:st=>'],
   ['endc:(st:St)=>','endc:st=>'],
