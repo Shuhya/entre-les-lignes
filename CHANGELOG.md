@@ -2,6 +2,7 @@
 
 Format court. Détail complet des versions dans les messages de commit.
 
+- **2.190** — Clarification fin W : « quelqu'un veille sur toi » (les six jours renvoient à la fuite de l'ancien numéro du joueur, prologue h1 — pas à l'âge du numéro de Nils, mort depuis vingt-trois jours) ; carnet de Nils : nouvelle ligne « 21/09. Station d'épuration, cuve 7. Tout transite par là. » (préparation chapitre 2, variante pov). Texte seul + VER + miroirs TS.
 - **2.131** — E2E-chaos en CI (vrai Chromium) : chapitre 1 joué en entier avec clics imprévisibles (‹ bibliothèque, ⚙, 📖 notes, 📑 transfert, thème, voix, mnBack, clics ailleurs) + reprise systématique jusqu'à l'écran de fin ; anti-soft-lock (150 s sans progrès = échec), SEED reproductible.
 - **2.99** — E2E élargie (début de partie complet joué en vrai navigateur) + infrastructure beta (branche beta + miroir /beta/ pour tester avant la mise en ligne).
 - **2.98** — Fix ESLint restant : appel `save()` hors de portée dans l’écran de fin (code mort silencieux depuis la v2.83, le fin patché sauvegardait déjà) — retiré.
