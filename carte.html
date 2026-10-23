@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carte de l'histoire — Entre les lignes</title>
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#0b1220;--card:#121a2b;--card2:#0e1524;--line:#243250;--txt:#e8edf7;--dim:#8ea0bd;--wa:#0b6b4f;--sms:#6b5bd6;--acc:#4da3ff;--fin:#d9a544;--hl:#ffd166}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 system-ui,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#0d1626,#0b1220ee);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+header h1{font-size:17px;margin:0;font-weight:600}
+header .v{color:var(--dim);font-size:12px}
+header input{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 10px;font-size:14px;width:220px}
+header .spacer{flex:1}
+button.clr{background:#20304d;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+button.clr:hover{background:#2a3d61}
+#bar{position:sticky;top:53px;z-index:19;background:#101a30;border-bottom:1px solid var(--line);padding:8px 16px;font-size:13px;color:var(--dim);min-height:34px;display:none}
+#bar.on{display:block}
+#bar b{color:var(--txt)}
+#bar .st{color:var(--acc)}
+#bar .ar{color:var(--hl);margin:0 4px}
+main{display:flex;gap:16px;padding:16px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:1 1 340px;max-width:560px}
+h2.ch{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:6px 2px;display:flex;gap:8px;align-items:center}
+h2.ch .root{font-size:11px;background:#20304d;border-radius:6px;padding:2px 6px}
+.fins{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.fins button{background:#2a2413;border:1px solid #5c4d1e;color:var(--fin);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer}
+.fins button:hover{background:#3a3119}
+.node{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;transition:border-color .15s, background .15s}
+.node.hl{border-color:var(--hl);background:#1a2233;box-shadow:0 0 0 1px var(--hl)}
+.node.hidden{display:none}
+.nid{font:600 11px ui-monospace,monospace;color:var(--acc);background:#152339;border-radius:5px;padding:1px 6px;margin-right:6px}
+.napp{font-size:11px;color:var(--dim)}
+.nfin{color:var(--fin);font-size:11px;font-weight:600}
+.nrt{color:#c58cff;font-size:11px;font-weight:600}
+.ntxt{margin:6px 0 0;font-size:13.5px;color:var(--txt)}
+.ntxt .lk{color:var(--dim);font-size:12px;margin-right:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:#20304d;border:1px solid var(--line);border-radius:14px;padding:4px 11px;font-size:12.5px;color:var(--txt);cursor:pointer;text-align:left;max-width:100%}
+.chip:hover{border-color:var(--acc)}
+.chip.hl{border-color:var(--hl);background:#33415f;color:#fff}
+.chip .tg{color:var(--acc);font:600 10.5px ui-monospace,monospace;margin-left:5px}
+.chip .fl{color:var(--fin);font-size:10.5px;margin-left:5px}
+.chip.seq{cursor:default;color:var(--dim)}
+footer{padding:10px 16px 24px;color:var(--dim);font-size:12px}
+@media (max-width:760px){main{padding:10px}#bar{top:57px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗺️ Carte de l'histoire</h1>
+  <span class="v" id="ver"></span>
+  <input id="f" type="search" placeholder="Filtrer (texte, id, flag)…">
+  <span class="spacer"></span>
+  <button class="clr" id="clr">✕ Effacer la sélection</button>
+</header>
+<div id="bar"></div>
+<main id="main"></main>
+<footer>Clique une réponse pour la surligner · clique une fin (chip dorée) pour remonter le chemin depuis le début du chapitre. Page locale au jeu : elle lit <code>js/story.js</code>, donc toujours à jour avec la version en ligne.</footer>
+<script src="js/story.js?v=2.205"></script>
+<script>
+(function(){
+"use strict";
+var SAMPLES=[{},{piege:1},{piege:1,mentir:1},{piege:1,trst:2},{piege:1,pol:1},{piege:1,int:3,pol:1,sil:1},
+ {mentir:1},{trst:2},{trst:3},{avou:1,trst:2},{int:1},{int:2},{int:3},{int:3,sil:1},{sil:1},{pol:1},
+ {t:1},{mentirY:1},{t:1,mentirY:1},{refR:1},{ytout:1,care:3},{r:2},{r:3},{f:2},{f:3},{pf:1}];
+function clean(x){return String(x==null?"":x).replace(/%N%/g,"toi").replace(/\*|\n/g," ")}
+function edgesOf(id){
+  var n=S[id],out=[];
+  if(!n)return out;
+  (n.c||[]).forEach(function(c){if(c&&c[1])out.push({from:id,to:c[1],label:clean(c[0]),fl:c[2]||{},kind:"choix"})});
+  if(typeof n.x==="string")out.push({from:id,to:n.x,label:"suite →",kind:"suite"});
+  if(n.dec)out.push({from:id,to:n.dec,label:"refuser l'appel",kind:"refus"});
+  if(n.h)out.push({from:id,to:n.h,label:"raccrocher",kind:"raccrocher"});
+  if(typeof n.j==="function"){
+    var tg={};SAMPLES.forEach(function(st){try{var t=n.j(st);if(t&&S[t])tg[t]=1}catch(e){}});
+    Object.keys(tg).forEach(function(t){out.push({from:id,to:t,label:"selon tes flags",kind:"routeur"})});
+  }
+  return out;
+}
+var EOUT={};
+function buildEdges(){
+  Object.keys(S).forEach(function(id){
+    EOUT[id]=edgesOf(id);
+  });
+}
+function orderFrom(root){
+  var seen={},q=[root],out=[];seen[root]=1;
+  while(q.length){var id=q.shift();out.push(id);
+    EOUT[id].forEach(function(e){if(!seen[e.to]){seen[e.to]=1;q.push(e.to)}})}
+  return out;
+}
+function pathTo(root,fin){
+  var par={},q=[root],seen={};seen[root]=1;
+  while(q.length){var id=q.shift();
+    if(id===fin)break;
+    EOUT[id].forEach(function(e){if(!seen[e.to]){seen[e.to]=1;par[e.to]={id:id,e:e};q.push(e.to)}})}
+  if(!seen[fin])return null;
+  var p=[],cur=fin;while(cur!==root){var pr=par[cur];p.unshift({id:pr.id,e:pr.e});cur=pr.id}
+  return p;
+}
+function nodeTitle(id){
+  var n=S[id]||{};
+  var bits=['<span class="nid">'+id+'</span>'];
+  if(n.app)bits.push('<span class="napp">'+n.app+' · '+(n.nm||"")+'</span>');
+  if(typeof n.j==="function")bits.push('<span class="nrt">routeur</span>');
+  if(n.f||n.k)bits.push('<span class="nfin">◆ fin'+(n.f?'"'+n.f+'"':"")+'</span>');
+  if(n.call)bits.push('<span class="nrt">📞 appel</span>');
+  if(n.inc)bits.push('<span class="nrt">entrant</span>');
+  return bits.join(" ");
+}
+function firstMsg(id){
+  var n=S[id]||{},m=(n.m||[]).map(function(x){return x[0]}).join(""),t="";
+  if(typeof n.endc==="function"){try{t=String(n.endc(SAMPLES[1])).split("\n").filter(Boolean)[0]||""}catch(e){}}
+  if(!t)(n.m||[]).some(function(x){if(x[0]!=="a"){t=clean(x[1]);return true}return false});
+  if(!t&&n.out)t=clean(n.out[0]);
+  t=t.replace(/<[^>]*>/g,"").slice(0,110);
+  return (n.lk?'<span class="lk">🔒 '+n.lk.t+"</span>":"")+t;
+}
+function flStr(fl){var s=[];for(var k in fl||{})s.push(k+(fl[k]!==1&&fl[k]!==undefined&&fl[k]!==null?"+"+fl[k]:""));return s.join(" ")}
+var ROOTS=[{t:"Chapitre 1 · Le numéro d'un mort",r:"h1"},{t:"Chapitre 2 · Quai 9",r:"q1"}];
+var cards={};
+function mkChip(e){
+  var b=document.createElement("button");b.className="chip";b.dataset.from=e.from;b.dataset.to=e.to;
+  var lb=document.createElement("span");lb.textContent=e.label;b.append(lb);
+  if(e.fl&&Object.keys(e.fl).length){var fl=document.createElement("span");fl.className="fl";fl.textContent="{"+flStr(e.fl)+"}";b.append(fl)}
+  var tg=document.createElement("span");tg.className="tg";tg.textContent=e.to;b.append(tg);
+  return b;
+}
+function render(){
+  var main=document.getElementById("main");main.innerHTML="";
+  ROOTS.forEach(function(ch){
+    var col=document.createElement("div");col.className="col";
+    var h=document.createElement("h2");h.className="ch";h.innerHTML=ch.t+' <span class="root">départ : '+ch.r+"</span>";col.append(h);
+    var fins=document.createElement("div");fins.className="fins";
+    orderFrom(ch.r).forEach(function(id){var n=S[id];if(n&&(n.f||n.k)){var b=document.createElement("button");b.textContent="◆ "+(n.f||id);b.onclick=function(ev){ev.stopPropagation();showPath(ch.r,id)};fins.append(b)}});
+    col.append(fins);
+    orderFrom(ch.r).forEach(function(id){
+      var n=S[id];if(!n)return;
+      var d=document.createElement("div");d.className="node";d.id="nd_"+id;
+      d.innerHTML='<div>'+nodeTitle(id)+'</div><div class="ntxt">'+firstMsg(id)+'</div>';
+      var ch2=document.createElement("div");ch2.className="chips";
+      EOUT[id].forEach(function(e){
+        if(e.kind==="routeur"||e.kind==="suite"){var s=document.createElement("span");s.className="chip seq";s.innerHTML=e.label+' <span class="tg">'+e.to+"</span>";ch2.append(s)}
+        else ch2.append(mkChip(e));
+      });
+      if(ch2.children.length)d.append(ch2);
+      col.append(d);cards[id]=d;
+    });
+    main.append(col);
+  });
+}
+function clearSel(){
+  document.querySelectorAll(".chip.hl,.node.hl").forEach(function(x){x.classList.remove("hl")});
+  var bar=document.getElementById("bar");bar.classList.remove("on");bar.innerHTML="";
+}
+function scrollNd(id){try{var c=cards[id];if(c&&c.scrollIntoView)c.scrollIntoView({behavior:"smooth",block:"center"})}catch(e){}}
+function showPath(root,fin){
+  clearSel();
+  var p=pathTo(root,fin),bar=document.getElementById("bar");
+  if(!p){bar.classList.add("on");bar.innerHTML="Aucun chemin trouvé vers "+fin;return}
+  var html='<b>Chemin</b> : <span class="st">'+root+"</span>";
+  var ids=[root];
+  p.forEach(function(st){
+    ids.push(st.e.to);
+    var lbl=st.e.kind==="choix"?st.e.label:(st.e.kind==="suite"?"→":st.e.label);
+    html+='<span class="ar">→</span><span class="st">'+st.e.to+"</span> <small>("+lbl.replace(/</g,"&lt;")+")</small>";
+  });
+  bar.innerHTML=html;bar.classList.add("on");
+  ids.forEach(function(id){var c=cards[id];if(c)c.classList.add("hl")});
+  scrollNd(root);
+}
+document.addEventListener("click",function(ev){
+  var t=ev.target&&ev.target.closest?ev.target.closest(".chip"):null;
+  if(!t||!t.dataset||!t.dataset.to||t.classList.contains("seq"))return;
+  clearSel();
+  t.classList.add("hl");
+  var from=t.dataset.from,to=t.dataset.to;
+  if(cards[from])cards[from].classList.add("hl");
+  if(cards[to])cards[to].classList.add("hl");
+  var bar=document.getElementById("bar");
+  bar.className="on";bar.innerHTML="<b>"+from+"</b> — « "+(t.textContent.replace(to,"").trim())+" » → <b>"+to+"</b>";
+  scrollNd(to);
+});
+document.getElementById("clr").onclick=clearSel;
+document.getElementById("f").addEventListener("input",function(){
+  var q=this.value.trim().toLowerCase();
+  Object.keys(cards).forEach(function(id){
+    var txt=(id+" "+cards[id].textContent).toLowerCase();
+    cards[id].classList.toggle("hidden",!!q&&txt.indexOf(q)<0);
+  });
+});
+buildEdges();render();
+document.getElementById("ver").textContent="v"+((((document||{}).querySelectorAll?document.querySelectorAll('script[src*="story.js"]')[0]:null)||{}).src||"").split("v=")[1]||"2.205";
+})();
+</script>
+</body>
+</html>
