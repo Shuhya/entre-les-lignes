@@ -545,6 +545,8 @@ body.pc .b{max-width:58%}
 .ngList .ngP{font:400 14px/1.7 system-ui,-apple-system,sans-serif;color:#ffffffa8;margin:0 0 20px;max-width:40ch}
 .ngList input{width:100%;box-sizing:border-box;background:#ffffff12;border:1px solid #ffffff2e;border-radius:12px;color:#fff;font:16px Georgia,serif;padding:12px 14px;outline:none;margin-bottom:16px}
 .ngList input:focus{border-color:#ffd16688}
+.card input.ch2Name{width:100%;box-sizing:border-box;background:#ffffff12;border:1px solid #ffffff2e;border-radius:12px;color:#fff;font:16px Georgia,serif;padding:12px 14px;outline:none;margin:0 0 14px}
+.card input.ch2Name:focus{border-color:#ffd16688}
 .ngList .ngBk{width:100%;margin-bottom:10px}
 .ngList .ngBk h3{font-size:16.5px}
 .ngList .ngBk p{font-size:12px}
