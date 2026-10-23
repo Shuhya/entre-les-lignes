@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.194";
+const VER="2.195";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -944,8 +944,9 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
 
 function ch2pick(s){const pf=(PG.s&&PG.s[1]&&PG.s[1].pf)?{pf:PG.s[1].pf}:{};
  const base=Object.assign({t:0,l:0,r:0,v:0,e:""},pf);
- const c=card("Quai 9 · Le chapitre 1 est terminé");
- const hd=document.createElement("p");hd.className="proTxt";hd.textContent="Choisis comment s’est terminé ton chapitre 1. Ta progression, ta sauvegarde et tes fins découvertes restent inchangées.";c.append(hd);
+ const done=((PG.c||0)>=2);
+ const c=card(done?"Quai 9 · Le chapitre 1 est terminé":"Quai 9 · Sans jouer le chapitre 1");
+ const hd=document.createElement("p");hd.className="proTxt";hd.textContent=(done?"Choisis comment s’est terminé ton chapitre 1.":"Choisis la fin du chapitre 1 avec laquelle commencer — tu n’y as pas joué.")+" Ta progression, ta sauvegarde et tes fins découvertes restent inchangées.";c.append(hd);
  row(c,"« Le rendez-vous manqué »","Tu as confirmé la prise du quai 9. Quelqu’un a attendu Nils.",()=>ch2go(s,base,{piege:1,mig:1}));
  row(c,"« La bonne nuit »","Cora veille sur toi : confiance totale.",()=>ch2go(s,base,{avou:1,trst:2,mig:1}));
  row(c,"« Le mensonge »","Elle t’a repéré en quatre minutes.",()=>ch2go(s,base,{mentir:1,mig:1}));
@@ -965,10 +966,10 @@ function ch2go(s,base,fl){GHOST=true;SC=1;PG.s[1]=Object.assign({},base,fl);$("n
    PG=P;
    const c=card(s.t);
    const list=document.createElement('div');list.className='bkWrap';c.append(list);
-   s.ch.forEach((h,i)=>{const w=!!S[h[1]],ok=w&&(i===0||i<P.c);
+   s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1');const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
-    b.innerHTML='<h3>'+(i+1)+'. '+h[0]+'</h3><div class="bkF">'+(ok?(i===SC?'en cours':'\u2713 termin\u00E9'):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
-    if(ok)b.onclick=()=>{if(s.id==='h'&&i===1&&h[1]==='q1'){ch2pick(s);return}SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};
+    b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+'</h3><div class="bkF">'+(ok?(i<P.c?(i===SC?'en cours':'\u2713 termin\u00E9'):'\u270E choisir une fin du ch1'):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
+    if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};
     list.append(b);
     if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};list.append(rb)}});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
