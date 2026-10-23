@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.204";
+const VER="2.205";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -298,9 +298,9 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
   if(L[0]===2&&Array.isArray(L[1])){
    const bx=document.createElement("div");bx.className="calCh";
    inChoice=true;eb.hidden=false;hint.hidden=false;
-   L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;const lab2=gf(lab);
+   L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;const eff=Array.isArray(opt)&&opt.length>2?opt[2]:null;const lab2=gf(lab);
     const b=document.createElement("button");b.textContent=lab2;
-    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab2],1);tx();if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
+    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab2],1);tx();if(eff)for(const k in eff)st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+eff[k]:eff[k];if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
    tr.append(bx);tr.scrollTop=1e9;return}
   const est=Math.max(700,(String(L[1]).split(/\s+/).length*310)+450)/SPD;
   const d=put(L,0);
@@ -342,6 +342,7 @@ else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="
 c.append(fd);
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
+ const nx=(SS.ch[SC+1]||[])[1];if(nx&&S[nx]){const b3=document.createElement("button");b3.id="ob3";b3.className="obN";b3.textContent="Chapitre suivant ›";b3.onclick=()=>{lockBgOff();o.remove();SC++;start()};c.append(b3)}
  try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }
 function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[fn];
@@ -446,7 +447,18 @@ function NH(s){return[
  {id:"pol",t:s.pol,tex:"Tu as annoncé à Cora que tu irais à la police municipale. Elle t’a aiguillé vers le commandant Riffaud, en te demandant de ne jamais citer son nom."},{id:"j2rdv",t:SC===1,tex:"Jour 2 · Cora, 12h15, square des Tanneurs, le banc face au kiosque."},
 {id:"j2att",t:SC===1&&!!s.piege,tex:"L’inconnu a attendu au quai 9. Il n’a pas aimé."},
 {id:"j2int",t:SC===1&&(s.int===2||s.int===3),tex:"L’inconnu écrit quand il veut."},
-{id:"j2seul",t:SC===1&&!s.pol&&s.int!==2&&s.int!==3,tex:"Un seul rendez-vous. C’est ça qui inquiète."}
+{id:"j2seul",t:SC===1&&!s.pol&&s.int!==2&&s.int!==3,tex:"Un seul rendez-vous. C’est ça qui inquiète."},
+{id:"j2yav",t:SC===1&&!!s.ytout,tex:"Yasmine sait presque tout. « Si quelqu’un te fait peur, tu me le dis. »"},
+{id:"j2y",t:SC===1&&!!s.mentirY,tex:"Yasmine n’en a pas cru un mot. Le fil reste ouvert, froid."},
+{id:"j2prom",t:SC===1&&!!s.t&&!!s.mentirY,tex:"Tu as brisé la promesse des douze ans, article premier. Elle ne l’a pas oublié."},
+{id:"j2rif",t:SC===1&&!!s.rif&&!!s["cal_q6c"],tex:"Riffaud connaît le quai 9 sans explication."},
+{id:"j2rR",t:SC===1&&!!s.rif&&!!s["cal_q6c"]&&!s.pov,tex:"« R. » exige le double. Trop gros pour tenir. R comme Riffaud ?"},
+{id:"j2rP",t:SC===1&&!!s.rif&&!!s["cal_q6c"]&&!!s.pov,tex:"Riffaud connaît le quai 9 sans explication. « R. » exigeait le double. Nils disait : ne fais pas confiance à la police municipale."},
+{id:"j2vendu",t:SC===1&&!!s.vendu,tex:"Tu as donné le nom de Cora à Riffaud. Ça se saura."},
+{id:"j2traite",t:SC===1&&!!s.traite,tex:"Version de Mandragore : Nils a été découvert, puis traité. Comment l’ont-ils découvert ?"},
+{id:"j2noir",t:SC===1&&!!s.noir,tex:"Il a vu le noir d’une heure. Il sait maintenant que tu décides."},
+{id:"j2pat",t:SC===1&&!!s.pat,tex:"L’inconnu est patient. Il observe plus qu’il n’ordonne."},
+{id:"j2refR",t:SC===1&&!!s.refR,tex:"Riffaud ne rappellera pas. Il n’en a pas besoin."}
 ].filter(x=>x.t)}
 function noteTick(){try{const cur=NH(st||{}).map(x=>x.id);const seen=(st&&st._nts)||[];const nw=cur.filter(i=>!seen.includes(i));if(nw.length){st._nts=(st._nts||[]).concat(nw);toast("Écrit dans tes notes : "+(nw.length>1?nw.length+" nouvelles notes":"1 nouvelle note"))}}catch(e){}}
 function notesOv(fromApp){const o=document.createElement("div");o.id="notesOv";o.dataset.from=fromApp?"app":"conv";
@@ -947,7 +959,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
 
 function ch2pick(s){const done=((PG.c||0)>=2);
  const prev=(PG.s&&PG.s[1])||{};
- const base=Object.assign({t:0,l:0,r:0,v:0,e:""},(prev.pf!==undefined?{pf:prev.pf}:{}),(prev.pname!==undefined?{pname:prev.pname}:{}));
+ const base=Object.assign({t:0,l:0,r:0,v:0,e:""},(prev.pf!==undefined?{pf:prev.pf}:{}),(prev.pname!==undefined?{pname:prev.pname}:{}),(prev.t?{t:prev.t}:{}));
  const c=card(done?"Quai 9 · Le chapitre 1 est terminé":"Quai 9 · Sans jouer le chapitre 1");
  const hd=document.createElement("p");hd.className="proTxt";hd.textContent=(done?"Choisis comment s’est terminé ton chapitre 1.":"Choisis la fin du chapitre 1 avec laquelle commencer — tu n’y as pas joué.")+" Ta progression, ta sauvegarde et tes fins découvertes restent inchangées.";c.append(hd);
  if(!done){let gpf=0;try{gpf=(localStorage.getItem("etl_pgen")==="f")?1:0}catch(e){}base.pf=gpf;
@@ -963,13 +975,15 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  row(c,"« La nuit sans sommeil »","La route standard : personne n’a écrit cette nuit.",()=>ch2go(s,base,{mig:1}));
  row(c,"« La nuit sans sommeil » + police","Tu as annoncé à Cora que tu irais voir le commandant Riffaud.",()=>ch2go(s,base,{mig:1,pol:1}));
  row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1}));
- row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3}));
+ row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1}));
+ row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2}));
  row(c,"‹ Retour","",()=>chap(s));
  show(c)}
 function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()}
  chap=function(s){GHOST=false;SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
-  const resuming=!!(v&&v.story===s.id&&v.node&&S[v.node]);
+  let pgc=0;try{pgc=(JSON.parse(localStorage.getItem("pg"+s.id)||"{}").c)||0}catch(e){}
+  const resuming=!!(v&&v.story===s.id&&v.node&&S[v.node]&&pgc<=(v.chapter||0)+1);
   const goChaps=()=>{
    nodeNow=null;
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}

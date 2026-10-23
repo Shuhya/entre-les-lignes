@@ -24,7 +24,7 @@ export interface Lk { t?: string; nm?: string; txt?: string; ic?: string }
 export interface Scr { k: string; ts?: string; st?: string; ic?: string; map?: Record<string, string> }
 
 /** Ligne d'appel : type 0 = didascalie (narrateur), 1 = réplique, 2 = menu d'options. */
-export type CallLine = [0 | 1, string] | [2, Array<[string, Array<[1, string]>]>];
+export type CallLine = [0 | 1, string] | [2, Array<[string, Array<[0 | 1, string]>, Record<string, any>?]>];
 
 /** Nœud narratif. Les routeurs (j) choisissent le nœud suivant selon St. */
 export interface Node {
