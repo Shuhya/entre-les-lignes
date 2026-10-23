@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.197";
+const VER="2.198";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -95,9 +95,11 @@ async function play(id,r=run){
  if(n.pro&&!PROD)await proCards(n.pro);
  if(n.out)await awayOv(n.out.map(gf));
  if(n.tel){const T=n.tel;await new Promise(q=>telOv(T,q))}
- if(n.lk&&!st["lkw_"+id]){st["lkw_"+id]=1;try{if(n.lk.t){clkSet(n.lk.t);$("clk").textContent=n.lk.t}}catch(e){}await lockWake(n.lk);if(r!=run)return}
+ let lkShown=false;
+ if(n.lk&&!st["lkw_"+id]){st["lkw_"+id]=1;lkShown=true;try{if(n.lk.t){clkSet(n.lk.t);$("clk").textContent=n.lk.t}}catch(e){}await lockWake(n.lk);if(r!=run)return}
  if(n.app){const tA=n.app,tN=n.nm||"",oC=CAPP,oN=CNM,ck=oC+"|"+oN,nk=tA+"|"+tN;
-  if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};if(n.noS){applyApp(n)}else await appSwitch(n)}
+  const lkOpen=(lkShown&&n.lk&&n.lk.nm===tN&&n.lk.txt);
+  if(tA!==oC){APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};if(n.noS||lkOpen){applyApp(n)}else await appSwitch(n)}
   else if(tN!==oN)APPH[ck]={c:$("chat").innerHTML,h:$("ch").innerHTML};
   applyApp(n);
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
