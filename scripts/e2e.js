@@ -34,7 +34,7 @@ let page = null;
   console.log('e2e 3/6: carte histoire cliquée');
 
   /* chap(s) affiche une carte de chapitres (rows '1. …'), PAS l'overlay #calOv (appel) */
-  const ch1 = page.locator('button', { hasText: /^1\. / }).first();
+  const ch1 = page.locator('button', { hasText: /^Chapitre 1/ }).first();
   await ch1.waitFor({ state: 'visible', timeout: 12000 });
   await ch1.click();
   console.log('e2e 4/6: chapitre 1 choisi');

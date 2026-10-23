@@ -47,7 +47,7 @@ const log = m => console.log('e2e-chaos: ' + m);
   await page.locator('.bkWrap .bk.open').first().click();
   log('histoire lancée');
 
-  const ch1 = page.locator('button', { hasText: /^1\. / }).first();
+  const ch1 = page.locator('button', { hasText: /^Chapitre 1/ }).first();
   await ch1.waitFor({ state: 'visible', timeout: 12000 });
   await ch1.click();
   log('chapitre 1 choisi');
@@ -119,7 +119,7 @@ const log = m => console.log('e2e-chaos: ' + m);
        sinon carte chapitres (row « 1. ») — sinon on resterait bloqué dessus */
     if (await menuOn()) {
       if (await clickIf('#mn .bk.open')) { await page.waitForTimeout(400); return true; }
-      const r1 = page.locator('#mn button', { hasText: /^1\. / }).first();
+      const r1 = page.locator('#mn button', { hasText: /^Chapitre 1/ }).first();
       if (await r1.count()) { try { await r1.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
     }
     /* nameGate : après une reprise navigation le jeu peut redémarrer du début */
