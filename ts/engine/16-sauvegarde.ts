@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.202";
+const VER="2.203";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -344,7 +344,7 @@ c.append(fd);
  try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }
 function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1]=JSON.parse(JSON.stringify(st));PG.c=Math.max(PG.c,SC+2);let k=[fn];
- try{PG["hist"]=PG["hist"]||{};const ap2={};for(const k2 in APPH)ap2[k2]={c:APPH[k2].c,h:""};PG["hist"][SC]={a:ap2,t:JSON.parse(JSON.stringify(THR))}}catch(e){}
+ try{APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML}}catch(e){}try{PG["hist"]=PG["hist"]||{};const ap2={};for(const k2 in APPH)ap2[k2]={c:APPH[k2].c,h:""};PG["hist"][SC]={a:ap2,t:JSON.parse(JSON.stringify(THR))}}catch(e){}
  try{localStorage.setItem("pg"+SS.id,JSON.stringify(PG));k=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");if(!k.includes(fn)){k.push(fn);localStorage.setItem("fe"+SS.id,JSON.stringify(k))}}catch(e){}
  k=k.filter(t2=>endsList(SS).includes(t2));
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.6),i*160));
