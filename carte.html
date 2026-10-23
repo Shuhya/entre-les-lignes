@@ -22,11 +22,20 @@ button.clr:hover{background:#2a3d61}
 #bar .chps{display:inline-flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 #bar .chps button{background:#20304d;border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:3px 10px;font-size:12px;cursor:pointer;text-align:left}
 #bar .chps button:hover{border-color:var(--acc)}
-#fins{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px 4px;max-width:1400px;margin:0 auto}
-#fins .lab{font-size:12px;color:var(--dim);align-self:center;margin-right:4px}
-#fins button{background:#2a2413;border:1px solid #5c4d1e;color:var(--fin);border-radius:9px;padding:5px 12px;font-size:12.5px;cursor:pointer}
-#fins button:hover{background:#3a3119}
-#fins button.on{background:#4d3d13;box-shadow:0 0 0 1px var(--fin)}
+#fins{max-width:1400px;margin:0 auto;padding:16px 16px 4px;border-top:1px solid var(--line)}
+#fins h2{font-size:15px;margin:0 0 2px;color:var(--txt)}
+#fins .sub{font-size:12px;color:var(--dim);margin:0 0 8px}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.fcard.on{border-color:var(--fin);box-shadow:0 0 0 1px #5c4d1e}
+.fcard .finbtn{background:#2a2413;border:1px solid #5c4d1e;color:var(--fin);border-radius:9px;padding:5px 12px;font-size:13px;cursor:pointer;font-weight:600}
+.fcard .finbtn:hover{background:#3a3119}
+.fcard .cnt{font-size:12px;color:var(--dim);margin-left:8px}
+.fcard .dcs{font-size:12.5px;color:var(--dim);margin-top:8px;line-height:1.7}
+.fcard .dcs b{color:var(--txt);font-family:ui-monospace,monospace;font-size:11.5px}
+.fcard .dcs .ok{color:#ffd166;font-weight:600}
+.fcard .dcs .no{color:#6f7f9b}
+.fcard .dcs .fl{color:var(--fin)}
+.fcard .more{color:var(--dim);font-style:italic}
 #wrap{overflow:auto;padding:8px 16px 60px}
 #cv{position:relative;margin:0 auto}
 #cv svg.links{position:absolute;left:0;top:0;pointer-events:none}
@@ -56,10 +65,10 @@ footer{padding:6px 16px 46px;color:var(--dim);font-size:12px;max-width:1400px;ma
   <span class="spacer"></span>
   <button class="clr" id="clr">✕ Effacer</button>
 </header>
-<div id="fins"></div>
 <div id="wrap"><div id="cv"></div></div>
 <div id="bar"></div>
-<footer>Clique sur une <b>fin</b> (bandeau doré ou case ◆) : tout ce qui peut y mener s'illumine — tous les nœuds et toutes les réponses de tous les chemins. Clique sur un nœud : ses réponses s'affichent en bas. Clique sur un lien pour surligner la réponse. Elle lit <code>js/story.js</code>, donc toujours à jour.</footer>
+<div id="fins"></div>
+<footer>En haut : le graphe — clique un nœud pour voir ses réponses, un lien pour le surligner. En bas : le détail de chaque fin, avec les infos (flags, choix) qui y mènent <b style="color:#ffd166">✓</b> et celles qui t'en écartent <span style="color:#6f7f9b">✗</span>. Clique sur une fin pour illuminer tout son cône. La carte lit <code>js/story.js</code>, donc toujours à jour.</footer>
 <script src="js/story.js?v=2.205"></script>
 <script>
 (function(){
@@ -196,7 +205,7 @@ var bar;
 function clearSel(){
   Object.keys(ELS).forEach(function(id){ELS[id].classList.remove("on","dim")});
   EDGELS.forEach(function(r){r.vis.classList.remove("on","dim")});
-  var fb=qa("#fins button.on");if(fb&&fb[0])fb[0].classList.remove("on");
+  var fc=qa("#fins .fcard.on");if(fc)for(var i=0;i<fc.length;i++)fc[i].classList.remove("on");
   bar.classList.remove("on");bar.innerHTML="";
 }
 function qa(s){return document.querySelectorAll(s)}
@@ -264,15 +273,111 @@ function onFin(root,fin){
   var el=ELS[fin];if(el&&el.scrollIntoView)try{el.scrollIntoView({behavior:"smooth",block:"center"})}catch(e){}
 }
 var CHROOT={h1:0,q1:1};
+function esc(x){return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function edgeChip(e,can){
+  var fl=(e.fl&&Object.keys(e.fl).length)?' <span class="fl">{ '+flStr(e.fl)+' }</span>':"";
+  var ok=can[e.to];
+  return "&laquo; "+esc(e.label).slice(0,80)+" &raquo;"+fl+" → "+e.to+(ok?' <span class="ok">✓</span>':' <span class="no">✗</span>');
+}
+/* pour un nœud routeur : cibles par état d'échantillons, avec exemple de flags */
+function routerChips(id,can){
+  var n=S[id],per={};
+  SAMPLES.forEach(function(st){try{var t=n.j(st);if(t&&S[t])(per[t]=per[t]||[]).push(st)}catch(e){}});
+  return Object.keys(per).map(function(t){
+    var ex=per[t][0]||{},fl=Object.keys(ex).length?flStr(ex):"aucun flag";
+    return "→ "+t+(can[t]?' <span class="ok">✓</span>':' <span class="no">✗</span>')+' <span class="fl">(p. ex. '+fl+")</span>";
+  }).join(" · ");
+}
+function flagOrigin(k){
+  var o=null;
+  Object.keys(EOUT).some(function(f){return EOUT[f].some(function(e){if(e.fl&&e.fl[k]!==undefined){o={from:f,label:e.label};return true}return false})});
+  return o;
+}
+function fk(k,v){return "<span class=\"fl\">"+k+(v!==1&&v!==undefined&&v!==null?"+"+v:"")+"</span>"}
+function flagsBlock(can){
+  var FIDS={};
+  var FLAGK={};Object.keys(EOUT).forEach(function(f){EOUT[f].forEach(function(e){for(var k in e.fl||{})FLAGK[k]=1})});
+  var lines=[];
+  Object.keys(can).forEach(function(id){
+    var n=S[id]||{};if(typeof n.j!=="function")return;
+    var tg={};SAMPLES.forEach(function(st){try{var t=n.j(st);if(t&&S[t])tg[t]=1}catch(e){}});
+    if(Object.keys(tg).every(function(t){return can[t]}))return; /* pas décisif */
+    var base=null;try{base=n.j({})||null}catch(e){}
+    if(base&&!S[base])base=null;
+    var good={},bad={};
+    Object.keys(FLAGK).forEach(function(k){
+      [1,2,3].forEach(function(v){
+        var t=null;try{var st={};st[k]=v;t=n.j(st)}catch(e){t=null}
+        if(!t||!S[t]||t===base)return;
+        if(can[t]&&!can[base]&&good[k]===undefined)good[k]=v;
+        else if(!can[t]&&can[base]&&bad[k]===undefined)bad[k]=v;
+      });
+    });
+    var parts=[];
+    if(Object.keys(good).length)parts.push("<span class='ok'>✓ y mène avec :</span> "+Object.keys(good).map(function(k){
+      var o=flagOrigin(k);return fk(k,good[k])+(o?" (<b>"+o.from+"</b> « "+esc(o.label).slice(0,50)+" &raquo;)":"");
+    }).join(" · "));
+    if(Object.keys(bad).length)parts.push("<span class='no'>✗ t'en écarte avec :</span> "+Object.keys(bad).map(function(k){
+      var o=flagOrigin(k);return fk(k,bad[k])+(o?" (<b>"+o.from+"</b> « "+esc(o.label).slice(0,50)+" &raquo;)":"");
+    }).join(" · "));
+    if(base)parts.push((can[base]?"<span class='ok'>✓ même sans info :</span> ":"<span class='no'>✗ sans aucune info :</span> ")+"→ "+base);
+    if(!parts.length)return;
+    FIDS[id]=1;
+    lines.push("<div><b>"+id+"</b> ⚑ selon tes flags : "+parts.join(" — ")+"</div>");
+  });
+  return {html:lines.join(""),ids:FIDS};
+}
+function finCard(ch,id){
+  var host=document.getElementById("fins");
+  var n=S[id]||{},can=cone(ch.r,id),np=countPaths(ch.r,id,300);
+  var card=document.createElement("div");card.className="fcard";
+  var btn=document.createElement("button");btn.className="finbtn";btn.textContent="◆ "+(n.f||id);
+  btn.onclick=function(ev){ev.stopPropagation();onFin(ch.r,id);
+    var sel=qa("#fins .fcard.on");for(var i=0;i<sel.length;i++)sel[i].classList.remove("on");
+    card.classList.add("on")};
+  card.append(btn);
+  var cnt=document.createElement("span");cnt.className="cnt";
+  cnt.textContent=np+("+ chemin"+(np>1?"s":"")+" possible"+(np>1?"s":"")+" depuis "+ch.r+" — ce qui compte :");
+  card.append(cnt);
+  var FB=flagsBlock(can);
+  var dcs=document.createElement("div");dcs.className="dcs";
+  /* décisions : nœuds du cône où au moins une réponse y mène et une autre s'en écarte */
+  var decs=[];
+  Object.keys(can).forEach(function(i2){
+    if(i2===id)return;
+    var ok=[],no=[];
+    EOUT[i2].forEach(function(e){if(can[e.to])ok.push(e);else no.push(e)});
+    if(ok.length&&no.length)decs.push({id:i2,ok:ok,no:no});
+  });
+  decs.sort(function(a,b){return (POS[a.id]&&POS[a.id].l||0)-(POS[b.id]&&POS[b.id].l||0)});
+  var html="",shown=0;
+  decs.forEach(function(d){
+    if(shown>=14){return}
+    shown++;
+    var body;
+    if(FB.ids[d.id]){return}
+    if(typeof (S[d.id]||{}).j==="function"&&d.ok.some(function(e){return e.kind==="routeur"})){
+      body="<b>"+d.id+"</b> ⚑ selon tes flags : "+routerChips(d.id,can);
+    }else{
+      body="<b>"+d.id+"</b> : "+d.ok.map(function(e){return edgeChip(e,can)}).join(" · ")
+        +(d.no.length?" — écarté : "+d.no.map(function(e){return edgeChip(e,can)}).join(" · "):"");
+    }
+    html+="<div>"+body+"</div>";
+  });
+  if(decs.length>14)html+='<div><span class="more">+ '+(decs.length-14)+" autres embranchements — clique la fin pour les voir s'illuminer sur le graphe</span></div>";
+  if(!decs.length&&!FB.html)html+="<div>Aucun embranchement décisif : toutes les routes de ce chapitre finissent ici — seul le <b>chemin</b> change (messages, notes, journal), pas la fin.</div>";
+  dcs.innerHTML=FB.html+html;
+  card.append(dcs);
+  host.append(card);
+}
 function finBand(){
   var host=document.getElementById("fins");
-  var lab=document.createElement("span");lab.className="lab";lab.textContent="Fins :";host.append(lab);
+  var h=document.createElement("h2");h.textContent="Fins & ce qui les décide";host.append(h);
+  var sub=document.createElement("p");sub.className="sub";
+  sub.textContent="Pour chaque fin : les réponses/flags qui y mènent (✓) et ceux qui t'en écartent (✗). Clique une fin pour illuminer son cône complet.";
+  host.append(sub);
   CH.forEach(function(ch){
-    reach(ch.r).forEach(function(id){var n=S[id];if(!(n&&(n.f||n.k)))return;
-      var b=document.createElement("button");b.textContent="◆ "+(n.f||id);
-      b.onclick=function(ev){ev.stopPropagation();onFin(ch.r,id);b.classList.add("on")};
-      host.append(b);
-    });
+    reach(ch.r).forEach(function(id){var n=S[id];if(!(n&&(n.f||n.k)))return;finCard(ch,id)});
   });
 }
 document.getElementById("clr").onclick=clearSel;
