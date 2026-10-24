@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.205";
+const VER="2.206";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -106,7 +106,7 @@ async function play(id,r=run){
  if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>incCallOv(n,q));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");const fn0=n.f||n.k;if(!q.includes(fn0)){q.push(fn0);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
- let insta=(n.lk&&n.lk.txt&&!/Nouveau message/.test(n.lk.txt))?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
+ let insta=(n.lk&&n.lk.txt)?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
  const MG=[];{let ag=null;for(const it of(n.m||[])){STATS.msgs++;if(it&&it[0]==="a"){(ag=ag||[]).push(String(it[1]).replace(/%N%/g,(st&&st.pname)||"toi"))}else{if(ag){MG.push(["a",ag]);ag=null}MG.push(it)}}if(ag)MG.push(["a",ag])}
  for(let mi=0;mi<MG.length;mi++){const[w,x0]=MG[mi];const x=Array.isArray(x0)?x0:String(x0).replace(/%N%/g,(st&&st.pname)||"toi");if(w!=="a")veil(0);
   if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(/coéquipier|espionné/.test(x)?gf(x):x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(/coéquipier|espionné/.test(x)?gf(x):x));await sl(350)}}
@@ -264,7 +264,7 @@ function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
 function incCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const o=document.createElement("div");o.id="incOv";
  const av=document.createElement("div");av.className="calAv incAv";
- const ph=avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
+ const ph=(nm==="C.")?null:avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
  const tb=document.createElement("div");tb.className="incTb";const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub+" · appel entrant…";tb.append(ne,se);
  const bt=document.createElement("div");bt.className="incBtns";
  const dec=document.createElement("button");dec.className="incDec";dec.innerHTML='<i>\u{1F4F5}</i>';
@@ -278,7 +278,7 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  const o=document.createElement("div");o.id="calOv";
  const hd=document.createElement("div");hd.className="calHd";
  const av=document.createElement("div");av.className="calAv";
- const ph=avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
+ const ph=(nm==="C.")?null:avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
  const tb=document.createElement("div");const ne=document.createElement("b");ne.textContent=nm;const se=document.createElement("small");se.textContent=sub;tb.append(ne,se);
  hd.append(av,tb);o.append(hd);
  const tr=document.createElement("div");tr.className="calTr";o.append(tr);
