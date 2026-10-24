@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.206";
+const VER="2.207";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -325,21 +325,13 @@ function lockBgOn(){try{const app=$("app");const o=document.createElement("div")
  const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")";
  app.append(o)}catch(e){}}
 function lockBgOff(){try{const e=document.getElementById("lkBg");if(e)e.remove()}catch(e){}}
-function endScreen(t,x,seen){const tot=endsTotal(SS);seen=(seen||[]).filter(t2=>endsList(SS).includes(t2));
+function endScreen(t,x,seen){seen=(seen||[]).filter(t2=>endsList(SS).includes(t2));
  const o=document.createElement("div");o.id="endOv";
  const c=document.createElement("div");c.className="card";
  const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
  const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 fin de chapitre";c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
- const fd=document.createElement("div");fd.className="endFins";
-if(tot>1){const fl=document.createElement("b");fl.textContent="Fins d\u00E9couvertes · "+seen.length+" / "+tot;fd.append(fl);
- const list=document.createElement("div");list.className="endFinsList";
- endsList(SS).forEach(t=>{const r=document.createElement("div");r.className="endFinRow"+(seen.includes(t)?" on":"");
-  r.innerHTML=seen.includes(t)?"<span>\u2713</span>"+t.replace(/</g,"&lt;"):"<span>\uD83D\uDD12</span>"+t.replace(/</g,"&lt;");
-  list.append(r)});
- fd.append(list)}
-else{const vh=document.createElement("p");vh.className="endVar";vh.textContent="La fin de ce chapitre change selon tes choix : prudence, preuves, confiance. Rejoue-le pour d\u00E9couvrir les autres.";fd.append(vh)}
-c.append(fd);
+
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
  const nx=(SS.ch[SC+1]||[])[1];if(nx&&S[nx]){const b3=document.createElement("button");b3.id="ob3";b3.className="obN";b3.textContent="Chapitre suivant ›";b3.onclick=()=>{lockBgOff();o.remove();SC++;start()};c.append(b3)}
@@ -356,7 +348,7 @@ function fin([t,x],skip){const fn=(S[nodeNow]&&S[nodeNow].f)||t;st.e=t;PG.s[SC+1
  const cb=$("ch");cb.innerHTML="";
  const bb=document.createElement("button");bb.className="finB";
  bb.textContent=ok?"\u25B8 J'ai tout lu \u2014 chapitre suivant":"\u25B8 J'ai tout lu \u2014 bilan de l'histoire";
- bb.onclick=()=>{if(ok){ov(t,x+"\n\nFins vues : "+k.length+" / "+endsTotal(SS),"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)};
+ bb.onclick=()=>{if(ok){ov(t,x,"Chapitre suivant",()=>{SC++;start()},"Menu",menu)}else endScreen(t,x,k)};
  cb.append(bb);$("fl").textContent="Fin de ce segment.";$("chat").scrollTop=1e9},900)}
 function addH(x){const d=add("h",x);
  if(CGP&&CGP.length>1){const i=x.indexOf(" : ");if(i>1&&i<22&&CGP.indexOf(x.slice(0,i))>=0){
