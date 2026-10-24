@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.215";
+const VER="2.216";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -104,19 +104,19 @@ async function play(id,r=run){
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
  if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>(n["inclk"]?lockCallOv(n,q):incCallOv(n,q)));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
- if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
+ if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})\s?h\s?(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");const fn0=n.f||n.k;if(!q.includes(fn0)){q.push(fn0);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  let insta=(n.lk&&n.lk.txt)?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
  const MG=[];{let ag=null;for(const it of(n.m||[])){STATS.msgs++;if(it&&it[0]==="a"){(ag=ag||[]).push(String(it[1]).replace(/%N%/g,(st&&st.pname)||"toi"))}else{if(ag){MG.push(["a",ag]);ag=null}MG.push(it)}}if(ag)MG.push(["a",ag])}
  for(let mi=0;mi<MG.length;mi++){const[w,x0]=MG[mi];const x=Array.isArray(x0)?x0:String(x0).replace(/%N%/g,(st&&st.pname)||"toi");if(w!=="a")veil(0);
   if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(/coéquipier|espionné/.test(x)?gf(x):x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(/coéquipier|espionné/.test(x)?gf(x):x));await sl(350)}}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="pm"){tx();const d=document.createElement("div");d.className="b m pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo envoy\u00e9e";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){if(mi>0){await rdOk();if(r!=run)return}await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="pm"){tx();const d=document.createElement("div");d.className="b m pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo envoy\u00e9e";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){if(mi>0){await rdOk();if(r!=run)return}await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})\s?h\s?(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
  clkPlan(n);
  if(n.e)return fin(n.e);
- if(n.x){const lm=(n.m||[]).slice(-1)[0];if(lm&&lm[0]!=="a")await rdOk();if(r!=run)return;return play(n.x,r)}if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
+ if(n.x){const lm=(n.m||[]).slice(-1)[0];if(lm&&lm[0]!=="a"&&!(S[n.x]&&S[n.x].m&&S[n.x].m.length))await rdOk();if(r!=run)return;return play(n.x,r)}if(!(n.c&&n.c.length))return fin([n.k||"Fin",""]);
  if(!n.vw&&!n.fx)veil(0);const c=$("ch");c.innerHTML="";
  if(n.c&&n.c.length)st["cpl_"+id]=1;
  noteTick();
@@ -261,10 +261,11 @@ function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  const cfg=CALL_VOICE[nm]||{pitch:1,rate:1};u.pitch=cfg.pitch;u.rate=cfg.rate;u.volume=Math.max(.2,Math.min(1,VS||1));
  const v=pickFr();if(v)u.voice=v;u.lang="fr-FR";speechSynthesis.speak(u)}catch(e){}}
 function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
+function lkBatt(){try{const h=(CLK.h==null?22:CLK.h)+((CLK.m||0)/60);const el=(h-22+24)%24;return Math.max(12,Math.min(95,Math.round(92-3.5*el)))}catch(e){return 78}}
 function lockCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const lc=n["lkc"]||{};const tm=(lc.t||"10:30"),dt=(lc.d||"Samedi 18 octobre");
  const app=$("app");const o=document.createElement("div");o.id="lkCall";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>\u25AE 78 %</i></div><div class="lkClock">'+tm+'</div><div class="lkDate">'+dt+'</div><div class="lkCallCard"><span class="lkIc"></span><div class="lkNc"><b class="lkNm"></b><small class="lkSub">appel entrant\u2026</small></div></div><div class="incBtns"><button class="incDec" aria-label="Refuser"><i>\u{1F4F5}</i></button><button class="incAcc" aria-label="D\u00E9crocher"><i>\u{1F4DE}</i></button></div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>\u25AE '+lkBatt()+' %</i></div><div class="lkClock">'+tm+'</div><div class="lkDate">'+dt+'</div><div class="lkCallCard"><span class="lkIc"></span><div class="lkNc"><b class="lkNm"></b><small class="lkSub">appel entrant\u2026</small></div></div><div class="incBtns"><button class="incDec" aria-label="Refuser"><i>\u{1F4F5}</i></button><button class="incAcc" aria-label="D\u00E9crocher"><i>\u{1F4DE}</i></button></div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf(nm);if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")")}catch(e){}
  try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkNm");const pn=(st&&st.pname)||"toi";if(tb)tb.textContent=String(nm).replace(/%N%/g,pn);
  if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.setAttribute("style","background-image:url("+AVN[nm]+")")}else ic.textContent="\u{1F4DE}"}catch(e){}
@@ -599,13 +600,13 @@ async function introH(cb){
 function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=document.createElement("div");v.id="etlVeil";$("app").append(v)}v.classList.remove("off")}else if(v){v.classList.add("off");setTimeout(()=>{const x=document.getElementById("etlVeil");if(x&&x.classList.contains("off"))x.remove()},400)}}
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">'+((s&&s.d)||"Samedi 18 octobre")+'</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ '+lkBatt()+' %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">'+((s&&s.d)||"Samedi 18 octobre")+'</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><button class="lkGo" aria-label="Déverrouiller"><i>\u{1F513}</i></button><div class="lkHint">Déverrouiller</div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")")}catch(e){}
  try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkTop b"),tm=o.querySelector(".lkTop small"),tx=o.querySelector(".lkTx");const pn=(st&&st.pname)||"toi";const nm=s&&s.nm||"";tb.textContent=nm.replace(/%N%/g,pn);tm.textContent=(s&&s.t)||"";tx.textContent=String(s&&s.txt||"").replace(/%N%/g,pn);
  if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.setAttribute("style","background-image:url("+AVN[nm]+")")}else ic.textContent=(s&&s.ic)||"💬"}catch(e){}
  const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
- await new Promise(res=>{o.onclick=()=>{veil(1);try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{var d=document.getElementById("lkDim");if(d)d.remove()}catch(e){}res()},420)}})}
+ await new Promise(res=>{const un=()=>{veil(1);try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{var d=document.getElementById("lkDim");if(d)d.remove()}catch(e){}res()},420)};const gb=o.querySelector(".lkGo");if(gb)gb.addEventListener("click",un)})}
 async function awayOv(lines,LB){
  const app=$("app");
  const o=document.createElement("div");o.id="awayOv";
@@ -618,7 +619,7 @@ async function awayOv(lines,LB){
  await new Promise(res=>{
   const close=()=>{if(done)return;done=true;veil(1);o.classList.add("off");setTimeout(()=>{o.remove();res()},620)};
   lines.forEach((L,i2)=>{const p=document.createElement("p");p.textContent=L;
-   try{const q=String(L).match(/^(\d{1,2})h(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm}}catch(e){}
+   try{const q=String(L).match(/^(\d{1,2})\s?h\s?(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm}}catch(e){}
    setTimeout(()=>{inn.append(p);requestAnimationFrame(()=>requestAnimationFrame(()=>p.classList.add("on")))},i2*650)});
   btn.textContent=LB||"Reprendre le t\u00E9l\u00E9phone";
   /* v2.132 : bouton actif seulement apres apparition du texte — anti "pas le temps de lire" + anti double-tap qui saute la carte suivante */
@@ -631,7 +632,7 @@ async function awayOv(lines,LB){
 /* ---- animation de transfert HÉLIOS (v2.59) : item par item, barre de progression ---- */
 async function heliosTransfer(o){
  const btns=o.querySelector(".scBtns");btns.innerHTML="";
- const items=[["Photos & vidéos","2,1 Go"],["Sauvegardes de messages","1,4 Go"],["Documents","0,7 Go"]];
+ const items=[["Photos & vidéos","2,1 Go"],["Sauvegardes de messages","1,4 Go"],["Contacts","47 numéros"],["Documents","0,7 Go"]];
  const box=document.createElement("div");box.className="scProg";
  box.innerHTML='<p class="scStat">Transfert des données…</p><div class="scTrack"><i></i></div><div class="scList"></div>';
  btns.append(box);
@@ -666,6 +667,7 @@ async function scrOv(n){
       :'<p class="scSub">Données en attente de transfert<br>06 51 09 43 87 · 4,2 Go</p>')
   +'<div class="scRow"><i>🖼️</i><span>Photos &amp; vidéos</span><small>'+(dn?'✓ 2,1 Go':'2,1 Go')+'</small></div>'
   +'<div class="scRow"><i>💬</i><span>Sauvegardes de messages</span><small>'+(dn?'✓ 1,4 Go':'1,4 Go')+'</small></div>'
+  +'<div class="scRow"><i>\u{1F464}</i><span>Contacts</span><small>'+(dn?'✓ 47 numéros':'47 numéros')+'</small></div>'
   +'<div class="scRow"><i>📄</i><span>Documents</span><small>'+(dn?'✓ 0,7 Go':'0,7 Go')+'</small></div>'
   +'<div class="scRow"><i>🔐</i><span>Espace chiffré</span><small>'+(dn?'4 fichiers · verrouillés':'taille inconnue')+'</small></div>'
   +(dn?'<p class="scNote">Les données de N. A. sont dans ton téléphone. Elles attendent.</p>':'')
@@ -733,7 +735,8 @@ function addBack(c){
   const a=document.createElement("button");a.type="button";a.className="mnBack";a.setAttribute("aria-label","Retour");a.textContent="\u2190";
   a.onclick=fn||homeIntro;
   if(c.parentElement&&c.parentElement.classList&&c.parentElement.classList.contains("rsOv")){c.style.position="relative";a.style.position="absolute";a.style.top="-56px";a.style.left="0";a.style.right="auto"}
-  c.prepend(a)}
+  c.prepend(a);
+  const x2=document.createElement("button");x2.type="button";x2.className="mnX";x2.setAttribute("aria-label","Fermer");x2.textContent="\u2715";x2.onclick=fn||homeIntro;c.append(x2)}
 /* ---- Guide (bouton dans la bibliotheque) ---- */
 function guideOv(){
  const o=document.createElement("div");o.id="infoOv";
@@ -900,7 +903,7 @@ function clkPlan(n){CLKMAX=null;if(CLK.h==null||!n)return;
  if(n.j){try{push(n.j(st),1)}catch(e){}try{const s2=JSON.parse(JSON.stringify(st));s2.piege=s2.piege?0:1;push(n.j(s2),1)}catch(e){}}
  while(q.length){
   const it=q.shift(),n2=S[it.id];let hasT=null;
-  for(const[w,x]of n2.m||[]){const q2=String(w==="n"?x:"").match(/^(\d{1,2})h(\d{2})/);if(q2){hasT={h:+q2[1],m:+q2[2]};break}}
+  for(const[w,x]of n2.m||[]){const q2=String(w==="n"?x:"").match(/^(\d{1,2})\s?h\s?(\d{2})/);if(q2){hasT={h:+q2[1],m:+q2[2]};break}}
   if(hasT){const v=hasT.h*60+hasT.m;if(v>cur&&(!CLKMAX||v<CLKMAX.h*60+CLKMAX.m))CLKMAX=hasT;continue} /* temps trouvé : chemin stoppé là */
   (n2.c||[]).forEach(ch=>ch&&push(ch[1],it.dp+1));if(n2.x)push(n2.x,it.dp+1);if(n2.h)push(n2.h,it.dp+1);
   if(n2.j){try{push(n2.j(st),it.dp+1)}catch(e){}}

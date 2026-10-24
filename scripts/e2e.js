@@ -67,7 +67,7 @@ let page = null;
 
   /* le récit s'auto-anime mais des overlays bloquants peuvent surgir à tout moment */
   /* .scBtn = écran-app annexe (scrOv) : cliquer le 1er bouton fait avancer */
-  const BLOCKERS = ['.lkNext', '.awGo', '#lkWake', '.notif', '.rdOk', '#scrOv .scBtn'];
+  const BLOCKERS = ['.lkNext', '.awGo', '#lkWake .lkGo', '#lkWake', '.notif', '.rdOk', '#scrOv .scBtn'];
   const settleOnce = async () => {
     for (const sel of BLOCKERS) {
       const el = await page.$(sel);

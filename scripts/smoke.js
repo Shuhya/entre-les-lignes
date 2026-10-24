@@ -110,7 +110,7 @@ async function drive(){
   el=first(".lkNext");if(el){el.click();await sleep(60);continue}
   el=first(".rxOv");if(el){el.click();await sleep(20);if(first(".rxOv"))el.click();await sleep(60);continue}
   el=first("#awayOv");if(el){(first(".awGo",el)||el).click();await sleep(40);continue}
-  el=first("#lkWake");if(el){el.click();await sleep(80);continue}
+  el=first("#lkWake .lkGo");if(el){el.click();await sleep(80);continue}
   el=first(".notif");if(el){el.click();await sleep(60);continue}
  el=first(".rdOk");if(el){el.click();await sleep(60);continue}
   el=first("#incOv");if(el){const ab=first(".incAcc",el);if(ab)ab.click();await sleep(60);continue}

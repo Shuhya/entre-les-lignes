@@ -128,7 +128,7 @@ const log = m => console.log('e2e-chaos: ' + m);
       await page.waitForTimeout(300); return true;
     } }
     /* overlays bloquants du récit (proSkip = cartes de fin de chapitre) */
-    const BLOCKERS = ['.proSkip', '.bioGo', '.lkNext', '.awGo', '#lockOv .lkGo', '#lkWake', '.notif', '.rdOk',
+    const BLOCKERS = ['.proSkip', '.bioGo', '.lkNext', '.awGo', '#lockOv .lkGo', '#lkWake .lkGo', '#lkWake', '.notif', '.rdOk',
       '#scrOv .scRow.go:not(.read)', '#scrOv .scBtn', '#incOv .incAcc',
       '#calOv .calCh button', '#calOv .calEnd:not([hidden])'];
     for (const sel of BLOCKERS) {
