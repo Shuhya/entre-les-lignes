@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.217";
+const VER="2.218";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -220,7 +220,7 @@ function transferOv(){
  const p1=document.createElement("p");p1.className="trP";p1.textContent="Copie ce code, puis colle-le sur ton autre appareil (R\u00E9glages \u2192 Transf\u00E9rer).";c.append(p1);
  const ta=document.createElement("textarea");ta.className="trTa";ta.readOnly=true;ta.value=code;ta.onclick=()=>{ta.select()};c.append(ta);
  const cp=document.createElement("button");cp.className="trBtn";cp.textContent="\u29B9 Copier le code";
- cp.onclick=()=>{try{navigator.clipboard.writeText(code);cp.textContent="\u2713 Copi\u00E9"}catch(e){ta.select();cp.textContent="S\u00E9lectionne et copie manuellement"}};
+ cp.onclick=()=>{try{const pr=navigator.clipboard.writeText(code);if(pr&&pr.catch)pr.catch(()=>{ta.select();cp.textContent="S\u00E9lectionne et copie manuellement"});cp.textContent="\u2713 Copi\u00E9"}catch(e){ta.select();cp.textContent="S\u00E9lectionne et copie manuellement"}};
  c.append(cp);
  const sep=document.createElement("div");sep.className="trSep";sep.textContent="ou, sur cet appareil :";c.append(sep);
  const ta2=document.createElement("textarea");ta2.className="trTa";ta2.placeholder="Colle un code de partie ici";c.append(ta2);
