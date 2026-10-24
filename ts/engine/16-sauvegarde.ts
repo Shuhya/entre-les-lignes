@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.207";
+const VER="2.208";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -330,6 +330,14 @@ function endScreen(t,x,seen){seen=(seen||[]).filter(t2=>endsList(SS).includes(t2
  const h=document.createElement("h2");h.className="endH";h.textContent=t;c.append(h);
  const sub=document.createElement("div");sub.className="endSub";sub.textContent=SS.t+" \u00B7 fin de chapitre";c.append(sub);
  const p=document.createElement("p");p.className="endTxt";p.textContent=x;c.append(p);
+ try{const all=endsList(SS);const got=(seen||[]);
+  if(all.length){const es=document.createElement("div");es.className="endStats";
+   const l1=document.createElement("div");l1.style.cssText="font-size:13px;color:#ffd166";
+   l1.textContent="\uD83C\uDFC1 Fin d\u00E9couverte \u2014 "+t;
+   const l2=document.createElement("div");l2.style.cssText="margin-top:4px;font-size:13px;color:#ffffffa0";
+   l2.textContent="Fins : "+got.length+" / "+all.length+(got.length<all.length?("\u00B7 "+(all.length-got.length)+" te t\u2019attendent encore"):"\u00B7 toutes trouv\u00E9es \u2728");
+   es.append(l1);es.append(l2);c.append(es)}
+ }catch(e){}
 
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
