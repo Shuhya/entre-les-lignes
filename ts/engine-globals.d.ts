@@ -17,6 +17,7 @@ declare const AVF2: any;
 declare const AVF3: any;
 declare const AVF4: any;
 declare const AVM1: any;
+declare const AVM2: any;
 
 interface Window {
   __ghost?: () => boolean;

@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.212";
+const VER="2.213";
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -104,7 +104,7 @@ async function play(id,r=run){
   applyApp(n);
   if(tA!==oC||tN!==oN){const th=APPH[nk];$("chat").innerHTML=(th&&th.c)||"";$("ch").innerHTML=(th&&th.h)||""}
   if(!THR[tA])THR[tA]=[];const lbl=tN||tA;if(!THR[tA].includes(lbl))THR[tA].push(lbl)}
- if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>incCallOv(n,q));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
+ if(n.call&&!st["cal_"+id]){if(n.inc&&!st["inc_"+id]&&!st.recall){st["inc_"+id]=1;const ic=await new Promise(q=>(n["inclk"]?lockCallOv(n,q):incCallOv(n,q)));if(ic==="decline"&&S[n.dec])return play(n.dec,r)}const hr=await new Promise(q=>callOv(n.call,q));st["cal_"+id]=1;if(hr==="hangup"&&S[n.h])return play(n.h,r)}
  if(n.card&&!st["card_"+id]){st["card_"+id]=1;const hh=String(n.card[1]||"").match(/^(\d{1,2})h(\d{2})/);if(hh){const hm=hh[1].padStart(2,"0")+":"+hh[2];try{clkSet(hm)}catch(e){}$("clk").textContent=hm}await proCards(n.card,{label:n.cardLab||"Prologue",lastBtn:"Continuer"});if(r!=run)return}
  if(n.k){st.e=n.k;try{const q=JSON.parse(localStorage.getItem("fe"+SS.id)||"[]");const fn0=n.f||n.k;if(!q.includes(fn0)){q.push(fn0);localStorage.setItem("fe"+SS.id,JSON.stringify(q))}}catch(e){}}
  let insta=(n.lk&&n.lk.txt)?1:(window.__noan?1:0);try{window.__noan=0}catch(e){}
@@ -262,6 +262,18 @@ function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  const cfg=CALL_VOICE[nm]||{pitch:1,rate:1};u.pitch=cfg.pitch;u.rate=cfg.rate;u.volume=Math.max(.2,Math.min(1,VS||1));
  const v=pickFr();if(v)u.voice=v;u.lang="fr-FR";speechSynthesis.speak(u)}catch(e){}}
 function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
+function lockCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
+ const lc=n["lkc"]||{};const tm=(lc.t||"10:30"),dt=(lc.d||"Samedi 18 octobre");
+ const app=$("app");const o=document.createElement("div");o.id="lkCall";
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>\u25AE 78 %</i></div><div class="lkClock">'+tm+'</div><div class="lkDate">'+dt+'</div><div class="lkCallCard"><span class="lkIc"></span><div class="lkNc"><b class="lkNm"></b><small class="lkSub">appel entrant\u2026</small></div></div><div class="incBtns"><button class="incDec" aria-label="Refuser"><i>\u{1F4F5}</i></button><button class="incAcc" aria-label="D\u00E9crocher"><i>\u{1F4DE}</i></button></div>';
+ try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf(nm);if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")")}catch(e){}
+ try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkNm");const pn=(st&&st.pname)||"toi";if(tb)tb.textContent=String(nm).replace(/%N%/g,pn);
+ if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.setAttribute("style","background-image:url("+AVN[nm]+")")}else ic.textContent="\u{1F4DE}"}catch(e){}
+ const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
+ try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
+ let rg=null;try{rg=setInterval(()=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)},1500);beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)}catch(e){}
+ const end=v=>{if(rg)clearInterval(rg);o.remove();const d=document.getElementById("lkDim");if(d)d.remove();done(v)};
+ const dec=o.querySelector(".incDec"),acc=o.querySelector(".incAcc");dec.addEventListener("click",()=>end("decline"));acc.addEventListener("click",()=>end("accept"))}
 function incCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const o=document.createElement("div");o.id="incOv";
  const av=document.createElement("div");av.className="calAv incAv";
@@ -322,7 +334,7 @@ function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.
 function endsTotal(s){return endsList(s).length}
 function lockBgOn(){try{const app=$("app");const o=document.createElement("div");o.id="lkBg";
  o.innerHTML='<div class="lkWp"></div><div class="lkClock">'+(($("clk")&&$("clk").textContent)||"23:07")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkTools"><i>🔦</i><i>📷</i></div>';
- const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")";
+ const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")");
  app.append(o)}catch(e){}}
 function lockBgOff(){try{const e=document.getElementById("lkBg");if(e)e.remove()}catch(e){}}
 function endScreen(t,x,seen){seen=(seen||[]).filter(t2=>endsList(SS).includes(t2));
@@ -365,7 +377,7 @@ function addH(x){const d=add("h",x);
   const row=document.createElement("div");row.className="hrow";d.replaceWith(row);row.append(av,d);d.textContent=x.slice(i+3)}else{const ph2=AVN[CNM];if(ph2){const av=document.createElement("span");av.className="gav";av.title=CNM;av.style.backgroundImage="url("+ph2+")";const row=document.createElement("div");row.className="hrow";d.replaceWith(row);row.append(av,d)}}}
  return d}
 function setAv(t){const a=$("av");if(!a)return;const unk=(!t||t==="\u{1F464}");const ph=unk?"":((SS&&SS.photo)||DEF_AV[SS?SS.id:'']);a.style.backgroundImage=ph?'linear-gradient(#0003,#0006),url("'+ph+'"'+')':'';a.textContent=ph?'':(t||"\u{1F464}")}
-const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
+const AVGR={C:AVF1,J:AVF2,N:AVM1,Y:AVF2,B:AVM1,V:AVM1};const AVN={"Cora":AVF3,"Yasmine":AVF4,"Riffaud":AVM2};const avOf=nm=>AVN[nm]||AVGR[(nm||"")[0]];let APPH={},PENDING=null,PAPP=null,CNM="",PNM="",THR={};
 const PART={h1:"I",h2:"I",h3:"I",h4:"I",h5a:"I",h5b:"I",h5c:"I",h6:"I",h7q:"I",h7m:"I",h7m2:"I",h7h:"I",h8b:"I",h8a:"I",h8:"I",h8p:"I",h8h:"I",h8ph:"I",h8d:"I",h8d2:"I",h8pd:"I",h8pd2:"I",h9:"I",h9a:"I",h9a2:"I",h9b:"I",h9c:"I",h9e:"I",h10:"I",h9y:"I",h11b:"I",h11c:"I",h11r:"I",h11p:"I",h11w:"I",h11f:"I",h11:"I",h3a:"I",h3b:"I",h3c:"I",h3l:"I",h3l1:"I",h3l2:"I",h3l3:"I",h9f2:"I",h9z:"I",h9w:"I"};
 let CHP="";
 let CGP=null;
@@ -588,10 +600,10 @@ async function introH(cb){
 function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=document.createElement("div");v.id="etlVeil";$("app").append(v)}v.classList.remove("off")}else if(v){v.classList.add("off");setTimeout(()=>{const x=document.getElementById("etlVeil");if(x&&x.classList.contains("off"))x.remove()},400)}}
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
- try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.style.backgroundImage="url("+ph+")"}catch(e){}
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ 78 %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">'+((s&&s.d)||"Samedi 18 octobre")+'</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><div class="lkHint">Appuie pour déverrouiller</div>';
+ try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")")}catch(e){}
  try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkTop b"),tm=o.querySelector(".lkTop small"),tx=o.querySelector(".lkTx");const pn=(st&&st.pname)||"toi";const nm=s&&s.nm||"";tb.textContent=nm.replace(/%N%/g,pn);tm.textContent=(s&&s.t)||"";tx.textContent=String(s&&s.txt||"").replace(/%N%/g,pn);
- if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.style.backgroundImage="url("+AVN[nm]+")"}else ic.textContent=(s&&s.ic)||"💬"}catch(e){}
+ if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.setAttribute("style","background-image:url("+AVN[nm]+")")}else ic.textContent=(s&&s.ic)||"💬"}catch(e){}
  const dm=document.createElement("div");dm.id="lkDim";app.append(dm);app.append(o);
  try{hit(150,1.2,.12,"lowpass",.015,.5)}catch(e){}
  await new Promise(res=>{o.onclick=()=>{veil(1);try{hit(880,.05,.06)}catch(e){}o.classList.add("on");setTimeout(()=>{o.remove();try{var d=document.getElementById("lkDim");if(d)d.remove()}catch(e){}res()},420)}})}
