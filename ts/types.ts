@@ -18,7 +18,7 @@ export type Msg = [string, string | Src];
 export type Choice = [string, string] | [string, string, Record<string, any>] | [string, string, Record<string, any> | undefined, string | undefined];
 
 /** Écran de verrouillage avec notification (prévisu). */
-export interface Lk { t?: string; nm?: string; txt?: string; ic?: string }
+export interface Lk { t?: string; nm?: string; txt?: string; ic?: string; d?: string }
 
 /** Écran applicatif spécial (helios / files). */
 export interface Scr { k: string; ts?: string; st?: string; ic?: string; map?: Record<string, string> }
@@ -44,6 +44,8 @@ export interface Node {
   h?: string;             /* nœud si le joueur raccroche */
   dec?: string;           /* nœud si le joueur refuse l'appel entrant */
   inc?: 1;                /* appel entrant */
+  inclk?: 1;              /* appel entrant sur l'écran de verrouillage */
+  lkc?: { t?: string; d?: string }; /* heure + date de l'appel entrant lock screen */
   call?: [string, string, Array<CallLine>]; /* [nom affiché, sous-titre, lignes] */
   endc?: (st: St) => string | string; /* écran de fin de chapitre */
   fx?: Array<[string, string, string, number | string]>; /* explorateur Fichiers : [icône, nom, meta, action (index de choix | "gpg"|"png")] */

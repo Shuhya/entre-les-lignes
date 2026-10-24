@@ -48,6 +48,7 @@
         "AVF3": "readonly",
         "AVF4": "readonly",
         "AVM1": "readonly",
+        "AVM2": "readonly",
         "VOICES": "readonly"
       },
       "rules": {
