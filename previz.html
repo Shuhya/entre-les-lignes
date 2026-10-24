@@ -214,7 +214,7 @@ function renderNode(id,live,answering){
   }
   flow.append(d);
   pos(id,n.app?n.app+" · "+(n.nm||""):null);
-  try{if(d.scrollIntoView)d.scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}
+  if(live){try{if(d.scrollIntoView)d.scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}}
 }
 function answer(id){
   /* Décrocher : révèle le dialogue d'appel puis propose la suite */
@@ -236,7 +236,7 @@ function answerCell(id,live){
   if(n.h&&live){var b3=document.createElement("button");b3.className="refu";b3.textContent="📵 Raccrocher";b3.onclick=function(ev){ev.stopPropagation();pushLog(n.h,null)};bx.append(b3)}
   if(bx.children.length)d.append(bx);
   flow.append(d);pos(id,"appel");
-  try{if(d.scrollIntoView)d.scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}
+  if(live){try{if(d.scrollIntoView)d.scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}}
 }
 function pushLog(id,fl){
   LOG.push({id:id,fl:fl||null});
