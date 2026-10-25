@@ -41,6 +41,7 @@ export interface Node {
   c?: Array<Choice>;      /* choix du joueur */
   j?: (st: St) => string; /* routeur : nœud suivant selon l'état */
   x?: string;             /* suite sans choix (après rdOk) */
+  ef?: Record<string, number>; /* effets automatiques à l'entrée du nœud (sweep pages action) */
   h?: string;             /* nœud si le joueur raccroche */
   dec?: string;           /* nœud si le joueur refuse l'appel entrant */
   inc?: 1;                /* appel entrant */

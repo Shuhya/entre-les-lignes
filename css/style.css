@@ -907,3 +907,8 @@ body.wa #app{background-color:#0b141a}
 .ifGuide{font:400 11.5px/1.68 system-ui}
 .ifGuide p>b{color:#fff}
 .ifGuide p:first-child b,.ifGuide p:nth-child(2) b{font-size:13.5px;color:#ffd166;letter-spacing:.3px}
+/* ---- v2.220 : cadenas SVG top-center (écrans verrouillés) + outils #lkCall ---- */
+.lkLock{position:absolute;top:calc(46px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:1;opacity:.92;animation:fo .55s .12s both}
+.lkLock svg{display:block}
+#lkCall .lkTools{display:flex;gap:26px;margin-top:26px;position:relative;z-index:1;animation:fo .55s .12s both}
+#lkCall .lkTools i{font-style:normal;width:44px;height:44px;border-radius:50%;background:#ffffff14;border:1px solid #ffffff24;display:grid;place-items:center;font-size:18px;box-shadow:0 2px 10px #0006}

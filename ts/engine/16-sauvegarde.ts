@@ -17,7 +17,8 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.219";
+const VER="2.220";
+const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
 updMob();
@@ -90,6 +91,7 @@ async function play(id,r=run){
  if(SS&&SS.id==="h"&&PART[id]){try{const pn={I:1,II:2,III:3,IV:4,V:5,VI:6}[PART[id]];const cu=+localStorage.getItem("etl_part_"+SS.id)||0;if(pn&&pn>cu)localStorage.setItem("etl_part_"+SS.id,pn)}catch(e){}}
  const abn=$("apps");if(abn)abn.style.display="none";
  if(n.j)return play(n.j(st),r);
+ if(n.ef)for(const k in n.ef){const v=n.ef[k];st[k]=["t","care","agency","practical"].includes(k)?((st[k]||0)+v):v}
  if(n.w){scene(n.w,id);try{const sm=JSON.parse(localStorage.getItem("etl_node_sounds")||"{}");if(sm[id])amb(sm[id]);else if(AUTOAMB[n.w])amb(AUTOAMB[n.w])}catch(e){}}
  if(n.pro&&!PROD)await proCards(n.pro);
  if(n.out)await awayOv(n.out.map(gf));
@@ -265,7 +267,7 @@ function lkBatt(){try{const h=(CLK.h==null?22:CLK.h)+((CLK.m||0)/60);const el=(h
 function lockCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const lc=n["lkc"]||{};const tm=(lc.t||"10:30"),dt=(lc.d||"Samedi 18 octobre");
  const app=$("app");const o=document.createElement("div");o.id="lkCall";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>\u25AE '+lkBatt()+' %</i></div><div class="lkClock">'+tm+'</div><div class="lkDate">'+dt+'</div><div class="lkCallCard"><span class="lkIc"></span><div class="lkNc"><b class="lkNm"></b><small class="lkSub">appel entrant\u2026</small></div></div><div class="incBtns"><button class="incDec" aria-label="Refuser"><i>\u{1F4F5}</i></button><button class="incAcc" aria-label="D\u00E9crocher"><i>\u{1F4DE}</i></button></div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>\u25AE '+lkBatt()+' %</i></div><div class="lkLock">'+LKLOCK+'</div><div class="lkClock">'+tm+'</div><div class="lkDate">'+dt+'</div><div class="lkCallCard"><span class="lkIc"></span><div class="lkNc"><b class="lkNm"></b><small class="lkSub">appel entrant\u2026</small></div></div><div class="incBtns"><button class="incDec" aria-label="Refuser"><i>\u{1F4F5}</i></button><button class="incAcc" aria-label="D\u00E9crocher"><i>\u{1F4DE}</i></button></div><div class="lkTools"><i>\u{1F526}</i><i>\u{1F4F7}</i></div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf(nm);if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")")}catch(e){}
  try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkNm");const pn=(st&&st.pname)||"toi";if(tb)tb.textContent=String(nm).replace(/%N%/g,pn);
  if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.setAttribute("style","background-image:url("+AVN[nm]+")")}else ic.textContent="\u{1F4DE}"}catch(e){}
@@ -333,7 +335,7 @@ function endsList(s){const seen={},q=[],out=[];(s.ch||[]).forEach(h=>{if(h[1])q.
  return out}
 function endsTotal(s){return endsList(s).length}
 function lockBgOn(){try{const app=$("app");const o=document.createElement("div");o.id="lkBg";
- o.innerHTML='<div class="lkWp"></div><div class="lkClock">'+(($("clk")&&$("clk").textContent)||"23:07")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkTools"><i>🔦</i><i>📷</i></div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkLock">'+LKLOCK+'</div><div class="lkClock">'+(($("clk")&&$("clk").textContent)||"23:07")+'</div><div class="lkDate">Samedi 18 octobre</div><div class="lkTools"><i>\u{1F526}</i><i>\u{1F4F7}</i></div>';
  const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")");
  app.append(o)}catch(e){}}
 function lockBgOff(){try{const e=document.getElementById("lkBg");if(e)e.remove()}catch(e){}}
@@ -514,13 +516,13 @@ function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne 
  o.querySelector(".bioGo").onclick=()=>{try{hit(660,.05,.08)}catch(x){}cb&&cb();o.remove()}}
 /* ---- v2.75 : genre du joueur + prénom ---- */
 function gf(t){if(!st||!st.pf)return String(t);return String(t)
- .replace(/(?<![\p{L}])(Désolé|désolé|éveillé|certain|seul|content|rentré|fatigué|prêt|vivant|sûr|repéré|appelé|aiguillé)(?![\p{L}])/gu,"$1e")
+ .replace(/(?<![\p{L}])(Désolé|désolé|éveillé|certain|seul|content|rentré|fatigué|prêt|vivant|sûr|repéré|appelé|aiguillé|allé|retourné)(?![\p{L}])/gu,"$1e")
  .replace(/(?<![\p{L}])curieux(?![\p{L}])/gu,"curieuse")
  .replace(/(?<![\p{L}])le flic(?![\p{L}])/gu,"la flic")
  .replace(/(?<![\p{L}])ancien inspecteur(?![\p{L}])/gu,"ancienne inspectrice")
  .replace(/(?<![\p{L}])réparateur indépendant(?![\p{L}])/gu,"réparatrice indépendante")
  .replace(/(?<![\p{L}])un ancien inspecteur(?![\p{L}])/gu,"une ancienne inspectrice")
- .replace(/(?<![\p{L}])d’un coéquipier(?![\p{L}])/gu,"d’une coéquipière").replace(/(?<![\p{L}])coéquipier(?![\p{L}])/gu,"coéquipière").replace(/(?<![\p{L}])d’un ancien flic(?![\p{L}])/gu,"d’une ancienne flic").replace(/(?<![\p{L}])espionné(?![\p{L}])/gu,"espionnée").replace(/n'es pas lui/g,"n'es pas elle")}
+ .replace(/(?<![\p{L}])d’un coéquipier(?![\p{L}])/gu,"d’une coéquipière").replace(/(?<![\p{L}])coéquipier(?![\p{L}])/gu,"coéquipière").replace(/(?<![\p{L}])d’un ancien flic(?![\p{L}])/gu,"d’une ancienne flic").replace(/(?<![\p{L}])espionné(?![\p{L}])/gu,"espionnée").replace(/(?<![\p{L}])le justicier solitaire(?![\p{L}])/gu,"la justicière solitaire").replace(/n'es pas lui/g,"n'es pas elle")}
 function nameGate(cb){const o=document.createElement("div");o.id="nameGate";o.className="ngOv";
  o.innerHTML='<div class="ngList"><button class="bk ngBk" id="ngBack"><h3>‹ Retour au menu</h3><p>Ne pas commencer maintenant.</p></button><h2>Avant de commencer</h2><p class="ngP">L’histoire va te parler, et elle aura besoin d’un nom.</p><input id="ngName" maxlength="14" placeholder="Ton prénom" autocomplete="off"><button class="bk ngBk" id="ngF"><h3>♀ Une femme</h3><p>L’histoire s’accorde au féminin.</p></button><button class="bk ngBk" id="ngM"><h3>♂ Un homme</h3><p>L’histoire s’accorde au masculin.</p></button><button class="ngGo">Continuer</button></div>';
  $("app").append(o);
@@ -600,7 +602,7 @@ async function introH(cb){
 function veil(on){let v=document.getElementById("etlVeil");if(on){if(!v){v=document.createElement("div");v.id="etlVeil";$("app").append(v)}v.classList.remove("off")}else if(v){v.classList.add("off");setTimeout(()=>{const x=document.getElementById("etlVeil");if(x&&x.classList.contains("off"))x.remove()},400)}}
 /* ---- v2.65 : réveil sur écran de verrouillage avec notification ---- */
 async function lockWake(s){const app=$("app");const o=document.createElement("div");o.id="lkWake";
- o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ '+lkBatt()+' %</i></div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">'+((s&&s.d)||"Samedi 18 octobre")+'</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>🔦</i><i>📷</i></div><button class="lkGo" aria-label="Déverrouiller"><i>\u{1F513}</i></button><div class="lkHint">Déverrouiller</div>';
+ o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>▮ '+lkBatt()+' %</i></div><div class="lkLock">'+LKLOCK+'</div><div class="lkClock">'+(s&&s.t||"")+'</div><div class="lkDate">'+((s&&s.d)||"Samedi 18 octobre")+'</div><div class="lkNotif"><span class="lkIc"></span><div class="lkNc"><p class="lkTop"><b></b><small></small></p><span class="lkTx"></span></div></div><div class="lkTools"><i>\u{1F526}</i><i>\u{1F4F7}</i></div><button class="lkGo" aria-label="Déverrouiller"></button><div class="lkHint">Déverrouiller</div>';
  try{const wp=o.querySelector(".lkWp");const ph=(typeof IMG!=="undefined"&&((st&&st.pf)?(IMG.fondecF||IMG.fondec):IMG.fondec))||avOf("Yasmine");if(wp&&ph)wp.setAttribute("style","background-image:url("+ph+")")}catch(e){}
  try{const ic=o.querySelector(".lkIc"),tb=o.querySelector(".lkTop b"),tm=o.querySelector(".lkTop small"),tx=o.querySelector(".lkTx");const pn=(st&&st.pname)||"toi";const nm=s&&s.nm||"";tb.textContent=nm.replace(/%N%/g,pn);tm.textContent=(s&&s.t)||"";tx.textContent=String(s&&s.txt||"").replace(/%N%/g,pn);
  if(nm&&typeof AVN!=="undefined"&&AVN[nm]){ic.className="lkIc av";ic.setAttribute("style","background-image:url("+AVN[nm]+")")}else ic.textContent=(s&&s.ic)||"💬"}catch(e){}
