@@ -429,7 +429,7 @@ function instOv(){return new Promise((/** @type {(v?:void)=>void} */res)=>{try{b
  +'<div class="instNm">Track App</div>'
  +'<div class="instBar"><i id="instBarI"></i></div><div class="instPc" id="instPc">0\u00A0%</div>';
  $("app").append(o);
- const bar=/** @type {any} */(o.querySelector("#instBarI")),pc=/** @type {any} */(o.querySelector("#instPc"));let p=0;
+ const bar=document.getElementById("instBarI"),pc=document.getElementById("instPc");let p=0;
  const iv=setInterval(()=>{p=Math.min(p+3,100);bar.style.width=p+"%";pc.textContent=p<100?(p+"\u00A0%"):"Termin\u00E9";
   if(p>=100){clearInterval(iv);try{st.suivi=1}catch(e2){}try{beep(1047,.14,.05)}catch(e2){}
    const b=document.createElement("button");b.className="instGo";b.textContent="Ouvrir \u00AB\u00A0Track App\u00A0\u00BB";
@@ -499,7 +499,8 @@ function trackOv(){return new Promise((/** @type {(v?:void)=>void} */res)=>{try{
  o.querySelectorAll(".trkPtG").forEach(g=>{gAny(g).onclick=()=>showNote(+g.getAttribute("data-p"))});
  o.querySelectorAll(".trkPt").forEach(b=>{gAny(b).onclick=()=>{showNote(+b.getAttribute("data-i"));tab("carte")}});
  const tab=t=>{o.querySelectorAll(".trkTab").forEach(b=>{b.classList.toggle("on",b.getAttribute("data-t")===t)});
-  o.querySelector("#trkCarte").hidden=t!=="carte";o.querySelector("#trkPts").hidden=t!=="points";o.querySelector("#trkCode").hidden=t!=="code";
+  const tc=document.getElementById("trkCarte"),tp=document.getElementById("trkPts"),tk=document.getElementById("trkCode");
+  tc.hidden=t!=="carte";tp.hidden=t!=="points";tk.hidden=t!=="code";
   if(t!=="carte")note.hidden=true};
  o.querySelectorAll(".trkTab").forEach(b=>{gAny(b).onclick=()=>tab(b.getAttribute("data-t"))});
  gAny(o.querySelector(".trkBack")).onclick=()=>{clearInterval(iv);o.remove();res()}})}
