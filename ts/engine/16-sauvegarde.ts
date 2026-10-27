@@ -422,20 +422,20 @@ function goApp(app,lbl){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").inne
  $("chat").innerHTML=t.c||"";$("ch").innerHTML=t.h||"";
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
  $("chat").scrollTop=1e9}
-function instOv(){return new Promise(res=>{try{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95)}catch(e){}
+function instOv(){return new Promise((/** @type {(v?:void)=>void} */res)=>{try{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95)}catch(e){}
  const o=document.createElement("div");o.className="instOv";
  o.innerHTML='<div class="instTop">Installation \u00E0 distance\u2026</div>'
  +'<div class="instIc"><span class="r1"></span><span class="r2"></span><span class="r3"></span>\u2916</div>'
  +'<div class="instNm">Track App</div>'
  +'<div class="instBar"><i id="instBarI"></i></div><div class="instPc" id="instPc">0\u00A0%</div>';
  $("app").append(o);
- const bar=o.querySelector("#instBarI"),pc=o.querySelector("#instPc");let p=0;
+ const bar=/** @type {any} */(o.querySelector("#instBarI")),pc=/** @type {any} */(o.querySelector("#instPc"));let p=0;
  const iv=setInterval(()=>{p=Math.min(p+3,100);bar.style.width=p+"%";pc.textContent=p<100?(p+"\u00A0%"):"Termin\u00E9";
   if(p>=100){clearInterval(iv);try{st.suivi=1}catch(e2){}try{beep(1047,.14,.05)}catch(e2){}
    const b=document.createElement("button");b.className="instGo";b.textContent="Ouvrir \u00AB\u00A0Track App\u00A0\u00BB";
    b.onclick=()=>{o.remove();trackOv().then(res)};
    o.append(b)}},70)})}
-function trackOv(){return new Promise(res=>{try{beep(880,.09,.05)}catch(e){}
+function trackOv(){return new Promise((/** @type {(v?:void)=>void} */res)=>{try{beep(880,.09,.05)}catch(e){}
  const TP=[["quai 9","quai 9 \u00B7 \u00E9chelle ouest",250,90,"pass\u00E9","23h40","la prise. nils n\u2019y est jamais all\u00E9."],
  ["square des tanneurs","square des tanneurs \u00B7 le banc",120,200,"proche","12h15","rendez-vous muet. elle observe de loin."],
  ["station d\u2019\u00E9puration","station d\u2019\u00E9puration \u00B7 cuve 7",300,380,"inconnu","\u2014","le lieu du carnet de nils. personne ne te l\u2019a encore donn\u00E9."],
@@ -478,7 +478,8 @@ function trackOv(){return new Promise(res=>{try{beep(880,.09,.05)}catch(e){}
  +'<div class="trkTabs"><button class="trkTab on" data-t="carte">carte</button><button class="trkTab" data-t="points">points</button><button class="trkTab" data-t="code">code</button></div>'
  +'<button class="trkBack">\u2039 Revenir aux applications</button>';
  $("app").append(o);
- const puce=o.querySelector("#trkPuce"),puceH=o.querySelector("#trkPuceH"),prec=o.querySelector("#trkPrec"),moi=o.querySelector("#trkMoi"),moiC=o.querySelector("#trkMoiC"),toi=o.querySelector("#trkToi"),pd=o.querySelector("#trkPd"),stx=o.querySelector("#trkSt"),note=o.querySelector("#trkNote");
+ const gAny=e=>/** @type {any} */(e);
+ const puce=gAny(o.querySelector("#trkPuce")),puceH=gAny(o.querySelector("#trkPuceH")),prec=gAny(o.querySelector("#trkPrec")),moi=gAny(o.querySelector("#trkMoi")),moiC=gAny(o.querySelector("#trkMoiC")),toi=gAny(o.querySelector("#trkToi")),pd=gAny(o.querySelector("#trkPd")),stx=gAny(o.querySelector("#trkSt")),note=gAny(o.querySelector("#trkNote"));
  let tt=0;
  const iv=setInterval(()=>{tt+=0.06;
   const cyc=Math.floor(tt)%40;
@@ -495,13 +496,13 @@ function trackOv(){return new Promise(res=>{try{beep(880,.09,.05)}catch(e){}
   pd.setAttribute("visibility",perdu?"visible":"hidden");
   moi.setAttribute("cx",x-70);moi.setAttribute("cy",y+60);moiC.setAttribute("cx",x-70);moiC.setAttribute("cy",y+60);toi.setAttribute("x",x-60);toi.setAttribute("y",y+64)},60);
  const showNote=i=>{const p=TP[i];note.querySelector("b").textContent=p[0];note.querySelector("small").textContent=p[5];note.querySelector("p").textContent=p[6];note.hidden=false};
- o.querySelectorAll(".trkPtG").forEach(g=>{g.onclick=()=>showNote(+g.getAttribute("data-p"))});
- o.querySelectorAll(".trkPt").forEach(b=>{b.onclick=()=>{showNote(+b.getAttribute("data-i"));tab("carte")}});
+ o.querySelectorAll(".trkPtG").forEach(g=>{gAny(g).onclick=()=>showNote(+g.getAttribute("data-p"))});
+ o.querySelectorAll(".trkPt").forEach(b=>{gAny(b).onclick=()=>{showNote(+b.getAttribute("data-i"));tab("carte")}});
  const tab=t=>{o.querySelectorAll(".trkTab").forEach(b=>{b.classList.toggle("on",b.getAttribute("data-t")===t)});
   o.querySelector("#trkCarte").hidden=t!=="carte";o.querySelector("#trkPts").hidden=t!=="points";o.querySelector("#trkCode").hidden=t!=="code";
   if(t!=="carte")note.hidden=true};
- o.querySelectorAll(".trkTab").forEach(b=>{b.onclick=()=>tab(b.getAttribute("data-t"))});
- o.querySelector(".trkBack").onclick=()=>{clearInterval(iv);o.remove();res()}})}
+ o.querySelectorAll(".trkTab").forEach(b=>{gAny(b).onclick=()=>tab(b.getAttribute("data-t"))});
+ gAny(o.querySelector(".trkBack")).onclick=()=>{clearInterval(iv);o.remove();res()}})}
 function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"\u{1F4F1}":"\u{1F4AC}"}
  const title=app==="SMS"?"Messages":app;
@@ -1094,7 +1095,7 @@ function actsMenu(s,i,h,b,v){
   w.append(r)});
  if(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]){const rb=document.createElement('button');rb.className='st actBtn';
   rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b><small>Ce qui s\u2019est pass\u00E9 jusqu\u2019ici</small>';
-  rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{})};w.append(rb)}
+  rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{},null,null)};w.append(rb)}
  b.after(w)}
 function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
 function act3pick(s,i,k){
