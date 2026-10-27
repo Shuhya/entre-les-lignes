@@ -30,7 +30,9 @@ const r=cp.spawnSync(process.execPath,[tsc,'--noEmit','--target','ES2020','--mod
 const n=((r.stdout||'')+(r.stderr||'')).split('error TS').length-1;
 try{fs.unlinkSync(tmp)}catch(e){}
 console.log('— Typecheck engine (concat 16 sections, non-strict)');
-if(n>BASELINE){console.log('  ✗ '+n+' erreur(s) tsc > baseline '+BASELINE+' : RÉGRESSION de typage, corriger ou resserrer les annotations');process.exit(1)}
+if(n>BASELINE){console.log('  ✗ '+n+' erreur(s) tsc > baseline '+BASELINE+' : RÉGRESSION de typage, corriger ou resserrer les annotations');
+  const errs=((r.stdout||'')+(r.stderr||'')).split('\n').filter(l=>/error TS/.test(l));
+  errs.slice(0,60).forEach(l=>console.log('    '+l.replace(/^.*etl-engine-concat[^:]*:/,'')));process.exit(1)}
 if(n===0){console.log('  ✓ 0 erreur — moteur entièrement typé 🎉');process.exit(0)}
 if(n<BASELINE){console.log('  ✓ '+n+' erreur(s) ≤ baseline '+BASELINE+' (amélioration ! mettre BASELINE à '+n+' dans scripts/typecheck-engine.js)')}
 else{console.log('  ✓ '+n+' erreur(s) = baseline (typage progressif, aucune régression)')}
