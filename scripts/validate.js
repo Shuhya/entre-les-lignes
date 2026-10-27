@@ -18,7 +18,7 @@ const {S,STORIES}=vm.runInContext(fs.readFileSync('js/story.js','utf8')+';({S:S,
 step(Object.keys(S).length>0,Object.keys(S).length+' nœuds, '+STORIES.length+' histoire(s)');
 const states=[{},{piege:1},{piege:1,avou:1},{piege:1,mentir:1},{piege:1,trst:1},{trst:2},{mentir:1},
   {piege:1,int:1,pov:2,prm:2},{avou:1,mentir:1,trst:1,int:3,pov:2,prm:2},{int:3,pov:2,prm:2,t:5},{int:1,pov:2,prm:2},{r:1},{r:2},{r:3},{f:1},{f:2},{f:3},{sil:1},{int:2},{int:3},{piege:1,int:3,pol:1,sil:1},{care:3,ytout:1,t:4,piege:1,pol:1},
-  {cal_h8:1},{cal_h8p:1,recall:1},{pov:1},{prm:1},{piege:1,cal_h8:1},{piege:1,recall:1}];
+  {cal_h8:1},{cal_h8p:1,recall:1},{pov:1},{prm:1},{piege:1,cal_h8:1},{piege:1,recall:1},{douteC:1,mentir:1},{pov:1,trst:2,transf:1},{transf:1}];
 let broken=[],seen=new Set(),q=[];
 STORIES.forEach(s=>(s.ch||[]).forEach(c=>{if(c[1]!=='-'&&S[c[1]])q.push(c[1])}));
 const push=(t,f)=>{if(t&&t!=='-'){if(!(t in S))broken.push(f+'→'+t);else q.push(t)}};

@@ -18,7 +18,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.220";
+const VER="2.221";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -113,7 +113,7 @@ async function play(id,r=run){
  const MG=[];{let ag=null;for(const it of(n.m||[])){STATS.msgs++;if(it&&it[0]==="a"){(ag=ag||[]).push(String(it[1]).replace(/%N%/g,(st&&st.pname)||"toi"))}else{if(ag){MG.push(["a",ag]);ag=null}MG.push(it)}}if(ag)MG.push(["a",ag])}
  for(let mi=0;mi<MG.length;mi++){const[w,x0]=MG[mi];const x=Array.isArray(x0)?x0:String(x0).replace(/%N%/g,(st&&st.pname)||"toi");if(w!=="a")veil(0);
   if(w=="h"){if(insta>0){insta--;$("st").textContent=CAPP;rx();rm();addH(emojiClean(/coéquipier|espionné/.test(x)?gf(x):x));await sl(400)}else{$("st").textContent="écrit…";ty(1);await sl(Math.min(4200,1050+x.length*44)/SPD);ty(0);if(r!=run)return;$("st").textContent=CAPP;rx();rm();addH(emojiClean(/coéquipier|espionné/.test(x)?gf(x):x));await sl(350)}}
-  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="pm"){tx();const d=document.createElement("div");d.className="b m pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo envoy\u00e9e";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){if(mi>0){await rdOk();if(r!=run)return}await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})\s?h\s?(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
+  else if(w=="s"){lab("sys",emojiClean("ℹ "+x));await sl(Math.min(4200,900+x.length*30)/SPD)}else if(w=="m"){tx();add("m",emojiClean(x));await sl(Math.min(2600,650+x.length*24)/SPD)}else if(w=="pm"){tx();const d=document.createElement("div");d.className="b m pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo envoy\u00e9e";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="p"){try{beep(1568,.05,.04);setTimeout(()=>beep(2093,.08,.035),85)}catch(e){}const d=document.createElement("div");d.className="b h pm";const im=document.createElement("img");const arr=Array.isArray(x);if(arr){im.src=(st&&st.pf)?x[1]:x[0];im.onerror=function(){im.onerror=null;im.src=x[0]}}else im.src=x;im.alt="Photo reçue";d.append(im);$("chat").append(d);$("chat").scrollTop=1e9;await sl(1100)}else if(w=="inst"){await instOv();if(r!=run)return}else if(w=="x"){$("nm").textContent=SS.n;setAv(SS.n[0]);st.named=true;try{localStorage.setItem("etl_name_"+SS.id,SS.n)}catch(e){}await sl(300)}else if(w==="a"){if(mi>0){await rdOk();if(r!=run)return}await awayOv((Array.isArray(x)?x:[x]).map(gf),"Continuer");if(r!=run)return}else{const q=x.match(/^(\d{1,2})\s?h\s?(\d{2})/);if(q){SK=1;const hm=q[1].padStart(2,"0")+":"+q[2];clkSet(hm);$("clk").textContent=hm;lab("ts","Aujourd'hui "+hm)}add("n",gf(x));await sl(Math.min(7000,900+x.length*34)/SPD)}
   if(r!=run)return}
  if(n.endc){const ec=typeof n.endc==="function"?n.endc(st):n.endc;const pars=String(ec).split("\n").filter(Boolean).map(gf);await proCards(["Fin du chapitre"].concat(pars),{label:"Chapitre 1",lastBtn:"Terminer le chapitre"});if(r!=run)return;return fin([n.k||"Fin",pars.join("\n")||""],1)}
  if(n.scr){const sc=await scrOv(n);if(sc)return}
@@ -401,20 +401,20 @@ function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>
  b.onclick=open})}
 function appHome(){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").innerHTML};
  const o=document.createElement("div");o.id="appHome";
- const ic=(a,c,t)=>'<div class="ah-app'+(a?"":" off")+'" data-app="'+(a||"")+'"><div class="ah-ic" style="background:'+c+'">'+t+'</div><span>'+(a?({SMS:"Messages",WhatsApp:"WhatsApp",Fichiers:"Fichiers",Notes:"Notes"}[a]):t)+'</span></div>';
+ const ic=(a,c,t)=>'<div class="ah-app'+(a?"":" off")+'" data-app="'+(a||"")+'"><div class="ah-ic" style="background:'+c+'">'+t+'</div><span>'+(a?({SMS:"Messages",WhatsApp:"WhatsApp",Fichiers:"Fichiers",Notes:"Notes",TrackApp:"Track App"}[a]):t)+'</span></div>';
  const t=($("clk").textContent||"9:41").trim();
  o.innerHTML='<div class="ah-clock"><b>'+t+'</b><span>5G<i class="ah-bat"></i></span></div>'
  +'<h2>Applications</h2>'
  +'<div class="ah-search"><span>🔍</span><input id="ahQ" placeholder="Rechercher" autocomplete="off"></div>'
  +'<div class="ah-grid">'
- +ic("SMS","#6b5bd6","📱","Messages")+ic("WhatsApp","#0b6b4f","💬")+ic("Notes","#53455e","📝")+ic("Fichiers","#3a3f52","📁")
+ +ic("SMS","#6b5bd6","📱","Messages")+ic("WhatsApp","#0b6b4f","💬")+ic("Notes","#53455e","📝")+ic("Fichiers","#3a3f52","📁")+(st&&st.suivi?ic("TrackApp","#123f34","⤖"):"")
  +ic("","#2b6ea3","📞")+ic("","#42506e","🖼️")+ic("","#1f5f5b","🎧")+ic("","#5a4a2f","⏰")+ic("","#31435e","🌤️")
  +'</div><div class="ah-dots"><i class="on"></i><i></i></div><button class="ahBack">‹ Revenir à la conversation</button>';
  $("app").append(o);
  const q=o.querySelector("#ahQ");if(q)q.oninput=()=>{const v=q.value.trim().toLowerCase();o.querySelectorAll(".ah-app").forEach(a=>{a.style.display=(!v||a.textContent.toLowerCase().includes(v))?"":"none"})};
  o.querySelector(".ahBack").onclick=()=>{o.remove();applyApp(hdrOf(CAPP,CNM))};
  o.querySelectorAll(".ah-app:not(.off)").forEach(a=>a.onclick=()=>{const app=a.dataset.app;o.remove();
-  if(app==="Notes")return notesOv(true);
+  if(app==="TrackApp")return trackOv();if(app==="Notes")return notesOv(true);
   if((app==="WhatsApp"||app==="SMS")&&(THR[app]||[]).length>1)return thrOv(app);
   if(app===CAPP)return;
   goApp(app,(THR[app]||[])[0]||app)})}
@@ -423,6 +423,86 @@ function goApp(app,lbl){APPH[CAPP+"|"+CNM]={c:$("chat").innerHTML,h:$("ch").inne
  $("chat").innerHTML=t.c||"";$("ch").innerHTML=t.h||"";
  if(app===PAPP&&PENDING&&S[PENDING]&&(PNM||PAPP)===lbl)mkCh(PENDING);
  $("chat").scrollTop=1e9}
+function instOv(){return new Promise(res=>{try{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95)}catch(e){}
+ const o=document.createElement("div");o.className="instOv";
+ o.innerHTML='<div class="instTop">Installation \u00E0 distance\u2026</div>'
+ +'<div class="instIc"><span class="r1"></span><span class="r2"></span><span class="r3"></span>\u2916</div>'
+ +'<div class="instNm">Track App</div>'
+ +'<div class="instBar"><i id="instBarI"></i></div><div class="instPc" id="instPc">0\u00A0%</div>';
+ $("app").append(o);
+ const bar=o.querySelector("#instBarI"),pc=o.querySelector("#instPc");let p=0;
+ const iv=setInterval(()=>{p=Math.min(p+3,100);bar.style.width=p+"%";pc.textContent=p<100?(p+"\u00A0%"):"Termin\u00E9";
+  if(p>=100){clearInterval(iv);try{st.suivi=1}catch(e2){}try{beep(1047,.14,.05)}catch(e2){}
+   const b=document.createElement("button");b.className="instGo";b.textContent="Ouvrir \u00AB\u00A0Track App\u00A0\u00BB";
+   b.onclick=()=>{o.remove();trackOv().then(res)};
+   o.append(b)}},70)})}
+function trackOv(){return new Promise(res=>{try{beep(880,.09,.05)}catch(e){}
+ const TP=[["quai 9","quai 9 \u00B7 \u00E9chelle ouest",250,90,"pass\u00E9","23h40","la prise. nils n\u2019y est jamais all\u00E9."],
+ ["square des tanneurs","square des tanneurs \u00B7 le banc",120,200,"proche","12h15","rendez-vous muet. elle observe de loin."],
+ ["station d\u2019\u00E9puration","station d\u2019\u00E9puration \u00B7 cuve 7",300,380,"inconnu","\u2014","le lieu du carnet de nils. personne ne te l\u2019a encore donn\u00E9."],
+ ["18h30","18h30 \u00B7 lieu illisible",80,420,"verrouill\u00E9","18h30","coordonn\u00E9es sans nom. tu ne sais pas lire ce point."]];
+ const TRAJET=[[210,140],[235,190],[270,250],[292,330],[298,372]];
+ let svg='<svg viewBox="0 0 360 520" preserveAspectRatio="xMidYMid slice">';
+ svg+='<rect width="360" height="520" fill="#0b1210"/>';
+ svg+='<path d="M0,40 C120,70 260,20 360,70 L360,140 C240,110 120,160 0,120 Z" fill="#0e2431" opacity="0.9"/>';
+ svg+='<text x="16" y="34" fill="#2b6a7c" font-size="9" letter-spacing="2">chenal de vaubris</text>';
+ svg+='<line x1="0" y1="132" x2="360" y2="152" stroke="#123028" stroke-width="6"/>';
+ [170,230,290,350,410,470].forEach(y=>{svg+='<line x1="0" y1="'+y+'" x2="360" y2="'+y+'" stroke="#12211c" stroke-width="3"/>'});
+ [60,130,200,270,330].forEach(x=>{svg+='<line x1="'+x+'" y1="140" x2="'+x+'" y2="520" stroke="#12211c" stroke-width="3"/>'});
+ [[64,172],[134,232],[204,292],[274,352],[64,292],[134,352],[204,412],[64,412],[274,412]].forEach(b=>{svg+='<rect x="'+b[0]+'" y="'+b[1]+'" width="46" height="40" fill="#0f1a16" stroke="#16281f"/>'});
+ svg+='<circle cx="'+TP[1][2]+'" cy="'+TP[1][3]+'" r="14" fill="#7bd88f" opacity="0.12"/>';
+ TP.forEach((p,i)=>{const col=p[4]==="pass\u00E9"?"#3a4a42":(p[4]==="verrouill\u00E9"?"#c46a4a":"#7bd88f");
+  svg+='<g data-p="'+i+'" class="trkPtG"><circle cx="'+p[2]+'" cy="'+p[3]+'" r="6" fill="'+col+'" stroke="#0b1210" stroke-width="2"/></g>'});
+ svg+='<circle id="trkPrec" cx="210" cy="140" r="18" fill="#d8b46a" opacity="0.10"/>';
+ svg+='<circle id="trkPuce" cx="210" cy="140" r="5" fill="#d8b46a"/>';
+ svg+='<circle id="trkPuceH" cx="210" cy="140" r="9" fill="none" stroke="#d8b46a" stroke-width="1" opacity="0.6"/>';
+ svg+='<text id="trkPd" x="180" y="128" fill="#c46a4a" font-size="10" letter-spacing="1" visibility="hidden">signal perdu</text>';
+ svg+='<circle id="trkMoi" cx="140" cy="200" r="6" fill="#6aa6d8"/>';
+ svg+='<circle id="trkMoiC" cx="140" cy="200" r="2.5" fill="#0b1210"/>';
+ svg+='<text id="trkToi" x="150" y="204" fill="#6aa6d8" font-size="9">toi</text>';
+ svg+='</svg>';
+ let pl="";
+ TP.forEach((p,i)=>{pl+='<button class="trkPt" data-i="'+i+'"><b>'+p[0]+'</b><span class="trkChip">'+p[4]+'</span><small>'+p[1]+'</small></button>'});
+ pl+='<div class="trkDim">ces points viennent du carnet de nils et de tes conversations. l\u2019appli les a lus toute seule.</div>';
+ const o=document.createElement("div");o.className="trackOv";
+ const t=(($("clk").textContent||"12:21").trim()||"12:21");
+ o.innerHTML='<div class="trkSb"><span>'+t+'</span><span>5G<i class="trkBat"></i></span></div>'
+ +'<div class="trkHd"><b>Track App</b><span class="trkSt" id="trkSt">\u00E9chantillon \u00B7 \u00B1 18 m</span></div>'
+ +'<div class="trkBody"><div class="trkSvg" id="trkCarte">'+svg+'</div>'
+ +'<div class="trkPts" id="trkPts" hidden>'+pl+'</div>'
+ +'<div class="trkCode" id="trkCode" hidden>'
+ +'<p>une vibration = danger. tu ne r\u00E9ponds plus \u00E0 rien, tu rentres.</p>'
+ +'<p>trois vibrations = danger imm\u00E9diat. tu changes d\u2019endroit, tu ne rentres pas.</p>'
+ +'<p class="warn">\u00AB\u00A0Track App\u00A0\u00BB voit la puce de l\u2019\u00E9chantillon. elle ne voit pas les gens. elle ne te voit pas, toi \u2014 officiellement.</p>'
+ +'<p class="dim">d\u00E9sinstaller est impossible. le bouton n\u2019existe pas.</p></div>'
+ +'<div class="trkNote" id="trkNote" hidden><b></b><small></small><p></p></div></div>'
+ +'<div class="trkTabs"><button class="trkTab on" data-t="carte">carte</button><button class="trkTab" data-t="points">points</button><button class="trkTab" data-t="code">code</button></div>'
+ +'<button class="trkBack">\u2039 Revenir aux applications</button>';
+ $("app").append(o);
+ const puce=o.querySelector("#trkPuce"),puceH=o.querySelector("#trkPuceH"),prec=o.querySelector("#trkPrec"),moi=o.querySelector("#trkMoi"),moiC=o.querySelector("#trkMoiC"),toi=o.querySelector("#trkToi"),pd=o.querySelector("#trkPd"),stx=o.querySelector("#trkSt"),note=o.querySelector("#trkNote");
+ let tt=0;
+ const iv=setInterval(()=>{tt+=0.06;
+  const cyc=Math.floor(tt)%40;
+  const pr=cyc<25?18+cyc*1.6:58;
+  const perdu=cyc>=32&&cyc<36;
+  const stx2=perdu?"\u00E9chantillon \u00B7 signal perdu":"\u00E9chantillon \u00B7 \u00B1 "+Math.round(pr)+" m";
+  stx.textContent=stx2;if(perdu)stx.classList.add("pd");else stx.classList.remove("pd");
+  const ph=(tt*0.1)%(TRAJET.length-1);const i2=Math.min(Math.floor(ph),TRAJET.length-2);const fr=ph-Math.floor(ph);
+  const a=TRAJET[i2],b=TRAJET[i2+1];const x=a[0]+(b[0]-a[0])*fr,y=a[1]+(b[1]-a[1])*fr;
+  puce.setAttribute("cx",x);puce.setAttribute("cy",y);puceH.setAttribute("cx",x);puceH.setAttribute("cy",y);
+  prec.setAttribute("cx",x);prec.setAttribute("cy",y);prec.setAttribute("r",pr*0.9);
+  pd.setAttribute("x",Math.min(Math.max(x-30,6),280));pd.setAttribute("y",Math.max(y-12,16));
+  puce.setAttribute("visibility",perdu?"hidden":"visible");puceH.setAttribute("visibility",perdu?"hidden":"visible");prec.setAttribute("visibility",perdu?"hidden":"visible");
+  pd.setAttribute("visibility",perdu?"visible":"hidden");
+  moi.setAttribute("cx",x-70);moi.setAttribute("cy",y+60);moiC.setAttribute("cx",x-70);moiC.setAttribute("cy",y+60);toi.setAttribute("x",x-60);toi.setAttribute("y",y+64)},60);
+ const showNote=i=>{const p=TP[i];note.querySelector("b").textContent=p[0];note.querySelector("small").textContent=p[5];note.querySelector("p").textContent=p[6];note.hidden=false};
+ o.querySelectorAll(".trkPtG").forEach(g=>{g.onclick=()=>showNote(+g.getAttribute("data-p"))});
+ o.querySelectorAll(".trkPt").forEach(b=>{b.onclick=()=>{showNote(+b.getAttribute("data-i"));tab("carte")}});
+ const tab=t=>{o.querySelectorAll(".trkTab").forEach(b=>{b.classList.toggle("on",b.getAttribute("data-t")===t)});
+  o.querySelector("#trkCarte").hidden=t!=="carte";o.querySelector("#trkPts").hidden=t!=="points";o.querySelector("#trkCode").hidden=t!=="code";
+  if(t!=="carte")note.hidden=true};
+ o.querySelectorAll(".trkTab").forEach(b=>{b.onclick=()=>tab(b.getAttribute("data-t"))});
+ o.querySelector(".trkBack").onclick=()=>{clearInterval(iv);o.remove();res()}})}
 function thrOv(app){const o=document.createElement("div");o.id="thrOv";
  $("nm").textContent=app==="SMS"?"Messages":app;$("st").textContent="Conversations";const av=$("av");if(av){av.className="av";av.style.backgroundImage="";av.textContent=app==="SMS"?"\u{1F4F1}":"\u{1F4AC}"}
  const title=app==="SMS"?"Messages":app;
@@ -501,11 +581,13 @@ function mkCh(id){const n=S[id];if(!n)return;PENDING=id;PAPP=CAPP;PNM=n.nm||"";c
  (n.c||[]).forEach(([t,nx,ef,rm])=>{const tG=unq(gf(t));const b=document.createElement("button");if(rm==="!"||rm==="-")b.classList.add("act");const sg=String(tG).split("*");if(sg.length>1){sg.forEach((sx,ix)=>{if(ix%2){const em=document.createElement("i");em.textContent=sx;b.append(em)}else if(sx){const sp=document.createElement("span");sp.textContent=sx;b.append(sp)}})}else b.textContent=tG;b.onclick=async()=>{try{beep(480,.05,.035)}catch(e){}c.innerHTML="";$("fl").textContent="Envoyer un message";const cl=x=>String(x).replace(/\*[^*]*\*/g,"").trim();const nf=x=>String(x).replace(/\*/g,"");if(rm==="!"){add("n",gf(emojiClean(nf(t))))}else if(rm!=="-"){const mt=rm?unq(gf(rm)):cl(tG);if(mt){tx();add("m",emojiClean(mt))}}for(const k in ef||{})st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+ef[k]:ef[k];await sl(rm==="!"?400:500);if(ef&&ef.lock){delete st.lock;await lockFx()}play(nx,run)};c.append(b)});
  const abm=$("apps");if(abm)abm.style.display=APPS_ON?"":"none";
  $("fl").textContent=(n.c||[]).length?"Choisis une réponse ↑":"Fin de ce segment.";$("chat").scrollTop=1e9}
+let ETL_ACT=null,ETL_ST=null;
 function start(){veil(0);run++;PROD=0;SK=1;STATS.runs++;statsTick();$("vol").hidden=true;{try{if(!localStorage.getItem("etl_hint")){localStorage.setItem("etl_hint","1");setTimeout(()=>{if(SK)add("sys","💬 Réponds aux messages pour avancer. Chaque choix compte. Le menu ‹ en haut à gauche, les réglages ⚙️ à droite.")},1500)}}catch(e){}}$("nm").textContent=SC?SS.n:SS.num;setAv(SC?SS.n[0]:"\u{1F464}");$("clk").textContent="";CHP="";
  st=JSON.parse(JSON.stringify(SC&&PG.s[SC]||{t:0,l:0,r:0,v:0,e:""}));
+ if(ETL_ST){st=Object.assign({t:0,l:0,r:0,v:0,e:""},(st&&st.pf!==undefined?{pf:st.pf}:{}),(st&&st.pname!==undefined?{pname:st.pname}:{}),ETL_ST);ETL_ST=null}
  $("chat").innerHTML="";$("ch").innerHTML="";$("ov").hidden=true;CAPP="SMS";CNM="";document.body.classList.remove("wa");APPH={};THR={};if(PG&&PG["hist"]){let hh=null;for(let hi=SC-1;hi>=0;hi--){if(PG["hist"][hi]){hh=PG["hist"][hi];break}}if(hh){try{APPH=JSON.parse(JSON.stringify(hh.a||{}));THR=JSON.parse(JSON.stringify(hh.t||{}))}catch(e){}}}PENDING=null;{const ab=$("apps");if(ab)ab.style.display="none"}$("st").textContent="SMS";unlock();
  document.body.classList.add("play");$("mn").classList.remove("on");
- const begin=()=>{if(SS.id==="h"&&!SC&&!(window.__ghost&&window.__ghost())&&typeof introH==="function")introH(()=>play(SS.ch[SC][1]));else play(SS.ch[SC][1])};
+ const begin=()=>{const en=(ETL_ACT&&S[ETL_ACT])?ETL_ACT:SS.ch[SC][1];ETL_ACT=null;if(SS.id==="h"&&!SC&&!(window.__ghost&&window.__ghost())&&typeof introH==="function")introH(()=>play(en));else play(en)};
  if(SS.id==="h"&&!SC&&!st.pname&&!(window.__ghost&&window.__ghost()))nameGate(()=>bioOv(begin));else begin()}
 function bioOv(cb){const nm=(st&&st.pname)||"";const insp=(st&&st.pf)?"ancienne inspectrice":"ancien inspecteur";
  const o=document.createElement("div");o.id="bioOv";o.className="proOv";
@@ -926,7 +1008,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  const oldPlay=play;
  let preChat=null;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);preChat=$('chat').innerHTML;save();const v=await oldPlay(id,r);if(r!=run)return v;preChat=null;save();return v};
- const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1]+'\n\n(Relecture : ta progression et tes fins d\u00E9couvertes restent inchang\u00E9es.)','Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
+ const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1],'Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  const oldMenu=menu;
  menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
@@ -996,6 +1078,37 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2}));
  row(c,"‹ Retour","",()=>chap(s));
  show(c)}
+function actOfNode(i,node){if(i!==1)return 0;const m=String(node).match(/^q(\d+)/);if(m){const n=+m[1];if(n<=3)return 0;if(n<=8)return 1;return 2}return 1}
+function actsMenu(s,i,h,b,v){
+ const old=document.querySelector('.actsWrap');
+ if(old){const same=(old.getAttribute('data-k')===s.id+i);old.remove();if(same)return}
+ const acts=(h[2]&&h[2].length)?h[2]:[[h[0],h[1]]];
+ const w=document.createElement('div');w.className='actsWrap';w.setAttribute('data-k',s.id+i);
+ acts.forEach((a,k)=>{
+  const live=!!(v&&v.story===s.id&&v.node&&S[v.node]&&(v.chapter||0)===i&&actOfNode(i,v.node)===k);
+  const r=document.createElement('button');r.className='st actBtn';
+  r.innerHTML='<b>'+(live?'\u25B6 Reprendre\u00A0: ':'\u25B6 ')+'Acte '+(k+1)+' \u00B7 '+a[0]+'</b><small>'+(live?'Ta conversation t\u2019attend l\u00E0 o\u00F9 tu l\u2019as laiss\u00E9e':'Progression et fins inchang\u00E9es \u2014 lecture \u00E0 part')+'</small>';
+  r.onclick=()=>{w.remove();
+   if(s.id==='h'&&i===1&&k===2&&a[1]==='q9')return act3pick(s,i,k);
+   if(live)return resume(v);
+   startAct(s,i,k)};
+  w.append(r)});
+ if(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]){const rb=document.createElement('button');rb.className='st actBtn';
+  rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b><small>Ce qui s\u2019est pass\u00E9 jusqu\u2019ici</small>';
+  rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{})};w.append(rb)}
+ b.after(w)}
+function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
+function act3pick(s,i,k){
+ const c=card('Quai 9 \u00B7 Acte III \u2014 par quel chemin\u00A0?');
+ const hd=document.createElement('p');hd.className='proTxt';hd.textContent='Choisis l\u2019\u00E9tat de ta partie en arrivant au square des Tanneurs. Ta progression, ta sauvegarde et tes fins d\u00E9couvertes restent inchang\u00E9es.';c.append(hd);
+ row(c,'\u25B6 \u00AB Confiance totale \u00BB','Cora t\u2019a appel\u00E9. Carnet lu, dernier message \u00E9cout\u00E9, mot \u00AB sucrier \u00BB donn\u00E9 au t\u00E9l\u00E9phone.',()=>act3go(s,i,k,{avou:1,trst:2,pov:1,prm:1,cal_h8:1,recall:1,mig:1}));
+ row(c,'\u25B6 \u00AB Le froid \u00BB','Pas d\u2019appel. Tu as r\u00E9pondu \u00AB erreur de num\u00E9ro \u00BB \u00E0 l\u2019inconnu.',()=>act3go(s,i,k,{mig:1,int:2}));
+ row(c,'\u25B6 \u00AB Le menteur \u00BB','La nuit du mensonge\u00A0: rep\u00E9r\u00E9 en quatre minutes.',()=>act3go(s,i,k,{mentir:1,mig:1,int:2}));
+ row(c,'\u25B6 \u00AB Le pi\u00E8ge + la police \u00BB','La prise du quai 9 confirm\u00E9e, et Riffaud pr\u00E9venu.',()=>act3go(s,i,k,{piege:1,pol:1,mig:1}));
+ row(c,'\u25B6 \u00AB La nuit standard \u00BB','La route droite\u00A0: personne n\u2019a \u00E9crit cette nuit.',()=>act3go(s,i,k,{mig:1}));
+ row(c,'\u2039 Retour','',()=>chap(s));
+ show(c)}
+function act3go(s,i,k,fl){GHOST=true;SC=i;ETL_ST=fl;ETL_ACT=(s.ch[i][2]&&s.ch[i][2][k])?s.ch[i][2][k][1]:s.ch[i][1];$('nm').textContent=s.n;setAv(s.n[0]);start()}
 function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()}
  chap=function(s){GHOST=false;SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
@@ -1010,9 +1123,8 @@ function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputEleme
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1');const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
     b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+'</h3><div class="bkF">'+(ok?(i<P.c?(i===SC?'en cours':'\u2713 termin\u00E9'):'\u270E choisir une fin du ch1'):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
-    if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};
-    list.append(b);
-    if(ok&&i<Math.max(0,P.c-1)){const rb=document.createElement('button');rb.className='st rp';rb.innerHTML='<b>\u21BA Rejouer en relecture</b><small>Sans toucher \u00E0 ta progression ni \u00E0 tes fins</small>';rb.onclick=()=>{GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);start()};list.append(rb)}});
+    if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
+    list.append(b)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
     fb.innerHTML='<h3>\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'</h3><p>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</p>';
     fb.onclick=()=>endsCard(s);list.append(fb)}

@@ -49,7 +49,8 @@
         "AVF4": "readonly",
         "AVM1": "readonly",
         "AVM2": "readonly",
-        "VOICES": "readonly"
+        "VOICES": "readonly",
+        "ETL_SUM": "readonly"
       },
       "rules": {
         "no-func-assign": "off"

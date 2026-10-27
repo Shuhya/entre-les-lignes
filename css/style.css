@@ -912,3 +912,55 @@ body.wa #app{background-color:#0b141a}
 .lkLock svg{display:block}
 #lkCall .lkTools{display:flex;gap:26px;margin-top:26px;position:relative;z-index:1;animation:fo .55s .12s both}
 #lkCall .lkTools i{font-style:normal;width:44px;height:44px;border-radius:50%;background:#ffffff14;border:1px solid #ffffff24;display:grid;place-items:center;font-size:18px;box-shadow:0 2px 10px #0006}
+
+/* ---- v2.221 : installation Track App (instOv) ---- */
+.instOv{position:absolute;inset:0;background:#0b1210;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.instTop{font-size:10px;letter-spacing:.3em;color:rgba(167,243,208,.4);text-transform:uppercase;margin-bottom:26px}
+.instIc{width:80px;height:80px;border-radius:22px;background:rgba(52,211,153,.1);border:1px solid rgba(110,231,183,.3);color:#6ee7b7;font-size:38px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;margin-bottom:14px}
+.instIc span{position:absolute;left:50%;top:50%;border:1px solid rgba(52,211,153,.14);border-radius:50%;animation:radar 4s ease-in-out infinite;pointer-events:none}
+.instIc .r1{width:170px;height:170px;margin:-85px 0 0 -85px}
+.instIc .r2{width:250px;height:250px;margin:-125px 0 0 -125px;animation-delay:1.3s}
+.instIc .r3{width:330px;height:330px;margin:-165px 0 0 -165px;animation-delay:2.6s}
+@keyframes radar{0%,100%{transform:scale(.92);opacity:.5}50%{transform:scale(1.06);opacity:1}}
+.instNm{color:#a7f3d0;font-size:16px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:26px}
+.instBar{width:200px;height:6px;border-radius:99px;background:rgba(52,211,153,.1);overflow:hidden}
+.instBar i{display:block;height:100%;width:0;border-radius:99px;background:rgba(110,231,183,.7)}
+.instPc{color:rgba(167,243,208,.5);font-size:12px;font-family:monospace;margin-top:12px}
+.instGo{margin-top:26px;padding:10px 26px;border-radius:99px;border:1px solid rgba(110,231,183,.4);background:none;color:#a7f3d0;font-size:13px;letter-spacing:.05em;position:relative;z-index:1}
+
+/* ---- v2.221 : appli Track App (trackOv) ---- */
+.trackOv{position:absolute;inset:0;background:#0b1210;z-index:40;display:flex;flex-direction:column;color:#a7f3d0}
+.trkSb{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 4px;font-size:11px;font-family:monospace;color:rgba(167,243,208,.45)}
+.trkSb span{display:flex;align-items:center;gap:6px}
+.trkBat{width:22px;height:10px;border:1px solid rgba(167,243,208,.45);border-radius:3px;position:relative;display:inline-block}
+.trkBat:before{content:"";position:absolute;inset:1.5px 1.5px 1.5px 55%;background:rgba(167,243,208,.45);border-radius:1.5px}
+.trkHd{display:flex;justify-content:space-between;align-items:baseline;padding:10px 18px 8px;border-bottom:1px solid rgba(52,211,153,.12)}
+.trkHd b{font-size:16px;letter-spacing:.05em}
+.trkSt{font-size:10px;font-family:monospace;color:rgba(110,231,183,.6)}
+.trkSt.pd{color:#c46a4a}
+.trkBody{flex:1;position:relative;overflow:hidden}
+.trkSvg{position:absolute;inset:0;width:100%;height:100%}
+.trkSvg svg{width:100%;height:100%;display:block}
+.trkPtG{cursor:pointer}
+.trkPts{position:absolute;inset:0;overflow-y:auto;padding:12px 14px}
+.trkPt{display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:8px;border-radius:12px;border:1px solid rgba(52,211,153,.12);background:rgba(52,211,153,.03);color:#d1fae5}
+.trkPt b{font-size:13px}
+.trkPt small{display:block;font-size:11px;color:rgba(167,243,208,.4);margin-top:3px}
+.trkChip{float:right;font-size:10px;font-family:monospace;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.05);color:rgba(167,243,208,.45)}
+.trkDim{font-size:10px;color:rgba(167,243,208,.25);line-height:1.6;padding:4px 2px 10px}
+.trkCode{position:absolute;inset:0;overflow-y:auto;padding:14px 18px}
+.trkCode p{font-size:12px;color:rgba(209,250,229,.8);border:1px solid rgba(52,211,153,.12);border-radius:12px;padding:10px 12px;margin:0 0 10px;line-height:1.55}
+.trkCode .warn{border-color:rgba(245,158,11,.25);color:rgba(253,230,138,.85)}
+.trkCode .dim{border-color:rgba(255,255,255,.06);color:rgba(167,243,208,.35)}
+.trkNote{position:absolute;left:0;right:0;bottom:0;background:rgba(11,18,16,.95);border-top:1px solid rgba(52,211,153,.12);padding:10px 14px}
+.trkNote b{font-size:13px;color:#d1fae5}
+.trkNote small{float:right;font-size:10px;font-family:monospace;color:rgba(167,243,208,.4)}
+.trkNote p{font-size:11px;color:rgba(167,243,208,.5);margin:4px 0 0}
+.trkTabs{display:flex;border-top:1px solid rgba(52,211,153,.12)}
+.trkTab{flex:1;padding:12px 0;background:none;border:none;color:rgba(167,243,208,.4);font-size:12px}
+.trkTab.on{color:#a7f3d0;box-shadow:inset 0 2px 0 #6ee7b7}
+.trkBack{padding:11px 18px;background:none;border:none;border-top:1px solid rgba(52,211,153,.08);color:rgba(167,243,208,.6);font-size:13px;text-align:left}
+
+/* ---- v2.221 : menu des actes sous un chapitre ---- */
+.actsWrap{margin:-4px 2px 12px;display:flex;flex-direction:column;gap:8px}
+.actsWrap .actBtn{background:rgba(52,211,153,.03)}
