@@ -51,6 +51,8 @@ const log = m => console.log('e2e-chaos: ' + m);
   await ch1.waitFor({ state: 'visible', timeout: 12000 });
   await ch1.click();
   log('chapitre 1 choisi');
+  const act1 = page.locator('.actsWrap .actBtn').first();
+  try { await act1.waitFor({ state: 'visible', timeout: 4000 }); await act1.click(); log('acte 1 choisi'); } catch (e) {}
 
   const gate = await page.$('#nameGate');
   if (gate) {
@@ -118,6 +120,7 @@ const log = m => console.log('e2e-chaos: ' + m);
     /* menu bibliothèque ouvert : carte histoire (reprise via chap → rsOv),
        sinon carte chapitres (row « 1. ») — sinon on resterait bloqué dessus */
     if (await menuOn()) {
+      if (await clickIf('#mn .actsWrap .actBtn')) { await page.waitForTimeout(400); return true; }
       if (await clickIf('#mn .bk.open')) { await page.waitForTimeout(400); return true; }
       const r1 = page.locator('#mn button', { hasText: /^Chapitre 1/ }).first();
       if (await r1.count()) { try { await r1.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
@@ -128,7 +131,7 @@ const log = m => console.log('e2e-chaos: ' + m);
       await page.waitForTimeout(300); return true;
     } }
     /* overlays bloquants du récit (proSkip = cartes de fin de chapitre) */
-    const BLOCKERS = ['.proSkip', '.bioGo', '.lkNext', '.awGo', '#lockOv .lkGo', '#lkWake .lkGo', '#lkWake', '.notif', '.rdOk',
+    const BLOCKERS = ['.instGo', '.trkBack', '.proSkip', '.bioGo', '.lkNext', '.awGo', '#lockOv .lkGo', '#lkWake .lkGo', '#lkWake', '.notif', '.rdOk',
       '#scrOv .scRow.go:not(.read)', '#scrOv .scBtn', '#incOv .incAcc',
       '#calOv .calCh button', '#calOv .calEnd:not([hidden])'];
     for (const sel of BLOCKERS) {

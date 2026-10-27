@@ -38,6 +38,9 @@ let page = null;
   await ch1.waitFor({ state: 'visible', timeout: 12000 });
   await ch1.click();
   console.log('e2e 4/6: chapitre 1 choisi');
+  /* menu déroulant des actes : lancer l'acte 1 */
+  const act1 = page.locator('.actsWrap .actBtn').first();
+  try { await act1.waitFor({ state: 'visible', timeout: 4000 }); await act1.click(); console.log('e2e 4/6b: acte 1 choisi'); } catch (e3) {}
 
   /* start() : nameGate D'ABORD, puis introH (prologue en cartes + lock screen) */
   const gate = await page.$('#nameGate');

@@ -61,6 +61,6 @@ export interface Node {
 }
 
 /** Sommaire : une histoire jouable. */
-export interface StoryMeta { id: string; n: string; num: string; t: string; d: string; ch: Array<[string, string]> }
+export interface StoryMeta { id: string; n: string; num: string; t: string; d: string; ch: Array<[string, string] | [string, string, Array<[string, string]>]> }
 
 export type Story = Record<string, Node>;
