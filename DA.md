@@ -25,3 +25,6 @@ Bulles de chat, écrans de verrouillage/appels, applis (Track App…), horloge, 
 
 ## Notice
 `notice.html` = même DA que le menu (fond menu + carte verre), 4 captures dans `assets/img/notice/` (390×780, générées par la branche `demo-shots`, workflow Shots).
+
+## Tokens CSS (v2.233)
+Toutes les couleurs/radius DA sont des variables `:root` (`--w-*`, `--gold-*`, `--k-*`, `--blue-*`, `--tx-*`, `--navy*`, `--glass`, `--r-*`) définies en tête de `css/style.css` — ne plus remettre de littéraux hex dans les règles. Les 3 « systèmes de boutons » sont unifiés au niveau tokens : `.bk` (cartes) et `.st` (lignes, produites par le helper JS `row()` — `.row` n'a plus de CSS). Règle morte purgée : `.bkF`, `.storyList`, `.storyC`. Vérification « 0 pixel » : diff de captures avant/après (v2.231 vs v2.233) = 0 pixel sur écran statique.
