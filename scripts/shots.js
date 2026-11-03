@@ -21,34 +21,40 @@ const { chromium } = require('playwright');
     console.log('SHOT ' + name + ' :: ' + t.slice(0, 160));
   };
 
-  /* 1 — accueil : bibliothèque */
+  /* 1 — accueil : carte des chapitres en direct (régime UX, plus de bibliothèque) */
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk');
   await page.waitForTimeout(900);
   await shot('01-accueil');
 
-  /* 2 — carte des chapitres */
+  /* 2 — menu des actes (déroulé sous le chapitre 1) */
   await page.locator('.bkWrap .bk.open').first().click();
-  await page.locator('button', { hasText: /Chapitre 1/ }).first().waitFor({ state: 'visible' });
+  await page.waitForSelector('.actsWrap .actBtn');
+  await page.waitForTimeout(400);
   await shot('02-chapitres');
 
-  /* 3 — menu des actes (déroulé sous le chapitre) */
-  await page.locator('button', { hasText: /Chapitre 1/ }).first().click();
-  await page.waitForSelector('.actsWrap .actBtn');
+  /* 3 — réglages (⚙) */
+  await page.goto(root + '/jeu.html');
+  await page.waitForSelector('.bkWrap .bk');
+  for (let i = 0; i < 2; i++) {
+    const vis = await page.evaluate(() => { const v = document.getElementById('vol'); return v && !v.hidden; });
+    if (vis) break;
+    await page.evaluate(() => document.getElementById('set').click());
+    await page.waitForTimeout(250);
+  }
+  await page.waitForFunction(() => { const v = document.getElementById('vol'); return v && !v.hidden; }, undefined, { timeout: 8000 });
   await shot('03-actes');
 
-  /* 4 — réglages */
-  await page.reload();
-  await page.waitForSelector('.bkWrap .bk');
-  await page.locator('.bkWrap .bk', { hasText: 'Param' }).first().click();
-  await page.waitForSelector('#vol', { state: 'visible' });
+  /* 4 — landing (bouton ℹ Notice à côté de Réglages/Guide) */
+  await page.goto(root + '/index.html');
+  await page.waitForSelector('#lNotice');
+  await page.waitForTimeout(900);
   await shot('04-reglages');
 
   /* 5 — écran prénom (début de partie, aucune ligne d'histoire) — tolérant, non bloquant */
-  await page.evaluate(() => { const v = document.getElementById('vol'); if (v) v.hidden = true; });
+  await page.goto(root + '/jeu.html');
+  await page.waitForSelector('.bkWrap .bk');
   await page.locator('.bkWrap .bk.open').first().click();
-  await page.locator('button', { hasText: /Chapitre 1/ }).first().waitFor({ state: 'visible' });
-  await page.locator('button', { hasText: /Chapitre 1/ }).first().click();
   await page.waitForSelector('.actsWrap .actBtn', { state: 'visible' });
   let got5 = false;
   for (let t = 0; t < 30 && !got5; t++) {
