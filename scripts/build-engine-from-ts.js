@@ -8,11 +8,12 @@
    Usage : node scripts/build-engine-from-ts.js [--write]  (--write régénère js/engine.js) */
 const fs=require('fs'),path=require('path');
 const DIR='ts/engine', MARK='/* [engine-section] */';
-const BANNER='/* js/engine.js — GÉNÉRÉ depuis ts/engine/ (16 sections) par scripts/build-engine-from-ts.js — ne pas éditer à la main. */\n';
+let BANNER='';
 let fail=0;
 const step=(ok,msg)=>{console.log((ok?'  ✓ ':'  ✗ ')+msg);if(!ok)fail=1};
 const files=fs.existsSync(DIR)?fs.readdirSync(DIR).filter(f=>f.endsWith('.ts')).sort():[];
-step(files.length===16, files.length+' section(s) ts/engine (attendu : 16)');
+step(files.length>=16, files.length+' section(s) ts/engine (attendu : >= 16)');
+BANNER='/* js/engine.js — GÉNÉRÉ depuis ts/engine/ ('+files.length+' sections) par scripts/build-engine-from-ts.js — ne pas éditer à la main. */\n';
 let out=BANNER;
 for(const f of files){
   const t=fs.readFileSync(path.join(DIR,f),'utf8');
@@ -26,6 +27,6 @@ if(process.argv.includes('--write')){
   console.log('js/engine.js régénéré depuis ts/engine/ ('+out.length+' octets)');
   process.exit(0);
 }
-step(out===js, out===js?'js/engine.js = build(ts/engine/ 16 sections) — génération à jour (source unique : ts/)'
+step(out===js, out===js?'js/engine.js = build(ts/engine/ '+files.length+' sections) — génération à jour (source unique : ts/)'
   :'js/engine.js NON à jour du build ts/ ('+out.length+' vs '+js.length+' octets) — lancer : node scripts/build-engine-from-ts.js --write');
 process.exit(fail);

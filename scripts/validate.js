@@ -58,7 +58,7 @@ if(fs.existsSync('ts/engine')){
   console.log('— Génération TS → js (engine : source unique = ts/, js/engine.js généré)');
   const r2=cp.spawnSync(process.execPath,['scripts/build-engine-from-ts.js'],{encoding:'utf8'});
   console.log((r2.stdout||r2.stderr||'').trim());
-  step(r2.status===0,'js/engine.js à jour du build ts/engine/ (16 sections)');
+  step(r2.status===0,'js/engine.js à jour du build ts/engine/');
 }
 
 process.exit(fail);

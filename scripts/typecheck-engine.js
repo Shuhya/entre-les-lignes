@@ -12,9 +12,9 @@
    Branché dans .github/workflows/ci.yml (job typecheck). */
 const fs=require('fs'),path=require('path'),os=require('os'),cp=require('child_process');
 const DIR='ts/engine',MARK='/* [engine-section] */';
-const BASELINE=104;
+const BASELINE=98;
 const files=fs.existsSync(DIR)?fs.readdirSync(DIR).filter(f=>f.endsWith('.ts')).sort():[];
-if(files.length!==16){console.error('✗ attendu : 16 sections ts/engine, trouvé : '+files.length);process.exit(1)}
+if(files.length<16){console.error('✗ attendu : au moins 16 sections ts/engine, trouvé : '+files.length);process.exit(1)}
 let out='';
 for(const f of files){
   const t=fs.readFileSync(path.join(DIR,f),'utf8');
@@ -29,7 +29,7 @@ if(!fs.existsSync(tsc)){console.error('✗ tsc introuvable ('+tsc+') — npm ins
 const r=cp.spawnSync(process.execPath,[tsc,'--noEmit','--target','ES2020','--module','none','--lib','ES2020,DOM','--skipLibCheck',tmp,path.join('ts','engine-globals.d.ts')],{encoding:'utf8'});
 const n=((r.stdout||'')+(r.stderr||'')).split('error TS').length-1;
 try{fs.unlinkSync(tmp)}catch(e){}
-console.log('— Typecheck engine (concat 16 sections, non-strict)');
+console.log('— Typecheck engine (concat '+files.length+' sections, non-strict)');
 if(n>BASELINE){console.log('  ✗ '+n+' erreur(s) tsc > baseline '+BASELINE+' : RÉGRESSION de typage, corriger ou resserrer les annotations');
   const errs=((r.stdout||'')+(r.stderr||'')).split('\n').filter(l=>/error TS/.test(l));
   errs.slice(0,220).forEach(l=>console.log('    '+l.replace(/^.*etl-engine-concat[^.]*\.ts/,'')));process.exit(1)}
