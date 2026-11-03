@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.223";
+const VER="2.224";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1027,6 +1027,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
    if(!locked)b.onclick=()=>chap(s);list.append(b)});
   {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres de la partie</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob)};
+  {const nb=document.createElement('button');nb.className='bk';nb.innerHTML='<h3>ℹ Notice &amp; informations</h3><p>Comment jouer, chapitres, actes et réglages — la visite guidée en images</p>';nb.onclick=()=>{try{location.href='notice.html'}catch(e){}};list.append(nb)};
   show(c);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){
