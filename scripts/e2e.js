@@ -22,22 +22,16 @@ let page = null;
   /* ---------- 1) jeu.html : overlays du menu ---------- */
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk');
-  await page.locator('.bkWrap .bk', { hasText: 'Param' }).first().click();
+  await page.evaluate(() => document.getElementById('set').click());
   await page.waitForSelector('#vol:not([hidden])', { state: 'visible', timeout: 8000 });
-  console.log('e2e 2/6 menu: Paramètres visible OK');
+  console.log('e2e 2/6 menu: ⚙ réglages (#vol) visible OK');
   await page.evaluate(() => { const v = document.getElementById('vol'); if (v) v.hidden = true; });
 
   /* ---------- 2) début de partie complet ---------- */
   await page.reload();
   await page.waitForSelector('.bkWrap .bk.open');
   await page.locator('.bkWrap .bk.open').first().click();
-  console.log('e2e 3/6: carte histoire cliquée');
-
-  /* chap(s) affiche une carte de chapitres (rows '1. …'), PAS l'overlay #calOv (appel) */
-  const ch1 = page.locator('button', { hasText: /^Chapitre 1/ }).first();
-  await ch1.waitFor({ state: 'visible', timeout: 12000 });
-  await ch1.click();
-  console.log('e2e 4/6: chapitre 1 choisi');
+  console.log('e2e 3/6: chapitre 1 cliqué (ouverture directe, plus de bibliothèque)');
   /* menu déroulant des actes : lancer l'acte 1 */
   const act1 = page.locator('.actsWrap .actBtn').first();
   try { await act1.waitFor({ state: 'visible', timeout: 4000 }); await act1.click(); console.log('e2e 4/6b: acte 1 choisi'); } catch (e3) {}
@@ -123,6 +117,9 @@ let page = null;
   /* ---------- 3) landing ---------- */
   await page.goto(root + '/index.html');
   await page.waitForSelector('#lSet');
+  const lNotice = await page.getAttribute('#lNotice', 'href');
+  if (!/notice\.html\?from=landing/.test(lNotice || '')) throw new Error('bouton landing Notice mal câblé: ' + lNotice);
+  console.log('e2e landing: bouton ℹ Notice -> notice.html?from=landing OK');
   await page.click('#lSet');
   await page.waitForSelector('.lOv', { state: 'visible', timeout: 8000 });
   await page.click('.lClose');
