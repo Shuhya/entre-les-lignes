@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* typecheck-engine.js — étape 4 migration TS+Vite (pur Node, zéro dépendance directe).
+/* typecheck-engine.js — v2.226 : ts/engine/ est la source unique, js/engine.js est généré par scripts/build-engine-from-ts.js. Pur Node, dépendance directe.
    ts/engine/*.ts ne parsent pas individuellement (découpage de lecture au milieu
    d'expressions) : ce script concatène les 16 sections (exactement comme
    scripts/build-engine-from-ts.js), écrit le résultat dans un fichier temporaire et

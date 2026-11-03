@@ -47,7 +47,7 @@ let refsOK=true;
   if(bad.length){refsOK=false;console.log('    '+f+' : refs périmées '+bad.join(','));}});
 step(refsOK,'refs ?v= cohérentes avec VER='+ver);
 
-/* 5. miroir TypeScript (étape 1 migration TS+Vite) */
+/* 5. source TS unique (v2.226) : story en miroir contrôlé, engine 100 % généré */
 if(fs.existsSync('ts/story.ts')){
   console.log('— Miroir TS');
   const r=cp.spawnSync(process.execPath,['scripts/check-ts-mirror.js'],{encoding:'utf8'});
@@ -55,10 +55,10 @@ if(fs.existsSync('ts/story.ts')){
   step(r.status===0,'ts/story.ts en cohérence avec js/story.js');
 }
 if(fs.existsSync('ts/engine')){
-  console.log('— Miroir TS engine');
+  console.log('— Génération TS → js (engine : source unique = ts/, js/engine.js généré)');
   const r2=cp.spawnSync(process.execPath,['scripts/build-engine-from-ts.js'],{encoding:'utf8'});
   console.log((r2.stdout||r2.stderr||'').trim());
-  step(r2.status===0,'ts/engine/ (16 sections) en cohérence avec js/engine.js');
+  step(r2.status===0,'js/engine.js à jour du build ts/engine/ (16 sections)');
 }
 
 process.exit(fail);
