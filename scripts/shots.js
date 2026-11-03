@@ -36,7 +36,7 @@ const { chromium } = require('playwright');
   /* 3 — réglages (⚙) */
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk');
-  await page.evaluate(() => { const v = document.getElementById('vol'); if (v) v.hidden = false; });
+  await page.evaluate(() => { const m = document.getElementById('mn'); if (m) m.classList.remove('on'); const v = document.getElementById('vol'); if (v) v.hidden = false; });
   await page.waitForFunction(() => { const v = document.getElementById('vol'); return v && !v.hidden; }, undefined, { timeout: 8000 });
   await page.waitForTimeout(500);
   await shot('03-actes');
