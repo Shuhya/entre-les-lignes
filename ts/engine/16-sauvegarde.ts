@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.221";
+const VER="2.222";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1081,7 +1081,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  show(c)}
 function actOfNode(i,node){if(i!==1)return 0;const m=String(node).match(/^q(\d+)/);if(m){const n=+m[1];if(n<=3)return 0;if(n<=8)return 1;return 2}return 1}
 function actsMenu(s,i,h,b,v){
- const old=document.querySelector('.actsWrap');
+ const old=document.querySelectorAll('.actsWrap')[0]||null;
  if(old){const same=(old.getAttribute('data-k')===s.id+i);old.remove();if(same)return}
  const acts=(h[2]&&h[2].length)?h[2]:[[h[0],h[1]]];
  const w=document.createElement('div');w.className='actsWrap';w.setAttribute('data-k',s.id+i);
@@ -1097,7 +1097,7 @@ function actsMenu(s,i,h,b,v){
  if(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]){const rb=document.createElement('button');rb.className='st actBtn';
   rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b><small>Ce qui s\u2019est pass\u00E9 jusqu\u2019ici</small>';
   rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{},null,null)};w.append(rb)}
- b.after(w)}
+ if(typeof b.after==="function")b.after(w);else{const pn=b.parentNode;if(pn)pn.append(w)}}
 function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
 function act3pick(s,i,k){
  const c=card('Quai 9 \u00B7 Acte III \u2014 par quel chemin\u00A0?');
@@ -1121,9 +1121,9 @@ function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputEleme
    PG=P;
    const c=card(s.t);
    const list=document.createElement('div');list.className='bkWrap';c.append(list);
-   s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1');const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
+   s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
-    b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+'</h3><div class="bkF">'+(ok?(i<P.c?(i===SC?'en cours':'\u2713 termin\u00E9'):'\u270E choisir une fin du ch1'):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
+    b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+'</h3><div class="bkF">'+(ok?(i<P.c?(i===SC?'en cours':'\u2713 termin\u00E9'):(ch2free?'\u270E choisir une fin du ch1':'\u25B6 commencer')):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
     if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
     list.append(b)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
