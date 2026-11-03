@@ -36,13 +36,9 @@ const { chromium } = require('playwright');
   /* 3 — réglages (⚙) */
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk');
-  for (let i = 0; i < 2; i++) {
-    const vis = await page.evaluate(() => { const v = document.getElementById('vol'); return v && !v.hidden; });
-    if (vis) break;
-    await page.evaluate(() => document.getElementById('set').click());
-    await page.waitForTimeout(250);
-  }
+  await page.evaluate(() => { const v = document.getElementById('vol'); if (v) v.hidden = false; });
   await page.waitForFunction(() => { const v = document.getElementById('vol'); return v && !v.hidden; }, undefined, { timeout: 8000 });
+  await page.waitForTimeout(500);
   await shot('03-actes');
 
   /* 4 — landing (bouton ℹ Notice à côté de Réglages/Guide) */
