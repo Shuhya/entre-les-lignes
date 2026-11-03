@@ -3,7 +3,9 @@
    Vérifie que ts/story.ts est le miroir EXACT de js/story.js :
    en retirant les annotations TS, le fichier doit redevenir js/story.js octet par octet.
    Lancé par scripts/validate.js (donc par la CI à chaque push).
-   Règle : les DEUX fichiers doivent toujours rester en cohérence. */
+   Règle : les DEUX fichiers doivent toujours rester en cohérence.
+   (depuis v2.226, le miroir ENGINE n'est plus ici : ts/engine/ est la source unique et
+   js/engine.js est vérifié comme sortie de scripts/build-engine-from-ts.js.) */
 const fs=require('fs');
 let fail=0;
 const step=(ok,msg)=>{console.log((ok?'  ✓ ':'  ✗ ')+msg);if(!ok)fail=1};

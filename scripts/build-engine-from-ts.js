@@ -1,17 +1,19 @@
 #!/usr/bin/env node
-/* build-engine-from-ts.js — Étape 2 migration TS+Vite (pur Node, zéro dépendance).
+/* build-engine-from-ts.js — v2.226 : ts/engine/ est LA source unique (pur Node, zéro dépendance).
    ts/engine/01-*.ts … 16-*.ts sont les sections de js/engine.js (découpage de lecture,
-   code identique). Ce script concatène les sections dans l'ordre alphabétique et
-   vérifie que le résultat est js/engine.js OCTET PAR OCTET.
+   code identique). js/engine.js est un FICHIER GÉNÉRÉ : ne jamais l'éditer à la main.
+   Ce script concatène les sections dans l'ordre alphabétique (plus un bandeau « généré »)
+   et, par défaut, VÉRIFIE que le résultat est js/engine.js octet par octet.
    Lancé par scripts/validate.js (donc CI à chaque push).
    Usage : node scripts/build-engine-from-ts.js [--write]  (--write régénère js/engine.js) */
 const fs=require('fs'),path=require('path');
 const DIR='ts/engine', MARK='/* [engine-section] */';
+const BANNER='/* js/engine.js — GÉNÉRÉ depuis ts/engine/ (16 sections) par scripts/build-engine-from-ts.js — ne pas éditer à la main. */\n';
 let fail=0;
 const step=(ok,msg)=>{console.log((ok?'  ✓ ':'  ✗ ')+msg);if(!ok)fail=1};
 const files=fs.existsSync(DIR)?fs.readdirSync(DIR).filter(f=>f.endsWith('.ts')).sort():[];
 step(files.length===16, files.length+' section(s) ts/engine (attendu : 16)');
-let out='';
+let out=BANNER;
 for(const f of files){
   const t=fs.readFileSync(path.join(DIR,f),'utf8');
   const i=t.indexOf(MARK);
@@ -24,6 +26,6 @@ if(process.argv.includes('--write')){
   console.log('js/engine.js régénéré depuis ts/engine/ ('+out.length+' octets)');
   process.exit(0);
 }
-step(out===js, out===js?'ts/engine/ (16 sections) ≡ js/engine.js (miroir exact)'
-  :'miroir désynchronisé ! ('+out.length+' vs '+js.length+' octets)');
+step(out===js, out===js?'js/engine.js = build(ts/engine/ 16 sections) — génération à jour (source unique : ts/)'
+  :'js/engine.js NON à jour du build ts/ ('+out.length+' vs '+js.length+' octets) — lancer : node scripts/build-engine-from-ts.js --write');
 process.exit(fail);
