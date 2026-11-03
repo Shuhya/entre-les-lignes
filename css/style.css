@@ -974,36 +974,16 @@ body.wa #app{background-color:#0b141a}
 .restartBtn b{color:#ffb3b3}
 .restartBtn[data-armed="1"] b{color:#ff8d8d}
 
-/* ---- v2.230 : DA des menus façon papier/lettre + placements ---- */
-#mn .card{background:linear-gradient(160deg,#f8f3e6 0%,#efe5cf 100%);border:1px solid #d9c9a0;border-radius:18px;box-shadow:0 30px 80px #000a,inset 0 1px 0 #fff8;padding:30px 26px 22px;color:#2b241a}
-#mn h2{color:#2b241a}
-#mn .bk{color:#2b241a;border-left:2px solid #b39b6a55}
-#mn .bk:hover{background:#00000008}
-#mn .bk.open{border-left-color:#b3872f}
-#mn .bk h3{color:#2b241a;font-family:'Palatino Linotype','Iowan Old Style',Palatino,Georgia,serif}
-#mn .bk p{color:#6f6450}
-#mn .bk.lock{opacity:.45}
-#mn .st{color:#2b241a;border-bottom:1px solid #00000014}
-#mn .st b{color:#2b241a}
-#mn .st small{color:#6f6450}
-#mn .proTxt p{color:#4a4234}
-#mn .proTxt p:first-child{color:#2b241a}
-#mn .finsTag{border-color:#b3872f66;color:#8a6a1f}
-#mn .verTag{color:#8a7f68}
-#mn .card input{background:#fffdf6;border:1px solid #00000026;color:#2b241a}
-.rsOv .card{background:linear-gradient(160deg,#f8f3e6,#efe5cf);border:1px solid #d9c9a0;border-radius:18px;box-shadow:0 30px 80px #000a;color:#2b241a;padding:26px 22px}
-.rsOv .card h2{color:#2b241a}
-.rsOv .bk{color:#2b241a;border-left:2px solid #b39b6a55}
-.rsOv .bk h3{color:#2b241a;font-family:'Palatino Linotype',Palatino,Georgia,serif}
-.rsOv .bk p{color:#6f6450}
-.rsOv .bk.lock{opacity:.45}
+/* ---- v2.231 : DA menus = verre transparent (mix : cadre fin façon #endOv, PAS de carte opaque) ---- */
+#mn .card{background:rgba(12,20,36,.55);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border:1px solid rgba(160,190,240,.16);border-radius:22px;box-shadow:0 24px 80px #000c,inset 0 1px 0 #ffffff14;padding:28px 24px 20px}
+.rsOv .card{background:rgba(12,20,36,.55);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border:1px solid rgba(160,190,240,.16);border-radius:22px;box-shadow:0 24px 80px #000c;padding:26px 22px}
 /* chevron retour : SVG parfaitement centré */
 .mnBack svg,.mnX{display:block}
 .mnBack{display:flex;align-items:center;justify-content:center}
 .mnX{display:flex;align-items:center;justify-content:center}
-/* bouton écraser/recommencer : pastille compacte à droite */
-#mn .restartBtn{display:block;width:auto;margin:16px 0 0 auto;padding:9px 16px;border:1px solid #c0392b33;background:#c0392b0a;border-radius:999px}
-#mn .restartBtn b{color:#b03a2e;font-size:14px}
-#mn .restartBtn small{color:#a0655c;font-size:11.5px}
-#mn .restartBtn[data-armed="1"]{border-color:#8e241866;background:#c0392b14}
-#mn .restartBtn[data-armed="1"] b{color:#8e2418}
+/* bouton écraser/recommencer : pastille compacte à droite, rouge sur verre */
+#mn .restartBtn{display:block;width:auto;margin:16px 0 0 auto;padding:9px 16px;border:1px solid rgba(255,120,120,.25);background:rgba(255,110,110,.06);border-radius:999px}
+#mn .restartBtn b{color:#ffb3b3;font-size:14px}
+#mn .restartBtn small{color:#e0a8a8;font-size:11.5px}
+#mn .restartBtn[data-armed="1"]{border-color:rgba(255,120,120,.5);background:rgba(255,110,110,.12)}
+#mn .restartBtn[data-armed="1"] b{color:#ff8d8d}
