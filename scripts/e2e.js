@@ -22,10 +22,11 @@ let page = null;
   /* ---------- 1) jeu.html : overlays du menu ---------- */
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk');
-  await page.evaluate(() => document.getElementById('set').click());
-  await page.waitForSelector('#vol:not([hidden])', { state: 'visible', timeout: 8000 });
-  console.log('e2e 2/6 menu: ⚙ réglages (#vol) visible OK');
+  const h1 = await page.evaluate(() => { const v = document.getElementById('vol'); const a = v.hidden; document.getElementById('set').click(); return a; });
+  const h2 = await page.evaluate(() => document.getElementById('vol').hidden);
+  if (h1 === h2) throw new Error('#vol ne bascule pas via ⚙ (hidden=' + h1 + '→' + h2 + ')');
   await page.evaluate(() => { const v = document.getElementById('vol'); if (v) v.hidden = true; });
+  console.log('e2e 2/6 menu: ⚙ réglages (#vol bascule) OK');
 
   /* ---------- 2) début de partie complet ---------- */
   await page.reload();
