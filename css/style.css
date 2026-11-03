@@ -964,3 +964,11 @@ body.wa #app{background-color:#0b141a}
 /* ---- v2.221 : menu des actes sous un chapitre ---- */
 .actsWrap{margin:-4px 2px 12px;display:flex;flex-direction:column;gap:8px}
 .actsWrap .actBtn{background:rgba(52,211,153,.03)}
+
+/* ---- v2.223 : bouton retour discret (chevron) + recommencer ---- */
+.mnBack{width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.13);background:rgba(13,20,35,.5);color:rgba(255,255,255,.82);font-size:30px;font-weight:200;box-shadow:0 4px 14px #00000052;transform:translateY(-1px)}
+.mnBack:hover{background:rgba(30,42,68,.6);border-color:rgba(255,255,255,.24)}
+.restartBtn{border:1px solid rgba(255,120,120,.22);background:rgba(255,110,110,.04);margin-top:18px}
+.restartBtn:hover{border-color:rgba(255,120,120,.45)}
+.restartBtn b{color:#ffb3b3}
+.restartBtn[data-armed="1"] b{color:#ff8d8d}
