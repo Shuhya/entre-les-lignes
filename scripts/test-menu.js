@@ -94,13 +94,19 @@ const first=s=>qa(doc.body,s)[0]||null;
 (async()=>{try{
  T.menu(); await sleep(200);
  const cards=qa(doc.body,".bkWrap .bk");
- const p=cards.find(c=>/Param/.test(c.textContent));
- if(!p)throw new Error("pas de carte Paramètres");
- const vol=doc.getElementById("vol");
- const h0=vol.hidden;
- p.click(); await sleep(80);
- if(vol.hidden===h0)throw new Error("#vol n'a pas basculé (hidden="+vol.hidden+")");
- if(vol.parentNode!==doc.body)throw new Error("#vol attaché à "+vol.parentNode.tagName+" au lieu de body");
- console.log("MENU OK — Paramètres→toggle+body");
+ if(cards.length!==2)throw new Error("attendu 2 cartes chapitre (ouverture directe), trouv\u00e9 "+cards.length);
+ if(/Ouvrir le livre|Param\u00e8tres de la partie/.test(doc.body.textContent))throw new Error("niveau biblioth\u00e8que encore pr\u00e9sent");
+ const ft=first(".finsTag");
+ if(!ft||!/\d+ \/ \d+/.test(ft.textContent))throw new Error("badge fins absent: "+(ft&&ft.textContent));
+ const c1=cards.find(c=>/Chapitre 1/.test(c.textContent));
+ c1.click(); await sleep(80);
+ const acts=qa(doc.body,".actBtn");
+ if(acts.length!==2)throw new Error("attendu 2 boutons acte (Acte + R\u00e9sum\u00e9) pour ch1, trouv\u00e9 "+acts.length);
+ acts.forEach(a=>{if(a.children.some(c=>c.tagName==="SMALL"))throw new Error("sous-libell\u00e9 acte encore pr\u00e9sent: "+a.textContent)});
+ if(!first(".mnBack"))throw new Error("chevron retour absent");
+ const vol=doc.getElementById("vol");const h0=vol.hidden;
+ doc.getElementById("set").click(); await sleep(30);
+ if(vol.hidden===h0)throw new Error("#vol n'a pas bascul\u00e9 via \u2699");
+ console.log("MENU OK \u2014 r\u00e9gime UX : chapitres en direct, badge fins, actes sans sous-libell\u00e9, chevron unique, \u2699 OK");
  process.exit(0)
 }catch(e){console.error("MENU FAIL:",e&&(e.stack||e.message));process.exit(1)}})();
