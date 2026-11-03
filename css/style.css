@@ -343,6 +343,7 @@ body.pc .b{max-width:58%}
 @media (prefers-reduced-motion:reduce){#in.on #bgi{animation:none}#in .tx>*{animation-duration:.01s}}
 
 .verTag{margin:14px 0 -2px;font-size:11px;color:#6c82a6;text-align:center;letter-spacing:.6px}
+.finsTag{align-self:flex-end;background:none;border:1px solid #ffd16655;color:#ffd166;font:inherit;font-size:13px;padding:5px 12px;border-radius:999px;cursor:pointer;margin:-6px 0 10px}
 .sbar #infoB{background:none;border:0;padding:0 0 0 5px;display:inline-grid;place-items:center;color:inherit;cursor:pointer;opacity:.7;vertical-align:middle}.sbar #infoB:hover{opacity:1}
 .infoCh{font-size:13px;color:#9fb4d4;padding:7px 11px;border:1px solid #2c4a73;border-radius:10px;margin:6px 0;background:#0a1424;text-align:left}.infoCh.on{color:#e8eefb;border-color:#ffd16655}.infoCh.on b,.infoCh.on{font-weight:400}
 .infoGuide{text-align:left;font-size:12.5px;line-height:1.7;color:#cfe0f5;border-top:1px solid #2c4a73;margin:14px 0 4px;padding-top:12px}.infoGuide b{color:#ffd166}.infoGuide>b{display:block;margin-bottom:7px;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase}.infoGuide p{margin:5px 0}.infoGuide p b{opacity:.95}

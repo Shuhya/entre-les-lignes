@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.228";
+const VER="2.229";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -815,11 +815,11 @@ async function scrOv(n){
 const ck=()=>{if(SK)return;$("clk").textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})};ck();setInterval(ck,30000);
 function card(h){const c=document.createElement("div");c.className="card";const e=document.createElement("h2");e.textContent=h;c.append(e);return c}
 function row(c,t,d,fn,off=0){const b=document.createElement("button");b.className="st";b.disabled=!!off;const a=document.createElement("b");a.textContent=t;b.append(a);if(d){const s=document.createElement("small");s.textContent=d;b.append(s)}b.onclick=fn;c.append(b);return b}
-function show(c){const m=$("mn");m.replaceChildren(c);m.classList.add("on");addBack(c)}
+function show(c,backFn){const m=$("mn");m.replaceChildren(c);m.classList.add("on");addBack(c,backFn)}
 /* Flèche « retour » en haut à gauche de chaque écran de base : reprend l'action de la ligne « ‹ Retour » de l'écran, sinon revient à l'accueil. */
 let INTRO_HTML=(function(){const d=document.getElementById("in");return d?d.innerHTML:""})();
-function addBack(c){
-  let fn=null;c.querySelectorAll("button.st,button.bk").forEach(b=>{if(/^\u2039\s*Retour/.test(b.textContent.trim()))fn=b.onclick});
+function addBack(c,backFn){
+  let fn=backFn||null;if(!fn)c.querySelectorAll("button.st,button.bk").forEach(b=>{if(/^\u2039\s*Retour/.test(b.textContent.trim()))fn=b.onclick});
   const a=document.createElement("button");a.type="button";a.className="mnBack";a.setAttribute("aria-label","Retour");a.textContent="\u2039";
   a.onclick=fn||homeIntro;
   if(c.parentElement&&c.parentElement.classList&&c.parentElement.classList.contains("rsOv")){c.style.position="relative";a.style.position="absolute";a.style.top="-56px";a.style.left="0";a.style.right="auto"}
@@ -1007,22 +1007,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));ov(v[0],v[1],'Revenir aux chapitres',()=>{GHOST=false;chap(SS)},'Menu',()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  menu=function(){GHOST=false;save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
-  const c=card('Choisis une histoire');
-  const list=document.createElement('div');list.className='bkWrap';c.append(list);
-  STORIES.forEach((s,i)=>{
-   const locked=s.id!=='h';
-   const b=document.createElement('button');b.className='bk'+(locked?' lock':' open');if(locked)b.disabled=true;
-   let foot=locked?'En pause \u2014 bient\u00F4t':'Ouvrir le livre \u203a';
-   if(!locked){let P=null;try{P=JSON.parse(localStorage.getItem('pg'+s.id))}catch(e){}
-    const tot=endsOf(s),got=feN(s);const g=Math.min(got,tot);const fs=g+' fin'+(g>1?'s':'')+' trouv\u00E9e'+(g>1?'s':'');
-    if(s.id==='h'){const RN=['','I','II','III','IV','V','VI'];let pp=1;try{pp=Math.min(6,+localStorage.getItem('etl_part_'+s.id)||1)}catch(e){};
-     foot='Partie '+RN[pp]+' / VI \u00B7 '+fs}
-    else if(P)foot=Math.min(P.c,s.ch.length)+' chapitre \u00B7 '+fs}
-   b.innerHTML='<h3>'+s.t+'</h3><p>'+s.d+'</p><div class="bkF">'+foot+'</div>'+(locked?'<span class="bkLock">\uD83D\uDD12 En pause</span>':'');
-   if(!locked)b.onclick=()=>chap(s);list.append(b)});
-  {const ob=document.createElement('button');ob.className='bk';ob.innerHTML='<h3>⚙ Paramètres de la partie</h3><p>Thème, son, vitesse de lecture, plein écran, transfert</p>';ob.onclick=volToggle;list.append(ob)};
-  {const nb=document.createElement('button');nb.className='bk';nb.innerHTML='<h3>ℹ Notice &amp; informations</h3><p>Comment jouer, chapitres, actes et réglages — la visite guidée en images</p>';nb.onclick=()=>{try{location.href='notice.html'}catch(e){}};list.append(nb)};
-  show(c);
+  chap(STORIES.find(s=>s.id==='h')||STORIES[0]);
   setTimeout(()=>{if($('mn').classList.contains('on')){document.body.classList.remove('play');$('chat').innerHTML='';$('ch').innerHTML='';$('chat').style.backgroundImage=''}},700)};
  function optCard(){
   const c=card('Options d\u2019affichage');
@@ -1031,7 +1016,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
    :'<b>Mode sobre : sans smileys \uD83D\uDCAC</b><small>Lecture plus dramatique \u2014 les \u00E9motic\u00F4nes sont retir\u00E9es des messages.</small>';
   em.onclick=()=>{emojiMode=!emojiMode;try{localStorage.setItem('etl_emoji',emojiMode?'on':'off')}catch(e){};optCard()};
   c.append(em);
-  row(c,'\u2039 Retour','',menu);show(c)}
+  show(c,menu)}
  let proEl=null;
  const stopPro=()=>{if(proEl){try{proEl.pause&&proEl.pause()}catch(e){}proEl=null}try{speechSynthesis.cancel()}catch(e){}};
  const proPlay=(s,txt)=>{if(proEl){stopPro();return}
@@ -1045,8 +1030,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   const list=document.createElement('div');list.className='bkWrap';c.append(list);
   all.forEach(t=>{const ok=got.includes(t);const r=document.createElement('button');r.className='bk'+(ok?' open':' lock');r.disabled=!ok;
    r.innerHTML='<h3>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</h3>';list.append(r)});
-  const bk3=document.createElement('button');bk3.className='st back';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>chap(s);c.append(bk3);
-  show(c)}
+  show(c,()=>chap(s))}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
@@ -1055,7 +1039,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  const prev=(PG.s&&PG.s[1])||{};
  const base=Object.assign({t:0,l:0,r:0,v:0,e:""},(prev.pf!==undefined?{pf:prev.pf}:{}),(prev.pname!==undefined?{pname:prev.pname}:{}),(prev.t?{t:prev.t}:{}));
  const c=card(done?"Chapitre 2 · Quai 9 — avec quelle fin du chapitre 1\u00A0?":"Chapitre 2 · Quai 9 — sans jouer le chapitre 1");
- const hd=document.createElement("p");hd.className="proTxt";hd.textContent=(done?"Tu as terminé le chapitre 1. Le chapitre 2 continue la même histoire : choisis comment ta première nuit s’est terminée.":"Le chapitre 2 commence le lendemain du chapitre 1. Tu n’y as pas joué : choisis la fin du chapitre 1 avec laquelle commencer.")+" Ta progression, ta sauvegarde et tes fins découvertes restent inchangées.";c.append(hd);
+ const hd=document.createElement("p");hd.className="proTxt";hd.textContent=done?"Avec quelle fin du chapitre 1 veux-tu commencer\u00a0?":"Tu n\u2019as pas jou\u00e9 le chapitre 1\u00a0: choisis une fin pour commencer.";c.append(hd);
  if(!done){let gpf=0;try{gpf=(localStorage.getItem("etl_pgen")==="f")?1:0}catch(e){}base.pf=gpf;
   const nb=document.createElement("p");nb.className="proTxt";nb.textContent="Ton prénom ? L’histoire s’adressera à toi par ce nom (laisse vide pour rester anonyme).";c.append(nb);
   const ni=/** @type {HTMLInputElement} */(document.createElement("input"));ni.id="ch2name";ni.type="text";ni.maxLength=14;ni.placeholder="Ton prénom";ni.autocomplete="off";try{ni["value"]=localStorage.getItem("etl_pname")||""}catch(e){}c.append(ni);
@@ -1071,8 +1055,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1}));
  row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1}));
  row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2}));
- row(c,"‹ Retour","",()=>chap(s));
- show(c)}
+ show(c,()=>chap(s))}
 function actOfNode(i,node){if(i!==1)return 0;const m=String(node).match(/^q(\d+)/);if(m){const n=+m[1];if(n<=3)return 0;if(n<=8)return 1;return 2}return 1}
 function actsMenu(s,i,h,b,v){
  const old=document.querySelectorAll('.actsWrap')[0]||null;
@@ -1082,27 +1065,26 @@ function actsMenu(s,i,h,b,v){
  acts.forEach((a,k)=>{
   const live=!!(v&&v.story===s.id&&v.node&&S[v.node]&&(v.chapter||0)===i&&actOfNode(i,v.node)===k);
   const r=document.createElement('button');r.className='st actBtn';
-  r.innerHTML='<b>'+(live?'\u25B6 Reprendre\u00A0: ':'\u25B6 ')+'Acte '+(k+1)+' \u00B7 '+a[0]+'</b><small>'+(live?'Ta conversation t\u2019attend l\u00E0 o\u00F9 tu l\u2019as laiss\u00E9e':'Progression et fins inchang\u00E9es \u2014 lecture \u00E0 part')+'</small>';
+  r.innerHTML='<b>'+(live?'\u25B6 Reprendre\u00A0: ':'\u25B6 ')+'Acte '+(k+1)+' \u00B7 '+a[0]+'</b>';
   r.onclick=()=>{w.remove();
    if(s.id==='h'&&i===1&&k===2&&a[1]==='q9')return act3pick(s,i,k);
    if(live)return resume(v);
    startAct(s,i,k)};
   w.append(r)});
  if(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]){const rb=document.createElement('button');rb.className='st actBtn';
-  rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b><small>Ce qui s\u2019est pass\u00E9 jusqu\u2019ici</small>';
+  rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b>';
   rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{},null,null)};w.append(rb)}
  if(typeof b.after==="function")b.after(w);else{const pn=b.parentNode;if(pn)pn.append(w)}}
 function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
 function act3pick(s,i,k){
  const c=card('Quai 9 \u00B7 Acte III \u2014 par quel chemin\u00A0?');
- const hd=document.createElement('p');hd.className='proTxt';hd.textContent='Choisis l\u2019\u00E9tat de ta partie en arrivant au square des Tanneurs. Ta progression, ta sauvegarde et tes fins d\u00E9couvertes restent inchang\u00E9es.';c.append(hd);
+ const hd=document.createElement('p');hd.className='proTxt';hd.textContent='Par quel \u00E9tat veux-tu arriver au square des Tanneurs\u00a0?';c.append(hd);
  row(c,'\u25B6 \u00AB Confiance totale \u00BB','Cora t\u2019a appel\u00E9. Carnet lu, dernier message \u00E9cout\u00E9, mot \u00AB sucrier \u00BB donn\u00E9 au t\u00E9l\u00E9phone.',()=>act3go(s,i,k,{avou:1,trst:2,pov:1,prm:1,cal_h8:1,recall:1,mig:1}));
  row(c,'\u25B6 \u00AB Le froid \u00BB','Pas d\u2019appel. Tu as r\u00E9pondu \u00AB erreur de num\u00E9ro \u00BB \u00E0 l\u2019inconnu.',()=>act3go(s,i,k,{mig:1,int:2}));
  row(c,'\u25B6 \u00AB Le menteur \u00BB','La nuit du mensonge\u00A0: rep\u00E9r\u00E9 en quatre minutes.',()=>act3go(s,i,k,{mentir:1,mig:1,int:2}));
  row(c,'\u25B6 \u00AB Le pi\u00E8ge + la police \u00BB','La prise du quai 9 confirm\u00E9e, et Riffaud pr\u00E9venu.',()=>act3go(s,i,k,{piege:1,pol:1,mig:1}));
  row(c,'\u25B6 \u00AB La nuit standard \u00BB','La route droite\u00A0: personne n\u2019a \u00E9crit cette nuit.',()=>act3go(s,i,k,{mig:1}));
- row(c,'\u2039 Retour','',()=>chap(s));
- show(c)}
+ show(c,()=>chap(s))}
 function act3go(s,i,k,fl){GHOST=true;SC=i;ETL_ST=fl;ETL_ACT=(s.ch[i][2]&&s.ch[i][2][k])?s.ch[i][2][k][1]:s.ch[i][1];$('nm').textContent=s.n;setAv(s.n[0]);start()}
 function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()}
  chap=function(s){GHOST=false;SS=s;
@@ -1117,19 +1099,16 @@ function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputEleme
    const list=document.createElement('div');list.className='bkWrap';c.append(list);
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
-    b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+'</h3><div class="bkF">'+(ok?(i<P.c?(i===SC?'en cours':'\u2713 termin\u00E9'):(ch2free?'\u25B6 commencer par une fin du ch. 1':'\u25B6 commencer')):(w?'\uD83D\uDD12 verrouill\u00E9':'bient\u00F4t'))+'</div>';
+    b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12')+'</h3>';
     if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
     list.append(b)});
-   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='bk';
-    fb.innerHTML='<h3>\uD83C\uDFC1 Fins : '+Math.min(got,tot)+' / '+tot+'</h3><p>Celles que tu as trouv\u00E9es \u2014 et celles qui t\u2019attendent encore</p>';
-    fb.onclick=()=>endsCard(s);list.append(fb)}
+   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.textContent='\uD83C\uDFC1 '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
    const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u21BA Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
    rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00A0?';rsb.querySelector('small').textContent='Progression, sauvegarde et fins de cette histoire seront perdues — reclique pour confirmer';return}
     try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}
     GHOST=false;delete seenPro[s.id];chap(s)};
    c.append(rsb);
-   const bk3=document.createElement('button');bk3.className='st back';bk3.innerHTML='<b>‹ Retour</b>';bk3.onclick=()=>menu();c.append(bk3);
-   show(c)};
+   show(c,homeIntro)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();
    const o=document.createElement('div');o.className='rsOv';
@@ -1141,8 +1120,7 @@ function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputEleme
     o.remove();
     try{if(v.story===s.id)localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id)}catch(e){}
     GHOST=false;delete seenPro[s.id];chap(s)});
-   lk('\u2039 Retour','Revenir en arri\u00E8re',()=>{o.remove()});
-   o.append(c);document.body.append(o);addBack(c);
+   o.append(c);document.body.append(o);addBack(c,()=>o.remove());
    o.addEventListener('click',e=>{if(e.target===o)o.remove()})};
   const pro=proOf(s);
   if(resuming)goList();
@@ -1154,7 +1132,7 @@ function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputEleme
    c.append(w);
    row(c,'\u25B6 '+(s.audio?'\u00C9couter la narration':'\u00C9couter (voix automatique)'),s.audio?'La narration enregistr\u00E9e de l\u2019histoire':'Aucun fichier joint : synth\u00E8se vocale du navigateur',()=>proPlay(s,pro));
    row(c,'\u25B6 '+(resuming?'Reprendre':'Commencer'),resuming?'Ta partie t\u2019attend juste apr\u00E8s.':'D\u00E9couvre l\u2019histoire',goList);
-   row(c,'\u2039 Retour','',menu);show(c)}
+   show(c,menu)}
   else goList()};
  function resume(v){const story=STORIES.find(x=>x.id===v.story);if(!story)return;SS=story;SC=Math.min(v.chapter||0,story.ch.length-1);try{PG=JSON.parse(localStorage.getItem('pg'+SS.id))||{c:1,s:[]}}catch(e){PG={c:1,s:[]}}st=v.state||{t:0,l:0,r:0,v:0,e:''};run++;SK=1;document.body.classList.add('play');$('mn').classList.remove('on');const nmd=!!((v.state&&v.state.named)||SC>0||localStorage.getItem('etl_name_'+SS.id)===SS.n);$('nm').textContent=nmd?SS.n:SS.num;setAv(nmd?SS.n[0]:"\u{1F464}");$('chat').innerHTML=v.chat||'';$('ch').innerHTML='';$('ov').hidden=true;$('vol').hidden=true;unlock();nodeNow=v.node;path=v.path?v.path.slice():[v.node];APPH=v.apph||{};THR=v.thr||{};PAPP=v.papp||null;PNM=v.pnm||'';
   const n=S[v.node],cpl=(v.state&&v.state["cpl_"+v.node]);

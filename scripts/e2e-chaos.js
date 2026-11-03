@@ -45,12 +45,8 @@ const log = m => console.log('e2e-chaos: ' + m);
   await page.goto(root + '/jeu.html');
   await page.waitForSelector('.bkWrap .bk.open');
   await page.locator('.bkWrap .bk.open').first().click();
-  log('histoire lancée');
+  log('chapitre 1 cliqué (ouverture directe, plus de bibliothèque)');
 
-  const ch1 = page.locator('button', { hasText: /^Chapitre 1/ }).first();
-  await ch1.waitFor({ state: 'visible', timeout: 12000 });
-  await ch1.click();
-  log('chapitre 1 choisi');
   const act1 = page.locator('.actsWrap .actBtn').first();
   try { await act1.waitFor({ state: 'visible', timeout: 4000 }); await act1.click(); log('acte 1 choisi'); } catch (e) {}
 
