@@ -44,16 +44,24 @@ const { chromium } = require('playwright');
   await page.waitForSelector('#vol', { state: 'visible' });
   await shot('04-reglages');
 
-  /* 5 — écran prénom (début de partie, aucune ligne d'histoire) */
+  /* 5 — écran prénom (début de partie, aucune ligne d'histoire) — tolérant, non bloquant */
   await page.evaluate(() => { const v = document.getElementById('vol'); if (v) v.hidden = true; });
   await page.locator('.bkWrap .bk.open').first().click();
   await page.locator('button', { hasText: /Chapitre 1/ }).first().waitFor({ state: 'visible' });
   await page.locator('button', { hasText: /Chapitre 1/ }).first().click();
-  const act1 = page.locator('.actsWrap .actBtn').first();
-  await act1.waitFor({ state: 'visible' });
-  await act1.click();
-  await page.waitForSelector('#nameGate');
-  await shot('05-prenom');
+  await page.waitForSelector('.actsWrap .actBtn', { state: 'visible' });
+  let got5 = false;
+  for (let t = 0; t < 30 && !got5; t++) {
+    await page.locator('.actsWrap .actBtn').first().click({ timeout: 3000 }).catch(() => {});
+    for (let k = 0; k < 10; k++) {
+      const ps = await page.$('.proSkip');
+      if (ps && await ps.isVisible()) { await ps.click().catch(() => {}); }
+      const gate = await page.$('#nameGate');
+      if (gate && await gate.isVisible()) { got5 = true; break; }
+      await page.waitForTimeout(800);
+    }
+  }
+  if (got5) { await shot('05-prenom'); } else { console.log('SKIP 05-prenom (non obtenu)'); }
 
   await b.close();
   console.log('DONE');
