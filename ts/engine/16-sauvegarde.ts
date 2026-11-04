@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.233";
+const VER="2.234";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -306,7 +306,7 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
  let q=lines.slice(),muted=false;
  const mb=document.createElement("button");mb.className="calMute";mb.textContent="🔊";mb.onclick=()=>{muted=!muted;mb.textContent=muted?"🔇":"🔊";if(muted){try{callSpeakStop()}catch(e){}}};o.append(mb);
  const put=(L,raw)=>{const d=document.createElement("div");d.className="calL "+(L[0]===1?"them":L[0]===2?"me":"info");if(raw)d.textContent=L[1];tr.append(d);tr.scrollTop=1e9;return d};
- const typeIn=(d,txt,cb)=>{let i2=0;try{const iv=setInterval(()=>{i2+=2;d.textContent=txt.slice(0,i2);tr.scrollTop=1e9;if(i2>=txt.length){clearInterval(iv);cb()}},Math.max(8,12/SPD))}catch(e){d.textContent=txt;cb()}};
+ const typeIn=(d,txt,cb)=>{let i2=0;try{const iv=setInterval(()=>{i2+=1;d.textContent=txt.slice(0,i2);tr.scrollTop=1e9;if(i2>=txt.length){clearInterval(iv);cb()}},Math.max(6,8/SPD))}catch(e){d.textContent=txt;cb()}};
  const next=()=>{if(!q.length){inChoice=false;hint.hidden=true;eb.hidden=false;return}
   const L=q.shift();
   if(L[0]===2&&Array.isArray(L[1])){
@@ -314,7 +314,7 @@ function callOv(T,done){const nm=T[0]||"",sub=T[1]||"Appel",lines=T[2]||[];let v
    inChoice=true;eb.hidden=false;hint.hidden=false;
    L[1].forEach(opt=>{const lab=Array.isArray(opt)?opt[0]:opt;const ex=Array.isArray(opt)?opt[1]:null;const eff=Array.isArray(opt)&&opt.length>2?opt[2]:null;const lab2=gf(lab);
     const b=document.createElement("button");b.textContent=lab2;
-    b.onclick=()=>{bx.remove();inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab2],1);tx();if(eff)for(const k in eff)st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+eff[k]:eff[k];if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
+    b.onclick=()=>{try{bx.style.transition="opacity .25s ease,transform .25s ease";bx.style.opacity="0";bx.style.transform="translateY(6px)"}catch(e){}setTimeout(()=>{try{bx.remove()}catch(e){}},260);inChoice=false;eb.hidden=true;hint.hidden=true;put([2,lab2],1);tx();if(eff)for(const k in eff)st[k]=["t","care","agency","practical"].includes(k)?(st[k]||0)+eff[k]:eff[k];if(ex&&ex.length)q.unshift(...ex);setTimeout(next,900/SPD)};bx.append(b)});
    tr.append(bx);tr.scrollTop=1e9;return}
   const est=Math.max(700,(String(L[1]).split(/\s+/).length*310)+450)/SPD;
   const d=put(L,0);
