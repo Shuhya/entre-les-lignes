@@ -1,6 +1,6 @@
 /* ts/engine/16c-chap-resume.ts — chap(), resume(), fin de l'IIFE (module chapitres/reprise) — module de js/engine.js (découpage v2.232). Source unique : ts/engine/, js généré. */
 /* [engine-section] */
- chap=function(s){GHOST=false;SS=s;
+ chap=function(s){GHOST=false;try{relBan(false)}catch(e){}SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
   let pgc=0;try{pgc=(JSON.parse(localStorage.getItem("pg"+s.id)||"{}").c)||0}catch(e){}
   const resuming=!!(v&&v.story===s.id&&v.node&&S[v.node]&&pgc<=(v.chapter||0)+1);

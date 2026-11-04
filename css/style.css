@@ -995,3 +995,14 @@ body.wa #app{background-color:var(--phone)}
 
 /* v2.234 : accessibilité globale — aucune animation si reduced-motion */
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* ---- v2.236 : bannière relecture + journal des échanges ---- */
+#relBan{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:300;background:rgba(255,209,102,.14);border:1px solid var(--gold-33);color:var(--gold-soft);font-size:12.5px;padding:7px 14px;border-radius:var(--r-full);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:none;white-space:nowrap}
+#logOv{position:fixed;inset:0;z-index:90;background:rgba(4,6,10,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 18px;animation:fo .25s}
+.logHd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logHd b{font:400 20px 'Palatino Linotype',Palatino,Georgia,serif;color:#fff;flex:1}
+#logIn{flex:2;min-width:0;background:var(--w-07);border:1px solid var(--w-13);border-radius:var(--r-10);color:#fff;font:inherit;font-size:14px;padding:9px 12px;outline:none}
+#logIn:focus{border-color:var(--gold-53)}
+#logList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px;scrollbar-width:thin}
+#logList .b{animation:none;max-width:86%}
+.logEmpty{color:var(--tx-3);font-size:13.5px;text-align:center;margin-top:30px}

@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.235";
+const VER="2.236";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -356,6 +356,7 @@ function endScreen(t,x,seen){seen=(seen||[]).filter(t2=>endsList(SS).includes(t2
 
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
+ const b4=document.createElement("button");b4.id="ob4";b4.className="obN";b4.textContent="\u2197 Partager cette fin";b4.onclick=()=>{const txt="Entre les lignes \u2014 j\u2019ai trouv\u00e9 la fin \u00ab "+t+" \u00bb. Et toi, quelle sera la tienne ? "+location.href;try{if(navigator.share){navigator.share({title:"Entre les lignes",text:txt,url:location.href}).catch(()=>{})}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>toast("Texte copi\u00e9 \u2713")).catch(()=>toast(txt))}else toast(txt)}catch(e){toast(txt)}};c.append(b4);
  const nx=(SS.ch[SC+1]||[])[1];if(nx&&S[nx]){const b3=document.createElement("button");b3.id="ob3";b3.className="obN";b3.textContent="Chapitre suivant ›";b3.onclick=()=>{lockBgOff();o.remove();SC++;start()};c.append(b3)}
  try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }
@@ -900,6 +901,22 @@ function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();if(typeof notesOv==="function")notesOv(false)});
 /* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
+{const lb=$("logB");if(lb)lb.onclick=logOv}
+function logOv(){const o=document.createElement("div");o.id="logOv";
+ const hd=document.createElement("div");hd.className="logHd";
+ const ti=document.createElement("b");ti.textContent="Journal des \u00e9changes";hd.append(ti);
+ const inp=document.createElement("input");inp.id="logIn";inp.placeholder="Rechercher\u2026";inp.autocomplete="off";hd.append(inp);
+ const x=document.createElement("button");x.className="mnX";x.style.position="static";x.textContent="\u2715";x.onclick=()=>o.remove();hd.append(x);
+ o.append(hd);
+ const list=document.createElement("div");list.id="logList";o.append(list);
+ document.body.append(o);
+ const render=()=>{const q=(inp.value||"").toLowerCase();list.innerHTML="";
+  const src=$("chat");const kids=src?src.children:[];
+  let n=0;
+  for(const k of kids){const t=(k.textContent||"").toLowerCase();if(q&&t.indexOf(q)<0)continue;
+   const d=document.createElement("div");d.className="b "+(k.className||"").replace("b ","");d.textContent=k.textContent;list.append(d);n++}
+  if(!n){const e=document.createElement("p");e.className="logEmpty";e.textContent=q?"Aucun message ne contient \u00ab "+inp.value+" \u00bb":"Aucun message pour l\u2019instant";list.append(e)}};
+ inp.oninput=render;render()}
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&(e.target===vv||(!vv.contains(e.target)&&!$("set").contains(e.target))))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
