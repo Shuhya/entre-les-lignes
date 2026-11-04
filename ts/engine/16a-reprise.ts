@@ -35,5 +35,5 @@
    r.innerHTML='<h3>'+(ok?'\u2713 '+t:'\uD83D\uDD12 fin non d\u00E9couverte')+'</h3>';list.append(r)});
   show(c,()=>chap(s))}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
- try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard}}catch(e){}
+ try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard,resume:resume,ch2go:ch2go,pg:()=>PG}}catch(e){}
  const oldStart=start;start=function(){if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}}oldStart()};
