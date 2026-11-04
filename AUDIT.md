@@ -44,3 +44,46 @@ Audit de validateur de déploiement, à partir du code réel (main @ v2.233), de
 
 ## Méthode
 Code audité : `ts/engine/*` (19 sections), `css/style.css` (tokens v2.233), `jeu.html`/`index.html`/`notice.html`, `sw.js`, `scripts/*`, CI GitHub Actions (runs récents 6/6 success), captures `demo-shots`. Références externes : guides UX visual novel 2026 (pacing lisible, transitions douces, Lisibilité mobile, reduced-motion).
+
+---
+
+# AUDIT APPROFONDI v2.234 (code + joueur + tests + histoire + perf + lisibilité + idées)
+
+## 1. Côté code
+- Moteur 120 Ko (19 sections TS → 1 fichier généré), story 58 Ko, audio 307 Ko. Parse bloquant au chargement : acceptable, à surveiller avec Actes IV/V.
+- `localStorage` : clés préfixées `etl_` + `pg`/`fe` + `etl_resume_v4` — cohérent. Risque Safari privé (éviction) : couvert par l'export/import manuel.
+- `sl()` = simple setTimeout ; pacing piloté par `SPD` (vitesse de lecture réglable) — bien.
+- Service worker v2.1 : network-first HTML, cache-first `?v=`, stale-while-revalidate images — correct pour Pages.
+- v2.234 appliqué : fondu bulles `bIn .38s`, typewriter 1 car/8 ms, carte menu `cardIn`, fondu sortie des choix, `prefers-reduced-motion` global, `loading="lazy"` notice. **Diff captures v2.233→v2.234 : 0 pixel** sur les écrans déterministes (les écarts restants = phase de l'animation de fond `kb` 26 s, pas le CSS).
+
+## 2. Côté joueur (parcours réel)
+- Onboarding : landing → Commencer → menu chapitres (direct, v2.229) → acte → nameGate (prénom+genre) → prologue (sautable) → lock screen → chat. Chaîne claire, ~4 clics avant le premier message — correct.
+- Points de friction : ch2pick (8 presets) peut intimider ; le résumé de chapitre existe (✎). Sauvegarde auto transparente (bon). Fins : badge 🏁 X/Y + liste verrouillée (bon feedback de collection).
+- Manque : pas de « log de conversation » scrollable en arrière pendant le jeu (les bulles restent, scrollable — OK), pas de rappel « où j'en étais » après longue pause hormis la reprise auto.
+
+## 3. Tests
+- Couverture : validate (structure/miroirs/refs), test-menu (régime UX), smoke a/b (2 routes ch1 complètes), typecheck (gate 98), e2e + e2e-chaos (vrai Chromium, parcours + chaos aléatoire), captures CI.
+- Trous : pas de test automatisé des chemins GHOST ch2 (variantes ch2pick) en local (couvert partiellement par e2e-chaos) ; pas de test de la reprise (`resume`) ; pas de test de l'export/import de sauvegarde.
+
+## 4. Histoire / contenu
+- 143 nœuds, 7 fins (`endc`) ch1 ; ch2 = 3 actes jouables (q1→q14). Actes IV (q15→q19) et V (q20→q23 + 4 fins canoniques) à écrire depuis `protos/canon-ch2-complet.md` — **bloquant pour un lancement complet**.
+- Cohérence : matrice de flags dans le canon ; chaque choix parlant envoie un vrai message (règle KNOWLEDGE) — à vérifier à l'écriture des Actes IV/V.
+
+## 5. Perf
+- Poids page jeu : engine 120 Ko + story 58 Ko + CSS 93 Ko + menu.jpg 128 Ko ≈ 400 Ko + SW precache (~1,5 Mo avec images/audio). Correct pour du mobile 4G.
+- `backdrop-filter blur(18px)` multiples overlays → jank low-end (préconisé : 12 px sur `.rsOv`).
+- Notice 1,1 Mo de PNG → lazy OK (v2.234), WebP reste une piste.
+- Animations : `will-change` déjà sur `#bgi` ; éviter d'en rajouter ailleurs.
+
+## 6. Lisibilité
+- Bulles 16,5 px / line-height passé à **1.4** (v2.234, était 1.28) — mieux pour la lecture longue.
+- Contraste blanc sur verre sombre : conforme WCAG AA. Titres serif Palatino — lisible.
+- Vitesse de lecture réglable (SPD) + mode sobre (sans emojis) + thème nuit/jour/auto : bien.
+- Attention : apostrophes U+2019 / NBSP dans les heures — piège connu, documenté (KNOWLEDGE).
+
+## 7. Idées (propositions, non appliquées)
+- `navigator.vibrate()` à l'arrivée d'une notification/appel (immersion mobile).
+- Statistiques de lecture (déjà `etl_stats`) rendues visibles (temps lu, messages, fins).
+- Partage de fin (texte + badge) en Web Share API.
+- Mode « relecture » d'un chapitre terminé sans perdre la progression (GHOST existe déjà en interne).
+- Audio : pluie en boucle déjà là ; ajouter un toggle musique/ambiance dans les réglages (déjà volume).
