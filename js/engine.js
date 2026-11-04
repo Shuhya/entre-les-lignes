@@ -907,13 +907,13 @@ $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 function logOv(){const o=document.createElement("div");o.id="logOv";
  const hd=document.createElement("div");hd.className="logHd";
  const ti=document.createElement("b");ti.textContent="Journal des \u00e9changes";hd.append(ti);
- const inp=document.createElement("input");inp.id="logIn";inp.placeholder="Rechercher\u2026";inp.autocomplete="off";hd.append(inp);
+ const inp=/** @type {HTMLInputElement} */(document.createElement("input"));inp.id="logIn";inp.placeholder="Rechercher\u2026";inp.autocomplete="off";hd.append(inp);
  const x=document.createElement("button");x.className="mnX";x.style.position="static";x.textContent="\u2715";x.onclick=()=>o.remove();hd.append(x);
  o.append(hd);
  const list=document.createElement("div");list.id="logList";o.append(list);
  document.body.append(o);
  const render=()=>{const q=(inp.value||"").toLowerCase();list.innerHTML="";
-  const src=$("chat");const kids=src?src.children:[];
+  const src=$("chat");const kids=src?Array.from(src.children):[];
   let n=0;
   for(const k of kids){const t=(k.textContent||"").toLowerCase();if(q&&t.indexOf(q)<0)continue;
    const d=document.createElement("div");d.className="b "+(k.className||"").replace("b ","");d.textContent=k.textContent;list.append(d);n++}
@@ -1021,7 +1021,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  let preChat=null;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);preChat=$('chat').innerHTML;save();const v=await oldPlay(id,r);if(r!=run)return v;preChat=null;save();return v};
  function relBan(on){let b=document.getElementById("relBan");if(on&&!b){b=document.createElement("div");b.id="relBan";b.textContent="\uD83D\uDC41 Relecture \u2014 ta progression n\u2019est pas modifi\u00e9e";document.body.append(b)}if(b)b.style.display=on?"block":"none"}
- const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));relBan(false);ov(v[0],v[1],"\uD83D\uDCD6 Voir le r\u00e9sum\u00e9 \u00e9crit",()=>{ov(SS.t,(typeof ETL_SUM!=="undefined"&&ETL_SUM[SC])||"R\u00e9sum\u00e9 indisponible.","Revenir aux chapitres",()=>{GHOST=false;chap(SS)})},"Revenir aux chapitres",()=>{GHOST=false;chap(SS)},"Menu",()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
+ const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));relBan(false);ov(v[0],v[1],"\uD83D\uDCD6 Voir le r\u00e9sum\u00e9 \u00e9crit",()=>{ov(SS.t,(typeof ETL_SUM!=="undefined"&&ETL_SUM[SC])||"R\u00e9sum\u00e9 indisponible.","Revenir aux chapitres",()=>{GHOST=false;chap(SS)},null,null)},"Menu",()=>{GHOST=false;menu()},null,null);return}oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  menu=function(){GHOST=false;try{relBan(false)}catch(e){}save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
   chap(STORIES.find(s=>s.id==='h')||STORIES[0]);

@@ -8,7 +8,7 @@
  let preChat=null;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);preChat=$('chat').innerHTML;save();const v=await oldPlay(id,r);if(r!=run)return v;preChat=null;save();return v};
  function relBan(on){let b=document.getElementById("relBan");if(on&&!b){b=document.createElement("div");b.id="relBan";b.textContent="\uD83D\uDC41 Relecture \u2014 ta progression n\u2019est pas modifi\u00e9e";document.body.append(b)}if(b)b.style.display=on?"block":"none"}
- const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));relBan(false);ov(v[0],v[1],"\uD83D\uDCD6 Voir le r\u00e9sum\u00e9 \u00e9crit",()=>{ov(SS.t,(typeof ETL_SUM!=="undefined"&&ETL_SUM[SC])||"R\u00e9sum\u00e9 indisponible.","Revenir aux chapitres",()=>{GHOST=false;chap(SS)})},"Revenir aux chapitres",()=>{GHOST=false;chap(SS)},"Menu",()=>{GHOST=false;menu()});return}oldFin(v,sk);save()};
+ const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));relBan(false);ov(v[0],v[1],"\uD83D\uDCD6 Voir le r\u00e9sum\u00e9 \u00e9crit",()=>{ov(SS.t,(typeof ETL_SUM!=="undefined"&&ETL_SUM[SC])||"R\u00e9sum\u00e9 indisponible.","Revenir aux chapitres",()=>{GHOST=false;chap(SS)},null,null)},"Menu",()=>{GHOST=false;menu()},null,null);return}oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  menu=function(){GHOST=false;try{relBan(false)}catch(e){}save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
   chap(STORIES.find(s=>s.id==='h')||STORIES[0]);

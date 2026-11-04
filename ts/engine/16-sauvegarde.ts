@@ -905,13 +905,13 @@ $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
 function logOv(){const o=document.createElement("div");o.id="logOv";
  const hd=document.createElement("div");hd.className="logHd";
  const ti=document.createElement("b");ti.textContent="Journal des \u00e9changes";hd.append(ti);
- const inp=document.createElement("input");inp.id="logIn";inp.placeholder="Rechercher\u2026";inp.autocomplete="off";hd.append(inp);
+ const inp=/** @type {HTMLInputElement} */(document.createElement("input"));inp.id="logIn";inp.placeholder="Rechercher\u2026";inp.autocomplete="off";hd.append(inp);
  const x=document.createElement("button");x.className="mnX";x.style.position="static";x.textContent="\u2715";x.onclick=()=>o.remove();hd.append(x);
  o.append(hd);
  const list=document.createElement("div");list.id="logList";o.append(list);
  document.body.append(o);
  const render=()=>{const q=(inp.value||"").toLowerCase();list.innerHTML="";
-  const src=$("chat");const kids=src?src.children:[];
+  const src=$("chat");const kids=src?Array.from(src.children):[];
   let n=0;
   for(const k of kids){const t=(k.textContent||"").toLowerCase();if(q&&t.indexOf(q)<0)continue;
    const d=document.createElement("div");d.className="b "+(k.className||"").replace("b ","");d.textContent=k.textContent;list.append(d);n++}
