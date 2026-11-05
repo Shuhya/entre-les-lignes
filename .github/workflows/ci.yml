@@ -17,6 +17,7 @@ jobs:
       - run: ROUTE=b node scripts/smoke.js
       - run: node scripts/test-menu.js
       - run: node scripts/test-save.js
+      - run: node scripts/smoke_ch2.js
   lint:
     runs-on: ubuntu-latest
     steps:

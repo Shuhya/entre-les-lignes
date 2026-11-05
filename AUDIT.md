@@ -87,3 +87,21 @@ Code audité : `ts/engine/*` (19 sections), `css/style.css` (tokens v2.233), `je
 - Partage de fin (texte + badge) en Web Share API.
 - Mode « relecture » d'un chapitre terminé sans perdre la progression (GHOST existe déjà en interne).
 - Audio : pluie en boucle déjà là ; ajouter un toggle musique/ambiance dans les réglages (déjà volume).
+
+---
+
+# Couverture de tests — v2.237 (audit retour)
+
+| Zone | Test | Statut |
+|---|---|---|
+| ch1 routes (piège/honnête) | `smoke.js` ROUTE=a/b | ✅ CI |
+| ch2 Actes I/II/III (q1/q4/q9→fins) | `smoke_ch2.js` (3 scénarios GHOST, Track App, fin) | ✅ CI (v2.237) |
+| menus régime UX | `test-menu.js` | ✅ CI |
+| reprise / transfert / GHOST | `test-save.js` | ✅ CI |
+| structure + miroirs + refs | `validate.js` | ✅ CI |
+| typage | `typecheck-engine.js` (baseline 96) | ✅ CI |
+| parcours réel navigateur | `e2e.js` + `e2e-chaos.js` (Playwright) | ✅ CI |
+| build | `build-vite` + `verify-dist-vite.js` | ✅ CI |
+| captures | workflow Shots (branche demo-shots) | ✅ |
+
+Reste non couvert automatiquement : Actes IV/V (pas encore écrits), playtest humain (Acte III à valider par Dylan), variantes ch2pick beyond 2 presets.
