@@ -1014,11 +1014,11 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
 function phoneIn(){try{if(document.getElementById("phIn"))return;
  const app=document.getElementById("app");
  const r=app&&app.getBoundingClientRect?app.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight};
- const o=document.createElement("div");o.id="phIn";
+ const o=/** @type {HTMLElement} */(document.createElement("div"));o.id="phIn";
  o.innerHTML='<svg class="phSvg" viewBox="0 0 100 200" preserveAspectRatio="none"><rect class="phBody" x="1.5" y="1.5" width="97" height="197" rx="12"/><rect class="phScr" x="4" y="4" width="92" height="192" rx="9"/><rect class="phNotch" x="38" y="6.5" width="24" height="4" rx="2"/></svg><div class="phUi"><div class="phBar"><span class="phClk">9:41</span><span class="phSig"></span></div><div class="phBub b1"></div><div class="phBub b2"></div><div class="phBub b3"></div><div class="phInp"></div></div><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
  const sv=o.querySelector(".phSvg");
- sv.style.width=r.width+"px";sv.style.height=r.height+"px";
- o.style.left=r.left+"px";o.style.top=r.top+"px";o.style.width=r.width+"px";o.style.height=r.height+"px";o.style.right="auto";o.style.bottom="auto";o.style.inset="auto";
+ if(sv)sv.setAttribute("style","width:"+r.width+"px;height:"+r.height+"px");
+ o.setAttribute("style","left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;right:auto;bottom:auto;inset:auto");
  document.body.append(o);
  setTimeout(()=>{o.classList.add("off");setTimeout(()=>{try{o.remove()}catch(e){}},550)},2200)}catch(e){}}
 function toast(t){let d=document.getElementById("edToast");if(!d){d=document.createElement("div");d.id="edToast";document.body.append(d)}d.textContent=t;d.classList.remove("go");void d.offsetWidth;d.classList.add("go");setTimeout(()=>{if(d&&d.parentNode)d.remove()},3600)}
