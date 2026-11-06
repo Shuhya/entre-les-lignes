@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.241";
+const VER="2.242";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1011,7 +1011,14 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
 
 /* Sauvegarde de reprise */
-function phoneIn(){try{if(document.getElementById("phIn"))return;const o=document.createElement("div");o.id="phIn";
- o.innerHTML='<svg class="phSvg" viewBox="0 0 390 780"><rect class="phBody" x="20" y="14" width="350" height="752" rx="42"/><rect class="phScr" x="34" y="28" width="322" height="724" rx="30"/><circle class="phNotch" cx="195" cy="46" r="5"/></svg><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
- document.body.append(o);setTimeout(()=>{o.classList.add("off");setTimeout(()=>{try{o.remove()}catch(e){}},520)},1150)}catch(e){}}
+function phoneIn(){try{if(document.getElementById("phIn"))return;
+ const app=document.getElementById("app");
+ const r=app&&app.getBoundingClientRect?app.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight};
+ const o=document.createElement("div");o.id="phIn";
+ o.innerHTML='<svg class="phSvg" viewBox="0 0 100 200" preserveAspectRatio="none"><rect class="phBody" x="1.5" y="1.5" width="97" height="197" rx="12"/><rect class="phScr" x="4" y="4" width="92" height="192" rx="9"/><rect class="phNotch" x="38" y="6.5" width="24" height="4" rx="2"/></svg><div class="phUi"><div class="phBar"><span class="phClk">9:41</span><span class="phSig"></span></div><div class="phBub b1"></div><div class="phBub b2"></div><div class="phBub b3"></div><div class="phInp"></div></div><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
+ const sv=o.querySelector(".phSvg");
+ sv.style.width=r.width+"px";sv.style.height=r.height+"px";
+ o.style.left=r.left+"px";o.style.top=r.top+"px";o.style.width=r.width+"px";o.style.height=r.height+"px";o.style.right="auto";o.style.bottom="auto";o.style.inset="auto";
+ document.body.append(o);
+ setTimeout(()=>{o.classList.add("off");setTimeout(()=>{try{o.remove()}catch(e){}},550)},2200)}catch(e){}}
 function toast(t){let d=document.getElementById("edToast");if(!d){d=document.createElement("div");d.id="edToast";document.body.append(d)}d.textContent=t;d.classList.remove("go");void d.offsetWidth;d.classList.add("go");setTimeout(()=>{if(d&&d.parentNode)d.remove()},3600)}
