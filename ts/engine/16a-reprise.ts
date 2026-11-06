@@ -37,4 +37,4 @@
   show(c,()=>chap(s))}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard,resume:resume,ch2go:ch2go,pg:()=>PG}}catch(e){}
- const oldStart=start;start=function(){try{relBan(!!GHOST)}catch(e){}if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}relBan(false)}oldStart()};
+ const oldStart=start;start=function(){try{relBan(!!GHOST);phoneIn()}catch(e){}if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}relBan(false)}oldStart()};

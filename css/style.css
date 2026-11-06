@@ -1030,3 +1030,36 @@ body.wa #app{background-color:var(--phone)}
 @keyframes bootGrid{from{background-position:0 44px,44px 0;opacity:0}to{background-position:0 0,0 0;opacity:.9}}
 @keyframes bootScan{from{top:0}to{top:100%}}
 @keyframes bootTx{from{opacity:0;letter-spacing:.6em;filter:blur(6px)}to{opacity:1;letter-spacing:.35em;filter:none}}
+
+/* ---- v2.240 : moins de bordures, plus de fonds doux ; boot matrix ; téléphone qui se construit ---- */
+.bk{border-left:0;background:rgba(255,255,255,.04)}
+.bk:hover{background:rgba(255,255,255,.08)}
+.bk.open{background:rgba(255,209,102,.08);border-left:0}
+.bk.lock{background:transparent}
+.st{border-bottom:0;background:rgba(255,255,255,.03);border-radius:var(--r-10);padding:13px 12px;margin:2px 0}
+.st b{font-size:16px}
+.st:hover{background:rgba(255,255,255,.06)}
+.finsTag{border:0;background:var(--w-08)}
+#mn .restartBtn{border:0;background:rgba(255,110,110,.12)}
+#mn .restartBtn[data-armed="1"]{background:rgba(255,110,110,.22)}
+.actBtn,.actPick button{border:0;background:var(--w-07)}
+.actBtn:hover,.actPick button:hover{background:var(--w-12)}
+.actPick button.on,.actBtn.on{background:rgba(255,209,102,.16);color:var(--gold-soft)}
+/* boot v2 : pluie matrix + plus long */
+#boot .bootRain{position:absolute;inset:0;width:100%;height:100%;opacity:.32}
+#boot .bootGrid{animation-duration:2s}
+#boot .bootScan{animation-duration:2s}
+#boot .bootTx b{animation-duration:1.6s}
+#boot .bootTx span{animation-duration:1.6s}
+/* téléphone qui se construit au lancement du jeu */
+#phIn{position:fixed;inset:0;z-index:9000;background:rgba(4,6,10,.97);pointer-events:none;display:grid;place-items:center;transition:opacity .5s}
+#phIn.off{opacity:0}
+#phIn .phSvg{width:min(62vw,300px);height:auto}
+#phIn .phBody{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-dasharray:1700;stroke-dashoffset:1700;animation:phDraw 1s .1s ease forwards}
+#phIn .phScr{fill:rgba(255,255,255,.05);opacity:0;animation:phFill .8s .55s ease forwards}
+#phIn .phNotch{fill:var(--w-20);opacity:0;animation:phFill .5s .8s ease forwards}
+#phIn .phScan{position:absolute;left:10%;right:10%;height:2px;top:0;background:linear-gradient(90deg,transparent,var(--gold),transparent);box-shadow:0 0 16px var(--gold-53);animation:phScan 1.1s .2s ease-in-out both}
+#phIn .phTx{position:absolute;bottom:12%;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--tx-3);animation:bootTx 1s .5s ease both}
+@keyframes phDraw{to{stroke-dashoffset:0}}
+@keyframes phFill{to{opacity:1}}
+@keyframes phScan{from{top:8%}to{top:92%}}
