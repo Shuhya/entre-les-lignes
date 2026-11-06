@@ -980,8 +980,8 @@ body.wa #app{background-color:var(--phone)}
 .restartBtn[data-armed="1"] b{color:#ff8d8d}
 
 /* ---- v2.231 : DA menus = verre transparent (mix : cadre fin façon #endOv, PAS de carte opaque) ---- */
-#mn .card{background:rgba(12,20,36,.55);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border:1px solid rgba(160,190,240,.16);border-radius:var(--r-22);box-shadow:0 24px 80px var(--k-80),inset 0 1px 0 var(--w-08);padding:28px 24px 20px}
-.rsOv .card{background:rgba(12,20,36,.55);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border:1px solid rgba(160,190,240,.16);border-radius:var(--r-22);box-shadow:0 24px 80px var(--k-80);padding:26px 22px}
+#mn .card{background:rgba(0,0,0,.28);border:0;border-radius:0;box-shadow:none;padding:26px 18px 16px}
+.rsOv .card{background:rgba(0,0,0,.28);border:0;border-radius:0;box-shadow:none;padding:22px 16px}
 /* chevron retour : SVG parfaitement centré */
 .mnBack svg,.mnX{display:block}
 .mnBack{display:flex;align-items:center;justify-content:center}
@@ -1006,3 +1006,27 @@ body.wa #app{background-color:var(--phone)}
 #logList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px;scrollbar-width:thin}
 #logList .b{animation:none;max-width:86%}
 .logEmpty{color:var(--tx-3);font-size:13.5px;text-align:center;margin-top:30px}
+
+/* ---- v2.239 : menu compact, sélecteur d'acte, boot animé ---- */
+#mn h2{font-size:27px;margin:0 0 16px}
+.bk{padding:11px 14px 11px 12px;border-radius:var(--r-10)}
+.bk h3{font-size:16px}
+.bk small{font-size:12px}
+.actsWrap{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.actBtn{width:auto;flex:0 1 auto;padding:9px 14px;border:1px solid var(--w-13);border-radius:var(--r-full);background:var(--w-05);font-size:13.5px}
+.actBtn b{font-size:13.5px}
+.actPick{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.actPick button{padding:8px 14px;border-radius:var(--r-full);border:1px solid var(--w-13);background:transparent;color:var(--tx-2);font:inherit;font-size:13px;cursor:pointer}
+.actPick button.on{border-color:var(--gold-53);color:var(--gold-soft);background:rgba(255,209,102,.08)}
+.finsTag{font-size:11.5px;padding:5px 10px}
+#mn .restartBtn{margin:12px 0 0 auto;padding:7px 13px}
+#boot{position:fixed;inset:0;z-index:9999;background:#04060a;pointer-events:none;display:grid;place-items:center;transition:opacity .6s}
+#boot.off{opacity:0}
+.bootGrid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 44px),repeating-linear-gradient(90deg,#ffffff08 0 1px,transparent 1px 44px);animation:bootGrid 1.1s ease-out both}
+.bootScan{position:absolute;left:0;right:0;height:2px;top:0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:bootScan 1.1s ease-in-out both;box-shadow:0 0 18px var(--gold-53)}
+.bootTx{position:relative;text-align:center}
+.bootTx b{display:block;font:400 30px 'Palatino Linotype',Palatino,Georgia,serif;letter-spacing:.35em;color:#fff;animation:bootTx 1s .15s cubic-bezier(.2,.8,.2,1) both}
+.bootTx span{display:block;margin-top:10px;font-size:12px;letter-spacing:.28em;color:var(--tx-3);text-transform:uppercase;animation:bootTx 1s .45s ease both}
+@keyframes bootGrid{from{background-position:0 44px,44px 0;opacity:0}to{background-position:0 0,0 0;opacity:.9}}
+@keyframes bootScan{from{top:0}to{top:100%}}
+@keyframes bootTx{from{opacity:0;letter-spacing:.6em;filter:blur(6px)}to{opacity:1;letter-spacing:.35em;filter:none}}

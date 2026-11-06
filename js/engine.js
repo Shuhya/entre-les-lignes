@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.238";
+const VER="2.239";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1063,14 +1063,22 @@ function ch2pick(s){const done=((PG.c||0)>=2);
   const bf=row(c,"","L’histoire s’accorde au féminin.",()=>{}),bm=row(c,"","L’histoire s’accorde au masculin.",()=>{});
   const rf=()=>{base.pf=gpf?1:0;bf.children[0].textContent=(gpf?"✓ ":"")+"♀ Une femme";bm.children[0].textContent=(!gpf?"✓ ":"")+"♂ Un homme"};
   bf.onclick=()=>{gpf=1;rf()};bm.onclick=()=>{gpf=0;rf()};rf()}
- row(c,"« Le rendez-vous manqué »","Tu as confirmé la prise du quai 9. Quelqu’un a attendu Nils.",()=>ch2go(s,base,{piege:1,mig:1}));
- row(c,"« La bonne nuit »","Cora veille sur toi : confiance totale.",()=>ch2go(s,base,{avou:1,trst:2,mig:1}));
- row(c,"« Le mensonge »","Elle t’a repéré en quatre minutes.",()=>ch2go(s,base,{mentir:1,mig:1}));
- row(c,"« La nuit sans sommeil »","La route standard : personne n’a écrit cette nuit.",()=>ch2go(s,base,{mig:1}));
- row(c,"« La nuit sans sommeil » + police","Tu as annoncé à Cora que tu irais voir le commandant Riffaud.",()=>ch2go(s,base,{mig:1,pol:1}));
- row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1}));
- row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1}));
- row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2}));
+ let actK=0;
+ {const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];
+  const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer ?";c.append(lab);
+  const aw=document.createElement("div");aw.className="actPick";
+  acts.forEach((a,k)=>{const b=document.createElement("button");b.type="button";b.textContent="Acte "+(k+1)+" · "+a[0];
+   b.onclick=()=>{actK=k;Array.prototype.forEach.call(aw.children,function(x){x.classList.remove("on")});b.classList.add("on")};
+   if(k===actK)b.classList.add("on");aw.append(b)});
+  c.append(aw)}
+  row(c,"« Le rendez-vous manqué »","Tu as confirmé la prise du quai 9. Quelqu’un a attendu Nils.",()=>ch2go(s,base,{piege:1,mig:1},actK));
+ row(c,"« La bonne nuit »","Cora veille sur toi : confiance totale.",()=>ch2go(s,base,{avou:1,trst:2,mig:1},actK));
+ row(c,"« Le mensonge »","Elle t’a repéré en quatre minutes.",()=>ch2go(s,base,{mentir:1,mig:1},actK));
+ row(c,"« La nuit sans sommeil »","La route standard : personne n’a écrit cette nuit.",()=>ch2go(s,base,{mig:1},actK));
+ row(c,"« La nuit sans sommeil » + police","Tu as annoncé à Cora que tu irais voir le commandant Riffaud.",()=>ch2go(s,base,{mig:1,pol:1},actK));
+ row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1},actK));
+ row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1},actK));
+ row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2},actK));
  show(c,()=>chap(s))}
 function actOfNode(i,node){if(i!==1)return 0;const m=String(node).match(/^q(\d+)/);if(m){const n=+m[1];if(n<=3)return 0;if(n<=8)return 1;return 2}return 1}
 function actsMenu(s,i,h,b,v){
@@ -1102,7 +1110,7 @@ function act3pick(s,i,k){
  row(c,'\u25B6 \u00AB La nuit standard \u00BB','La route droite\u00A0: personne n\u2019a \u00E9crit cette nuit.',()=>act3go(s,i,k,{mig:1}));
  show(c,()=>chap(s))}
 function act3go(s,i,k,fl){GHOST=true;SC=i;ETL_ST=fl;ETL_ACT=(s.ch[i][2]&&s.ch[i][2][k])?s.ch[i][2][k][1]:s.ch[i][1];$('nm').textContent=s.n;setAv(s.n[0]);start()}
-function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()} chap=function(s){GHOST=false;try{relBan(false)}catch(e){}SS=s;
+function ch2go(s,base,fl,k){GHOST=true;SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];if(acts[k])ETL_ACT=acts[k][1]}try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()} chap=function(s){GHOST=false;try{relBan(false)}catch(e){}SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
   let pgc=0;try{pgc=(JSON.parse(localStorage.getItem("pg"+s.id)||"{}").c)||0}catch(e){}
   const resuming=!!(v&&v.story===s.id&&v.node&&S[v.node]&&pgc<=(v.chapter||0)+1);
