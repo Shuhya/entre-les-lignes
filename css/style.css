@@ -1063,3 +1063,37 @@ body.wa #app{background-color:var(--phone)}
 @keyframes phDraw{to{stroke-dashoffset:0}}
 @keyframes phFill{to{opacity:1}}
 @keyframes phScan{from{top:8%}to{top:92%}}
+
+/* ---- v2.241 : DA « Apple pro » — monochrome, sans-serif UI, tailles tactiles 44px, segmented ---- */
+.bk,.st,.actBtn,.actPick button,.finsTag,#mn .restartBtn,.proTxt,.volCard{font-family:-apple-system,'SF Pro Text','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+.bk{font-size:16px;min-height:56px;padding:14px 16px;border-radius:14px}
+.bk h3{font-family:inherit;font-size:16.5px;font-weight:600}
+.bk small{font-size:13px;color:var(--w-55)}
+.bk.open{background:rgba(255,255,255,.10)}
+.st{font-size:15.5px;min-height:52px;padding:14px 16px;border-radius:12px}
+.st b{font-size:15.5px;font-weight:600}
+.st small{font-size:13px;color:var(--w-55)}
+.finsTag{background:rgba(255,255,255,.10);color:#fff;font-size:12.5px;padding:7px 12px}
+#mn .restartBtn{background:rgba(255,255,255,.07);color:#ff9f9f;min-height:48px}
+#mn .restartBtn b{color:#ff9f9f;font-size:14.5px;font-weight:600}
+#mn .restartBtn small{color:var(--w-55);font-size:12px}
+#mn .restartBtn[data-armed="1"]{background:rgba(255,110,110,.16)}
+/* segmented control façon iOS pour le choix d'acte */
+.actPick{background:rgba(255,255,255,.08);border-radius:var(--r-12);padding:3px;gap:3px}
+.actPick button{border-radius:9px;min-height:38px;padding:8px 16px;color:var(--w-72);font-size:13.5px;font-weight:500}
+.actPick button.on{background:#fff;color:#000;font-weight:600}
+.actBtn{min-height:44px;padding:11px 16px;font-size:14.5px}
+.actBtn.on{background:#fff;color:#000}
+.actBtn.on b{color:#000}
+/* champ prénom façon iOS */
+#ch2name{background:rgba(255,255,255,.08);border:0;border-radius:12px;color:#fff;font:inherit;font-size:15.5px;padding:12px 14px;width:100%;outline:none}
+#ch2name:focus{background:rgba(255,255,255,.12)}
+.proTxt{font-size:14px;line-height:1.55;color:var(--w-72);margin:0 0 10px}
+.proTxt p{font-size:14px;line-height:1.6}
+#mn h2{font-size:24px;font-family:-apple-system,'SF Pro Display','Segoe UI',Roboto,sans-serif;font-weight:700;letter-spacing:-.02em;margin:0 0 18px}
+/* accents dorés retirés -> neutres (fondu noir/blanc) */
+#boot .bootScan{background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 18px rgba(255,255,255,.3)}
+#boot .bootTx b{color:#fff}
+#relBan{background:rgba(255,255,255,.08);border-color:transparent;color:#fff}
+#phIn .phBody{stroke:#fff}
+#phIn .phScan{background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 16px rgba(255,255,255,.3)}
