@@ -15,8 +15,8 @@
     b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12')+'</h3>';
     if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
     list.append(b)});
-   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.textContent='\uD83C\uDFC1 '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
-   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u21BA Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
+   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
+   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
    rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00A0?';rsb.querySelector('small').textContent='Progression, sauvegarde et fins de cette histoire seront perdues — reclique pour confirmer';return}
     try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}
     GHOST=false;delete seenPro[s.id];chap(s)};

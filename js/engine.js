@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.240";
+const VER="2.241";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1099,7 +1099,7 @@ function actsMenu(s,i,h,b,v){
    startAct(s,i,k)};
   w.append(r)});
  if(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]){const rb=document.createElement('button');rb.className='st actBtn';
-  rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b>';
+  rb.innerHTML='<b><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg> R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b>';
   rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{},null,null)};w.append(rb)}
  if(typeof b.after==="function")b.after(w);else{const pn=b.parentNode;if(pn)pn.append(w)}}
 function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
@@ -1128,8 +1128,8 @@ function ch2go(s,base,fl,k){GHOST=true;SC=1;if(k!=null){const acts=(s.ch[1][2]&&
     b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12')+'</h3>';
     if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
     list.append(b)});
-   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.textContent='\uD83C\uDFC1 '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
-   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u21BA Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
+   {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
+   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
    rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00A0?';rsb.querySelector('small').textContent='Progression, sauvegarde et fins de cette histoire seront perdues — reclique pour confirmer';return}
     try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}
     GHOST=false;delete seenPro[s.id];chap(s)};

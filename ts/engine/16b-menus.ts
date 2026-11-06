@@ -45,7 +45,7 @@ function actsMenu(s,i,h,b,v){
    startAct(s,i,k)};
   w.append(r)});
  if(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]){const rb=document.createElement('button');rb.className='st actBtn';
-  rb.innerHTML='<b>\u270E R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b>';
+  rb.innerHTML='<b><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg> R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b>';
   rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{},null,null)};w.append(rb)}
  if(typeof b.after==="function")b.after(w);else{const pn=b.parentNode;if(pn)pn.append(w)}}
 function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
