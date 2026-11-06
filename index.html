@@ -175,8 +175,18 @@ html.ambC{--ambImg:url("assets/amb/dusk.jpg")}
 .seg button.sel{background:#ffd166;border-color:#ffd166;color:#1c1408}
 .lNote{margin-top:14px;padding-top:12px;border-top:1px solid #ffffff14;color:#9a958a;font:12px/1.5 system-ui,sans-serif}
 </style>
-<div id="boot"><div class="bootGrid"></div><div class="bootScan"></div><div class="bootTx"><b>ENTRE LES LIGNES</b><span>chargement du récit…</span></div></div>
-<script>addEventListener('load',function(){setTimeout(function(){var b=document.getElementById('boot');if(b){b.classList.add('off');setTimeout(function(){b.remove()},700)}},900)})</script>
+<div id="boot"><canvas class="bootRain"></canvas><div class="bootGrid"></div><div class="bootScan"></div><div class="bootTx"><b>ENTRE LES LIGNES</b><span>chargement du récit…</span></div></div>
+<script>(function(){var rm=false;try{rm=matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+function done(){var b=document.getElementById('boot');if(b){b.classList.add('off');setTimeout(function(){b.remove()},650)}}
+addEventListener('load',function(){var b=document.getElementById('boot');if(!b)return;
+ if(rm){done();return}
+ var cv=b.querySelector('.bootRain');if(cv){var cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  var gl='アイウエオ01<>/\|#@%&'.split('');var cols=Math.ceil(cv.width/18);var y=[];for(var i=0;i<cols;i++)y.push(Math.floor(Math.random()*20));
+  var iv=setInterval(function(){cx.fillStyle='rgba(4,6,10,.16)';cx.fillRect(0,0,cv.width,cv.height);cx.font='14px monospace';
+   for(var i=0;i<cols;i++){var ch=gl[Math.floor(Math.random()*gl.length)];cx.globalAlpha=.55;cx.fillStyle=Math.random()<.05?'#ffd166':'#3e91ff';cx.fillText(ch,i*18,y[i]*18);if(y[i]*18>cv.height&&Math.random()>.975)y[i]=0;y[i]++}},50);
+  setTimeout(function(){clearInterval(iv);done()},2100)}
+ else setTimeout(done,1200)})})</script>
+
 </head>
 <body>
 <div id="in" class="on">
