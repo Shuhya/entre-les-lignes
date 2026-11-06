@@ -14,6 +14,9 @@ const PRE = [
   "./assets/img/av-c.jpg", "./assets/img/av-j.jpg", "./assets/img/av-n.jpg",
   "./assets/img/av-cora.jpg", "./assets/img/av-yasmine.jpg",
   "./assets/audio/pluie.mp3",
+  /* NE PAS ajouter assets/audio/calls/*.mp3 ici tant qu'ils n'existent pas :
+     addAll est atomique, un 404 casserait tout le precache. Les voix sont
+     servies en stale-while-revalidate (branche non versionnée ci-dessous). */
   "./assets/img/echantillon.jpg",
   "./assets/img/fond-ecran.jpg",
   "./assets/img/fond-ecran-f.jpg",

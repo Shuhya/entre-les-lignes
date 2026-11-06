@@ -12,14 +12,22 @@ function ch2pick(s){const done=((PG.c||0)>=2);
   const bf=row(c,"","L’histoire s’accorde au féminin.",()=>{}),bm=row(c,"","L’histoire s’accorde au masculin.",()=>{});
   const rf=()=>{base.pf=gpf?1:0;bf.children[0].textContent=(gpf?"✓ ":"")+"♀ Une femme";bm.children[0].textContent=(!gpf?"✓ ":"")+"♂ Un homme"};
   bf.onclick=()=>{gpf=1;rf()};bm.onclick=()=>{gpf=0;rf()};rf()}
- row(c,"« Le rendez-vous manqué »","Tu as confirmé la prise du quai 9. Quelqu’un a attendu Nils.",()=>ch2go(s,base,{piege:1,mig:1}));
- row(c,"« La bonne nuit »","Cora veille sur toi : confiance totale.",()=>ch2go(s,base,{avou:1,trst:2,mig:1}));
- row(c,"« Le mensonge »","Elle t’a repéré en quatre minutes.",()=>ch2go(s,base,{mentir:1,mig:1}));
- row(c,"« La nuit sans sommeil »","La route standard : personne n’a écrit cette nuit.",()=>ch2go(s,base,{mig:1}));
- row(c,"« La nuit sans sommeil » + police","Tu as annoncé à Cora que tu irais voir le commandant Riffaud.",()=>ch2go(s,base,{mig:1,pol:1}));
- row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1}));
- row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1}));
- row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2}));
+ let actK=0;
+ {const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];
+  const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer ?";c.append(lab);
+  const aw=document.createElement("div");aw.className="actPick";
+  acts.forEach((a,k)=>{const b=document.createElement("button");b.type="button";b.textContent="Acte "+(k+1)+" · "+a[0];
+   b.onclick=()=>{actK=k;Array.prototype.forEach.call(aw.children,function(x){x.classList.remove("on")});b.classList.add("on")};
+   if(k===actK)b.classList.add("on");aw.append(b)});
+  c.append(aw)}
+  row(c,"« Le rendez-vous manqué »","Tu as confirmé la prise du quai 9. Quelqu’un a attendu Nils.",()=>ch2go(s,base,{piege:1,mig:1},actK));
+ row(c,"« La bonne nuit »","Cora veille sur toi : confiance totale.",()=>ch2go(s,base,{avou:1,trst:2,mig:1},actK));
+ row(c,"« Le mensonge »","Elle t’a repéré en quatre minutes.",()=>ch2go(s,base,{mentir:1,mig:1},actK));
+ row(c,"« La nuit sans sommeil »","La route standard : personne n’a écrit cette nuit.",()=>ch2go(s,base,{mig:1},actK));
+ row(c,"« La nuit sans sommeil » + police","Tu as annoncé à Cora que tu irais voir le commandant Riffaud.",()=>ch2go(s,base,{mig:1,pol:1},actK));
+ row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1},actK));
+ row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1},actK));
+ row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2},actK));
  show(c,()=>chap(s))}
 function actOfNode(i,node){if(i!==1)return 0;const m=String(node).match(/^q(\d+)/);if(m){const n=+m[1];if(n<=3)return 0;if(n<=8)return 1;return 2}return 1}
 function actsMenu(s,i,h,b,v){
@@ -51,4 +59,4 @@ function act3pick(s,i,k){
  row(c,'\u25B6 \u00AB La nuit standard \u00BB','La route droite\u00A0: personne n\u2019a \u00E9crit cette nuit.',()=>act3go(s,i,k,{mig:1}));
  show(c,()=>chap(s))}
 function act3go(s,i,k,fl){GHOST=true;SC=i;ETL_ST=fl;ETL_ACT=(s.ch[i][2]&&s.ch[i][2][k])?s.ch[i][2][k][1]:s.ch[i][1];$('nm').textContent=s.n;setAv(s.n[0]);start()}
-function ch2go(s,base,fl){GHOST=true;SC=1;try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()}
+function ch2go(s,base,fl,k){GHOST=true;SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];if(acts[k])ETL_ACT=acts[k][1]}try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()}

@@ -12,7 +12,7 @@
    Branché dans .github/workflows/ci.yml (job typecheck). */
 const fs=require('fs'),path=require('path'),os=require('os'),cp=require('child_process');
 const DIR='ts/engine',MARK='/* [engine-section] */';
-const BASELINE=98;
+const BASELINE=96;
 const files=fs.existsSync(DIR)?fs.readdirSync(DIR).filter(f=>f.endsWith('.ts')).sort():[];
 if(files.length<16){console.error('✗ attendu : au moins 16 sections ts/engine, trouvé : '+files.length);process.exit(1)}
 let out='';

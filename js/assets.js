@@ -3,4 +3,9 @@ const IMG={fondec:"assets/img/fond-ecran.jpg",fondecF:"assets/img/fond-ecran-f.j
 const AVF1="assets/img/av-c.jpg",AVF2="assets/img/av-j.jpg",AVM1="assets/img/av-n.jpg",AVF3="assets/img/av-cora.jpg",AVF4="assets/img/av-yasmine.jpg",AVM2="assets/img/av-riffaud.jpg";
 
 /* Voix des appels — ajouter les fichiers dans assets/audio/ et référencer ici */
-const VOICES={};
+/* Voix des appels (ElevenLabs — voir AUDIO.md + assets/audio/CALLS.csv).
+   Fichier manquant = repli sur les bips mécaniques (aucun crash). */
+const VOICES={
+ "C.":"assets/audio/calls/cora.mp3",
+ "Riffaud":"assets/audio/calls/riffaud.mp3"
+};

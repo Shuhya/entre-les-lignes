@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.234";
+const VER="2.239";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -264,7 +264,7 @@ function callSpeak(txt,nm){if(!TTSOK||!TTS_ON||!txt)return;
  const v=pickFr();if(v)u.voice=v;u.lang="fr-FR";speechSynthesis.speak(u)}catch(e){}}
 function callSpeakStop(){if(TTSOK){try{speechSynthesis.cancel()}catch(e){}}}
 function lkBatt(){try{const h=(CLK.h==null?22:CLK.h)+((CLK.m||0)/60);const el=(h-22+24)%24;return Math.max(12,Math.min(95,Math.round(92-3.5*el)))}catch(e){return 78}}
-function lockCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
+function lockCallOv(n,done){try{if(navigator.vibrate)navigator.vibrate([70,50,70,50,70])}catch(e){}const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const lc=n["lkc"]||{};const tm=(lc.t||"10:30"),dt=(lc.d||"Samedi 18 octobre");
  const app=$("app");const o=document.createElement("div");o.id="lkCall";
  o.innerHTML='<div class="lkWp"></div><div class="lkSbar"><i>5G</i><i>\u25AE '+lkBatt()+' %</i></div><div class="lkLock">'+LKLOCK+'</div><div class="lkClock">'+tm+'</div><div class="lkDate">'+dt+'</div><div class="lkCallCard"><span class="lkIc"></span><div class="lkNc"><b class="lkNm"></b><small class="lkSub">appel entrant\u2026</small></div></div><div class="incBtns"><button class="incDec" aria-label="Refuser"><i>\u{1F4F5}</i></button><button class="incAcc" aria-label="D\u00E9crocher"><i>\u{1F4DE}</i></button></div><div class="lkTools"><i>\u{1F526}</i><i>\u{1F4F7}</i></div>';
@@ -276,7 +276,7 @@ function lockCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call
  let rg=null;try{rg=setInterval(()=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)},1500);beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),140)}catch(e){}
  const end=v=>{if(rg)clearInterval(rg);o.remove();const d=document.getElementById("lkDim");if(d)d.remove();done(v)};
  const dec=o.querySelector(".incDec"),acc=o.querySelector(".incAcc");dec.addEventListener("click",()=>end("decline"));acc.addEventListener("click",()=>end("accept"))}
-function incCallOv(n,done){const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
+function incCallOv(n,done){try{if(navigator.vibrate)navigator.vibrate([70,50,70,50,70])}catch(e){}const nm=(n.call&&n.call[0])||"",sub=(n.call&&n.call[1])||"Appel";
  const o=document.createElement("div");o.id="incOv";
  const av=document.createElement("div");av.className="calAv incAv";
  const ph=(nm==="C.")?null:avOf(nm);if(ph){av.style.backgroundImage='url('+ph+')'}else av.textContent="\u{1F464}";
@@ -356,6 +356,7 @@ function endScreen(t,x,seen){seen=(seen||[]).filter(t2=>endsList(SS).includes(t2
 
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
+ const b4=document.createElement("button");b4.id="ob4";b4.className="obN";b4.textContent="\u2197 Partager cette fin";b4.onclick=()=>{const txt="Entre les lignes \u2014 j\u2019ai trouv\u00e9 la fin \u00ab "+t+" \u00bb. Et toi, quelle sera la tienne ? "+location.href;try{if(navigator.share){navigator.share({title:"Entre les lignes",text:txt,url:location.href}).catch(()=>{})}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>toast("Texte copi\u00e9 \u2713")).catch(()=>toast(txt))}else toast(txt)}catch(e){toast(txt)}};c.append(b4);
  const nx=(SS.ch[SC+1]||[])[1];if(nx&&S[nx]){const b3=document.createElement("button");b3.id="ob3";b3.className="obN";b3.textContent="Chapitre suivant ›";b3.onclick=()=>{lockBgOff();o.remove();SC++;start()};c.append(b3)}
  try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }
@@ -391,7 +392,7 @@ function applyApp(n){const wa=n.app==="WhatsApp";document.body.classList.toggle(
  else if(n.mem){av.className="av";const ph=avOf(n.mem[0]);av.style.backgroundImage=ph?"linear-gradient(#0003,#0006),url("+ph+")":"";av.textContent=ph?"":n.mem[0][0]}
  else{const pn=AVN[n.nm];if(pn){av.className="av";av.style.backgroundImage="linear-gradient(#0003,#0006),url("+pn+")";av.textContent=""}else if(n.nm&&n.app!=="Fichiers"){av.className="av";av.style.backgroundImage="";av.textContent="\u{1F464}"}else{av.className="av";if(n.app==="Fichiers"){av.style.backgroundImage="";av.textContent="📁"}else setAv(SC?SS.n[0]:"\u{1F464}")}}}
 function appSwitch(n){return new Promise(res=>{beep(880,.09,.05);setTimeout(()=>beep(1175,.12,.045),95);
- const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";
+ const wa=n.app==="WhatsApp",ic=n.app==="Fichiers"?"📁":(wa?"💬":"📱"),b=document.createElement("div");b.className="notif";try{if(navigator.vibrate)navigator.vibrate(40)}catch(e){}
  const snd=n.nm||((n.prev||"").split(" : ")[0])||n.app;
  const avp=(typeof AVN!=="undefined"&&AVN[snd])||null;
  b.innerHTML='<div class="nIc'+(avp?' nAv':'')+'" style="'+(avp?'background-image:url('+avp+')':'background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6")))+'">'+(avp?'':ic)+'</div><i class="nAp" style="background:'+(wa?"#0b6b4f":(n.app==="Fichiers"?"#3a3f52":"#6b5bd6"))+'">'+ic+'</i><div><b>'+snd+'</b><small>'+(snd!==n.app?n.app+" · maintenant":"maintenant")+'</small></div>';
@@ -843,7 +844,7 @@ function guideOv(){
  o.append(b);document.body.append(o);try{noRubber(o)}catch(e){}
  o.addEventListener("click",e2=>{if(e2.target===o)o.remove()});
 }
-function volToggle(){const vv=$("vol");if(vv&&vv.parentElement!==document.body)document.body.append(vv);vv.hidden=!vv.hidden}
+function volToggle(){const vv=$("vol");if(vv&&vv.parentElement!==document.body)document.body.append(vv);vv.hidden=!vv.hidden;try{let se=document.getElementById("etlStats");if(!se){se=document.createElement("div");se.id="etlStats";se.style.cssText="font-size:12px;color:var(--mu);text-align:center;margin:0 0 10px";const vc=vv.querySelector(".volCard");if(vc)vc.append(se)}const m=Math.round((STATS.t||0)/60);se.textContent="Lecture : "+m+" min · "+(STATS.msgs||0)+" messages · "+(STATS.runs||0)+" parties"}catch(e){}}
 /* ---- Fiche progression (bouton i a cote de l'heure) ---- */
 function infoOv(){
  try{const M=window.etlMisc;if(M&&M.stopPro)M.stopPro()}catch(e){}
@@ -900,6 +901,22 @@ function gt(d){const i=SC+d,h=SS.ch[i];if(h&&S[h[1]]){SC=i;start()}}
 const ib=$("infoB");if(ib)ib.addEventListener("click",e=>{e.stopPropagation();if(typeof notesOv==="function")notesOv(false)});
 /* ---- boutons et démarrage ---- */
 $("set").onclick=e=>{e.stopPropagation();$("vol").hidden=!$("vol").hidden};
+{const lb=$("logB");if(lb)lb.onclick=logOv}
+function logOv(){const o=document.createElement("div");o.id="logOv";
+ const hd=document.createElement("div");hd.className="logHd";
+ const ti=document.createElement("b");ti.textContent="Journal des \u00e9changes";hd.append(ti);
+ const inp=/** @type {HTMLInputElement} */(document.createElement("input"));inp.id="logIn";inp.placeholder="Rechercher\u2026";inp.autocomplete="off";hd.append(inp);
+ const x=document.createElement("button");x.className="mnX";x.style.position="static";x.textContent="\u2715";x.onclick=()=>o.remove();hd.append(x);
+ o.append(hd);
+ const list=document.createElement("div");list.id="logList";o.append(list);
+ document.body.append(o);
+ const render=()=>{const q=(inp.value||"").toLowerCase();list.innerHTML="";
+  const src=$("chat");const kids=src?Array.from(src.children):[];
+  let n=0;
+  for(const k of kids){const t=(k.textContent||"").toLowerCase();if(q&&t.indexOf(q)<0)continue;
+   const d=document.createElement("div");d.className="b "+(k.className||"").replace("b ","");d.textContent=k.textContent;list.append(d);n++}
+  if(!n){const e=document.createElement("p");e.className="logEmpty";e.textContent=q?"Aucun message ne contient \u00ab "+inp.value+" \u00bb":"Aucun message pour l\u2019instant";list.append(e)}};
+ inp.oninput=render;render()}
 document.addEventListener("pointerdown",e=>{const vv=$("vol");if(vv&&!vv.hidden&&(e.target===vv||(!vv.contains(e.target)&&!$("set").contains(e.target))))vv.hidden=true});
 {const tb=$("ttsB");if(tb){const up=()=>{tb.textContent=(TTS_ON?"🎙️":"🔇")+" Voix des appels : "+(TTS_OK()? (TTS_ON?"activées":"désactivées"):"non disponibles sur cet appareil");tb.style.opacity=TTS_OK()?1:.55;tb.disabled=!TTS_OK()};
  const TTS_OK=()=>typeof speechSynthesis!=="undefined";
