@@ -18,7 +18,7 @@ const { chromium } = require('playwright');
     await page.waitForTimeout(600);
     await page.screenshot({ path: 'shots/' + name + '.png' });
     const t = await page.evaluate(() => document.body.innerText.replace(/\s+/g, ' ').trim());
-    const dbg = await page.evaluate(() => ({boot: !!document.getElementById('boot'), rs: document.readyState, off: (document.getElementById('boot')||{}).className||''}));
+    const dbg = await page.evaluate(() => ({boot: !!document.getElementById('boot'), ran: !!window.__bootRan, rs: document.readyState, off: (document.getElementById('boot')||{}).className||''}));
     console.log('DBG ' + name + ' ' + JSON.stringify(dbg));
     console.log('SHOT ' + name + ' :: ' + t.slice(0, 160));
   };
