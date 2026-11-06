@@ -1,5 +1,4 @@
 /* boot « le site se construit » — exécuté dès le début du <body> (v2.240) */
-window.__bootRan = 1;
 (function () {
   var b = document.getElementById('boot');
   if (!b) return;
@@ -10,8 +9,8 @@ window.__bootRan = 1;
     if (x) { x.classList.add('off'); setTimeout(function () { try { x.remove() } catch (e) {} }, 650) }
   }
   /* disparition INCONDITIONNELLE, quoi qu'il arrive */
-  window.__bootSched = 1;
-  setTimeout(function () { window.__bootT = 1; done() }, rm ? 60 : 2750);
+  
+  setTimeout(done, rm ? 60 : 2750);
   if (rm) return;
   try {
     var cv = b.querySelector('.bootRain');
