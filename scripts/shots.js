@@ -23,6 +23,7 @@ const { chromium } = require('playwright');
 
   /* 1 — accueil : carte des chapitres en direct (régime UX, plus de bibliothèque) */
   await page.goto(root + '/jeu.html');
+  await page.waitForSelector('#boot',{state:'detached',timeout:8000}).catch(()=>{});
   await page.waitForSelector('.bkWrap .bk');
   await page.waitForTimeout(900);
   await shot('01-accueil');
@@ -35,6 +36,7 @@ const { chromium } = require('playwright');
 
   /* 3 — réglages (⚙) */
   await page.goto(root + '/jeu.html');
+  await page.waitForSelector('#boot',{state:'detached',timeout:8000}).catch(()=>{});
   await page.waitForSelector('.bkWrap .bk');
   await page.evaluate(() => { const m = document.getElementById('mn'); if (m) m.classList.remove('on'); const v = document.getElementById('vol'); if (v) v.hidden = false; });
   await page.waitForFunction(() => { const v = document.getElementById('vol'); return v && !v.hidden; }, undefined, { timeout: 8000 });
@@ -43,12 +45,14 @@ const { chromium } = require('playwright');
 
   /* 4 — landing (bouton ℹ Notice à côté de Réglages/Guide) */
   await page.goto(root + '/index.html');
+  await page.waitForSelector('#boot',{state:'detached',timeout:8000}).catch(()=>{});
   await page.waitForSelector('#lNotice');
   await page.waitForTimeout(900);
   await shot('04-reglages');
 
   /* 5 — écran prénom (début de partie, aucune ligne d'histoire) — tolérant, non bloquant */
   await page.goto(root + '/jeu.html');
+  await page.waitForSelector('#boot',{state:'detached',timeout:8000}).catch(()=>{});
   await page.waitForSelector('.bkWrap .bk');
   await page.locator('.bkWrap .bk.open').first().click();
   await page.waitForSelector('.actsWrap .actBtn', { state: 'visible' });
