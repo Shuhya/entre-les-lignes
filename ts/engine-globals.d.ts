@@ -22,7 +22,7 @@ declare const AVM2: any;
 
 interface Window {
   __ghost?: () => boolean;
-  etlMisc?: { stopPro?: () => void; endsOf?: (s: any) => number; feN?: (s: any) => number; endsCard?: (s: any) => void; resume?: (v: any) => void; ch2go?: (s: any, base: any, fl: any) => void; pg?: () => any };
+  etlMisc?: { stopPro?: () => void; endsOf?: (s: any) => number; feN?: (s: any) => number; endsCard?: (s: any) => void; resume?: (v: any) => void; ch2go?: (s: any, base: any, fl: any, k?: any) => void; pg?: () => any };
   __noan?: number;
   webkitAudioContext?: typeof AudioContext;
 }
