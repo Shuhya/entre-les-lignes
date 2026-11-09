@@ -93,13 +93,16 @@ const first=s=>qa(doc.body,s)[0]||null;
 
 (async()=>{try{
  T.menu(); await sleep(200);
- const cards=qa(doc.body,".bkWrap .bk");
- if(cards.length!==2)throw new Error("attendu 2 cartes chapitre (ouverture directe), trouv\u00e9 "+cards.length);
+ const cards=qa(doc.body,"#chapSel option");
+ if(cards.length!==2)throw new Error("attendu 2 chapitres dans le d\u00e9roulant (ouverture directe), trouv\u00e9 "+cards.length);
  if(/Ouvrir le livre|Param\u00e8tres de la partie/.test(doc.body.textContent))throw new Error("niveau biblioth\u00e8que encore pr\u00e9sent");
  const ft=first(".finsTag");
  if(!ft||!/\d+ \/ \d+/.test(ft.textContent))throw new Error("badge fins absent: "+(ft&&ft.textContent));
- const c1=cards.find(c=>/Chapitre 1/.test(c.textContent));
- c1.click(); await sleep(80);
+ const sel=first("#chapSel"); if(!sel)throw new Error("déroulant chapitres absent");
+ sel.value="0";
+ const go=qa(doc.body,".st").find(b=>/Commencer/.test(b.textContent));
+ if(!go)throw new Error("bouton Commencer absent");
+ go.click(); await sleep(80);
  const acts=qa(doc.body,".actBtn");
  if(acts.length!==2)throw new Error("attendu 2 boutons acte (Acte + R\u00e9sum\u00e9) pour ch1, trouv\u00e9 "+acts.length);
  acts.forEach(a=>{if(a.children.some(c=>c.tagName==="SMALL"))throw new Error("sous-libell\u00e9 acte encore pr\u00e9sent: "+a.textContent)});

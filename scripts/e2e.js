@@ -21,7 +21,7 @@ let page = null;
 
   /* ---------- 1) jeu.html : overlays du menu ---------- */
   await page.goto(root + '/jeu.html');
-  await page.waitForSelector('.bkWrap .bk');
+  await page.waitForSelector('#chapSel');
   const h1 = await page.evaluate(() => { const v = document.getElementById('vol'); const a = v.hidden; document.getElementById('set').click(); return a; });
   const h2 = await page.evaluate(() => document.getElementById('vol').hidden);
   if (h1 === h2) throw new Error('#vol ne bascule pas via ⚙ (hidden=' + h1 + '→' + h2 + ')');
@@ -30,8 +30,9 @@ let page = null;
 
   /* ---------- 2) début de partie complet ---------- */
   await page.reload();
-  await page.waitForSelector('.bkWrap .bk.open');
-  await page.locator('.bkWrap .bk.open').first().click();
+  await page.waitForSelector('#chapSel');
+  await page.selectOption('#chapSel', { index: 0 });
+  await page.locator('#mn .st', { hasText: /Commencer/ }).first().click();
   console.log('e2e 3/6: chapitre 1 cliqué (ouverture directe, plus de bibliothèque)');
   /* menu déroulant des actes : lancer l'acte 1 */
   const act1 = page.locator('.actsWrap .actBtn').first();

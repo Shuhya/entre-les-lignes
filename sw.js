@@ -6,7 +6,7 @@
      à chaque version, donc le ?v= redevient un vrai cache-buster.
    - Images/audios/icônes/manifest (non versionnés) : stale-while-revalidate.
    - skipWaiting + clients.claim + page reload automatique au changement de contrôleur. */
-const CACHE = "etl-v3";
+const CACHE = "etl-v2.244";
 const SHELL = ["./", "./jeu.html", "./index.html"];
 const PRE = [
   "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./maskable-512.png",

@@ -43,8 +43,9 @@ const log = m => console.log('e2e-chaos: ' + m);
   /* accélération de lecture (sl()/SPD) pour tenir dans le budget CI */
   await page.addInitScript(v => { try { localStorage.setItem('etl_spd', String(v)); } catch (e) {} }, SPDV);
   await page.goto(root + '/jeu.html');
-  await page.waitForSelector('.bkWrap .bk.open');
-  await page.locator('.bkWrap .bk.open').first().click();
+  await page.waitForSelector('#chapSel');
+  await page.selectOption('#chapSel', { index: 0 });
+  await page.locator('#mn .st', { hasText: /Commencer/ }).first().click();
   log('chapitre 1 cliqué (ouverture directe, plus de bibliothèque)');
 
   const act1 = page.locator('.actsWrap .actBtn').first();
@@ -117,9 +118,12 @@ const log = m => console.log('e2e-chaos: ' + m);
        sinon carte chapitres (row « 1. ») — sinon on resterait bloqué dessus */
     if (await menuOn()) {
       if (await clickIf('#mn .actsWrap .actBtn')) { await page.waitForTimeout(400); return true; }
-      if (await clickIf('#mn .bk.open')) { await page.waitForTimeout(400); return true; }
-      const r1 = page.locator('#mn button', { hasText: /^Chapitre 1/ }).first();
-      if (await r1.count()) { try { await r1.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
+      { const sel = await page.$('#mn #chapSel');
+        if (sel) { await page.selectOption('#mn #chapSel', { index: 0 });
+          const cm = page.locator('#mn .st', { hasText: /Commencer/ }).first();
+          if (await cm.count()) { try { await cm.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} } } }
+      const cm2 = page.locator('#mn .st', { hasText: /Commencer/ }).first();
+      if (await cm2.count()) { try { await page.selectOption('#mn #chapSel', { index: 0 }); await cm2.click({ timeout: 3000 }); await page.waitForTimeout(400); return true; } catch (e) {} }
     }
     /* nameGate : après une reprise navigation le jeu peut redémarrer du début */
     { const g = await page.$('#nameGate'); if (g && await g.isVisible()) {

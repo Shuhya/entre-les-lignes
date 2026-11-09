@@ -128,10 +128,11 @@ async function drive(maxMs){
   if(qs.length<3)throw new Error(sc.name+": trop peu de nœuds q atteints ("+qs.join(",")+")");
   const ov=byId.ov;const endOv=first("#endOv");
   if(!endOv&&!(ov&&!ov.hidden))throw new Error(sc.name+": aucun écran de fin atteint");
-  if(store["etl_resume_v4"]!==before)throw new Error(sc.name+": la sauvegarde a été modifiée en GHOST !");
+  if(!store["etl_resume_v4"])throw new Error(sc.name+": aucune sauvegarde écrite après lancement ch2 (mode relecture supprimé, la sauvegarde est normale)");
   console.log("CH2 OK — "+sc.name+" : "+qs.length+" nœuds q, fin atteinte"+(r.trk?", Track App vu":""));
   /* retour au menu pour le scénario suivant */
-  const m=first("#ob2");if(m&&!byId.ob2.hidden)m.click();else{const o1=first("#ob");if(o1)o1.click()}
+  try{const eo=first("#endOv");if(eo)eo.remove()}catch(e){}
+  try{T.menu()}catch(e){}
   await sleep(120);
   if(!first(".bkWrap .bk")){T.menu();await sleep(150)}
  }

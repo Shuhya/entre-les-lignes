@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.243";
+const VER="2.244";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1018,8 +1018,8 @@ function bootIn(cb){try{if(document.getElementById("boot")){if(cb)cb();return}
  b.innerHTML='<canvas class="bootRain"></canvas><div class="bootGrid"></div><div class="bootScan"></div><div class="bootTx"><b>ENTRE LES LIGNES</b><span>chargement du r\u00e9cit\u2026</span></div>';
  document.body.append(b);
  let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
- const cv=b.querySelector(".bootRain");
- if(cv&&!rm){const cx=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
+ const cv=b.querySelector("canvas");
+ if(cv&&!rm){const cx=/** @type {CanvasRenderingContext2D} */(cv.getContext("2d"));cv.width=innerWidth;cv.height=innerHeight;
   const gl="アイウエオカキクケコサシスセソ01<>/\\|#@%&".split("");const cols=Math.ceil(cv.width/18);const y=[];for(let i=0;i<cols;i++)y.push(Math.floor(Math.random()*20));
   const iv=setInterval(function(){cx.fillStyle="rgba(4,6,10,.16)";cx.fillRect(0,0,cv.width,cv.height);cx.font="14px monospace";for(let i=0;i<cols;i++){const ch=gl[Math.floor(Math.random()*gl.length)];cx.globalAlpha=.55;cx.fillStyle=Math.random()<.05?"#ffd166":"#3e91ff";cx.fillText(ch,i*18,y[i]*18);if(y[i]*18>cv.height&&Math.random()>.975)y[i]=0;y[i]++}},50);
   setTimeout(function(){clearInterval(iv)},1300)}
@@ -1091,7 +1091,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
   const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer\u00a0?";c.append(lab);
   const as=document.createElement("select");as.className="finSel";as.setAttribute("aria-label","Choisir un acte");
   acts.forEach(function(a,k){const op=document.createElement("option");op.value=k;op.textContent="Acte "+(k+1)+" \u00b7 "+a[0];as.append(op)});
-  as.value=actK;as.onchange=function(){actK=+as.value};c.append(as)}
+  as.value=String(actK);as.onchange=function(){actK=+as.value};c.append(as)}
  const FINS=[
   ["\u00ab Le rendez-vous manqu\u00e9 \u00bb","Tu as confirm\u00e9 la prise du quai 9. Quelqu\u2019un a attendu Nils.",{piege:1,mig:1}],
   ["\u00ab La bonne nuit \u00bb","Cora veille sur toi : confiance totale.",{avou:1,trst:2,mig:1}],
@@ -1104,7 +1104,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  ];
  const fl=document.createElement("p");fl.className="proTxt";fl.textContent=done?"Choisis la fin du chapitre 1 avec laquelle lancer le chapitre 2 :":"Choisis une fin pour commencer :";c.append(fl);
  const sel=document.createElement("select");sel.className="finSel";sel.setAttribute("aria-label","Choisir une fin du chapitre 1");
- FINS.forEach(function(f,k){const o=document.createElement("option");o.value=k;o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
+ FINS.forEach(function(f,k){const o=document.createElement("option");o.value=String(k);o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
  c.append(sel);
  row(c,"\u25b6 Commencer le chapitre 2","Lancer avec la fin choisie dans le menu d\u00e9roulant.",function(){const f=FINS[+sel.value||0];ch2go(s,base,f[2],actK)});
  show(c,()=>chap(s))}
@@ -1139,7 +1139,7 @@ function act3pick(s,i,k){
   ["\u00ab La nuit standard \u00bb","La route droite : personne n\u2019a \u00e9crit cette nuit.",{mig:1}]
  ];
  const sel=document.createElement("select");sel.className="finSel";sel.setAttribute("aria-label","Choisir un chemin pour l\u2019Acte III");
- FINS.forEach(function(f,k2){const o=document.createElement("option");o.value=k2;o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
+ FINS.forEach(function(f,k2){const o=document.createElement("option");o.value=String(k2);o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
  c.append(sel);
  row(c,"\u25b6 Commencer l\u2019Acte III","Lancer avec le chemin choisi dans le menu d\u00e9roulant.",function(){const f=FINS[+sel.value||0];act3go(s,i,k,f[2])});
  show(c,()=>chap(s))}
@@ -1176,7 +1176,7 @@ function ch2go(s,base,fl,k){SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     if(ok&&!firstOk)firstOk=i;
     const o=document.createElement('option');o.value=i;o.textContent='Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12');o.disabled=!ok;sel.append(o)});
-   sel.value=firstOk;c.append(sel);
+   sel.value=String(firstOk);c.append(sel);
    row(c,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
     if(cb.checked){summaryPage(s);return}
     const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);

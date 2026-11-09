@@ -32,7 +32,7 @@
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     if(ok&&!firstOk)firstOk=i;
     const o=document.createElement('option');o.value=i;o.textContent='Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12');o.disabled=!ok;sel.append(o)});
-   sel.value=firstOk;c.append(sel);
+   sel.value=String(firstOk);c.append(sel);
    row(c,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
     if(cb.checked){summaryPage(s);return}
     const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);

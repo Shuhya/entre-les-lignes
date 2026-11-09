@@ -327,7 +327,7 @@ body.pc .bk .bkLock{right:24px}
 
 /* ---- écran de fin ---- */
 #endOv{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(6,10,20,.55);backdrop-filter:blur(14px) saturate(1.15);-webkit-backdrop-filter:blur(14px) saturate(1.15);color:#fff;padding:24px;animation:fo .6s}
-#endOv .card{width:100%;max-width:460px;background:rgba(12,20,36,.62);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(160,190,240,.22);border-radius:var(--r-22);padding:26px 24px;box-shadow:0 24px 80px var(--k-80),inset 0 1px 0 var(--w-08)}
+#endOv .card{width:100%;max-width:460px;background:rgba(12,20,36,.62);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(160,190,240,.22);border-radius:var(--r-22);padding:26px 24px;box-shadow:0 24px 80px var(--k-80),inset 0 1px 0 var(--w-08)}
 #endOv h2{font:400 30px Georgia,serif;margin:0 0 4px;letter-spacing:.4px}
 .endSub{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx-3);margin-bottom:14px}
 .endTxt{white-space:pre-line;color:var(--w-85);line-height:1.7;font-size:15px;margin:0 0 18px}

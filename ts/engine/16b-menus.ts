@@ -17,7 +17,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
   const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer\u00a0?";c.append(lab);
   const as=document.createElement("select");as.className="finSel";as.setAttribute("aria-label","Choisir un acte");
   acts.forEach(function(a,k){const op=document.createElement("option");op.value=k;op.textContent="Acte "+(k+1)+" \u00b7 "+a[0];as.append(op)});
-  as.value=actK;as.onchange=function(){actK=+as.value};c.append(as)}
+  as.value=String(actK);as.onchange=function(){actK=+as.value};c.append(as)}
  const FINS=[
   ["\u00ab Le rendez-vous manqu\u00e9 \u00bb","Tu as confirm\u00e9 la prise du quai 9. Quelqu\u2019un a attendu Nils.",{piege:1,mig:1}],
   ["\u00ab La bonne nuit \u00bb","Cora veille sur toi : confiance totale.",{avou:1,trst:2,mig:1}],
@@ -30,7 +30,7 @@ function ch2pick(s){const done=((PG.c||0)>=2);
  ];
  const fl=document.createElement("p");fl.className="proTxt";fl.textContent=done?"Choisis la fin du chapitre 1 avec laquelle lancer le chapitre 2 :":"Choisis une fin pour commencer :";c.append(fl);
  const sel=document.createElement("select");sel.className="finSel";sel.setAttribute("aria-label","Choisir une fin du chapitre 1");
- FINS.forEach(function(f,k){const o=document.createElement("option");o.value=k;o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
+ FINS.forEach(function(f,k){const o=document.createElement("option");o.value=String(k);o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
  c.append(sel);
  row(c,"\u25b6 Commencer le chapitre 2","Lancer avec la fin choisie dans le menu d\u00e9roulant.",function(){const f=FINS[+sel.value||0];ch2go(s,base,f[2],actK)});
  show(c,()=>chap(s))}
@@ -65,7 +65,7 @@ function act3pick(s,i,k){
   ["\u00ab La nuit standard \u00bb","La route droite : personne n\u2019a \u00e9crit cette nuit.",{mig:1}]
  ];
  const sel=document.createElement("select");sel.className="finSel";sel.setAttribute("aria-label","Choisir un chemin pour l\u2019Acte III");
- FINS.forEach(function(f,k2){const o=document.createElement("option");o.value=k2;o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
+ FINS.forEach(function(f,k2){const o=document.createElement("option");o.value=String(k2);o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
  c.append(sel);
  row(c,"\u25b6 Commencer l\u2019Acte III","Lancer avec le chemin choisi dans le menu d\u00e9roulant.",function(){const f=FINS[+sel.value||0];act3go(s,i,k,f[2])});
  show(c,()=>chap(s))}
