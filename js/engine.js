@@ -1083,17 +1083,15 @@ function ch2pick(s){const done=((PG.c||0)>=2);
   const nb=document.createElement("p");nb.className="proTxt";nb.textContent="Ton pr\u00e9nom\u00a0? L\u2019histoire s\u2019adressera \u00e0 toi par ce nom (laisse vide pour rester anonyme).";c.append(nb);
   const ni=/** @type {HTMLInputElement} */(document.createElement("input"));ni.id="ch2name";ni.type="text";ni.maxLength=14;ni.placeholder="Ton pr\u00e9nom";ni.autocomplete="off";try{ni["value"]=localStorage.getItem("etl_pname")||""}catch(e){}c.append(ni);
   const gb=document.createElement("p");gb.className="proTxt";gb.textContent="Et ton genre\u00a0? L\u2019histoire s\u2019accorde au masculin ou au f\u00e9minin.";c.append(gb);
-  const bf=row(c,"","L\u2019histoire s\u2019accorde au f\u00e9minin.",()=>{}),bm=row(c,"","L\u2019histoire s\u2019accorde au masculin.",()=>{});
-  const rf=()=>{base.pf=gpf?1:0;bf.children[0].textContent=(gpf?"\u2713 ":"")+"\u2640 Une femme";bm.children[0].textContent=(!gpf?"\u2713 ":"")+"\u2642 Un homme"};
-  bf.onclick=()=>{gpf=1;rf()};bm.onclick=()=>{gpf=0;rf()};rf()}
+  const gs=document.createElement("select");gs.className="finSel";gs.setAttribute("aria-label","Choisir le genre");
+  [["\u2640 Une femme","L\u2019histoire s\u2019accorde au f\u00e9minin.","1"],["\u2642 Un homme","L\u2019histoire s\u2019accorde au masculin.","0"]].forEach(function(o){const op=document.createElement("option");op.value=o[2];op.textContent=o[0]+" \u2014 "+o[1];gs.append(op)});
+  gs.value=gpf?"1":"0";gs.onchange=function(){gpf=+gs.value;base.pf=gpf};c.append(gs)}
  let actK=0;
  {const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];
   const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer\u00a0?";c.append(lab);
-  const aw=document.createElement("div");aw.className="actPick";
-  acts.forEach((a,k)=>{const b=document.createElement("button");b.type="button";b.textContent="Acte "+(k+1)+" \u00b7 "+a[0];
-   b.onclick=()=>{actK=k;Array.prototype.forEach.call(aw.children,function(x){x.classList.remove("on")});b.classList.add("on")};
-   if(k===actK)b.classList.add("on");aw.append(b)});
-  c.append(aw)}
+  const as=document.createElement("select");as.className="finSel";as.setAttribute("aria-label","Choisir un acte");
+  acts.forEach(function(a,k){const op=document.createElement("option");op.value=k;op.textContent="Acte "+(k+1)+" \u00b7 "+a[0];as.append(op)});
+  as.value=actK;as.onchange=function(){actK=+as.value};c.append(as)}
  const FINS=[
   ["\u00ab Le rendez-vous manqu\u00e9 \u00bb","Tu as confirm\u00e9 la prise du quai 9. Quelqu\u2019un a attendu Nils.",{piege:1,mig:1}],
   ["\u00ab La bonne nuit \u00bb","Cora veille sur toi : confiance totale.",{avou:1,trst:2,mig:1}],
