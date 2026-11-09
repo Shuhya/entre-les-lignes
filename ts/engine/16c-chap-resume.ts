@@ -26,12 +26,18 @@
    const cb=document.createElement('input');cb.type='checkbox';cb.id='relChk';
    const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel de tout ce que tu as fait \u2014 n\u2019ouvre pas le jeu.</small>';
    rel.append(cb,rt);c.append(rel);
-   const list=document.createElement('div');list.className='bkWrap';c.append(list);
+   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='Quel chapitre veux-tu ouvrir ?';c.append(cl);
+   const sel=document.createElement('select');sel.className='finSel';sel.id='chapSel';sel.setAttribute('aria-label','Choisir un chapitre');
+   let firstOk=0;
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
-    const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
-    b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12')+'</h3>';
-    if(ok)b.onclick=()=>{if(cb.checked){summaryPage(s);return}if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
-    list.append(b)});
+    if(ok&&!firstOk)firstOk=i;
+    const o=document.createElement('option');o.value=i;o.textContent='Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12');o.disabled=!ok;sel.append(o)});
+   sel.value=firstOk;c.append(sel);
+   row(c,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
+    if(cb.checked){summaryPage(s);return}
+    const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);
+    if(ch2free){ch2pick(s);return}
+    actsMenu(s,i,h,sel,v)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
    const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
    rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00A0?';rsb.querySelector('small').textContent='Progression, sauvegarde et fins de cette histoire seront perdues — reclique pour confirmer';return}

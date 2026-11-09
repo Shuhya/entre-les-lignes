@@ -1121,3 +1121,12 @@ body.wa #app{background-color:var(--phone)}
 .finSel{display:block;width:100%;margin:4px 0 12px;padding:12px 38px 12px 14px;border:1px solid var(--gold-33);border-radius:var(--r-10);background:rgba(14,21,34,.95) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd166' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center/14px;appearance:none;-webkit-appearance:none;color:#f3efe4;font:500 14px system-ui,sans-serif;cursor:pointer}
 .finSel:focus{outline:none;border-color:var(--gold)}
 .finSel option{background:#0e1522;color:#f3efe4}
+
+/* ---- v2.243 : boutons de menu en verre transparent (pas de fond gris plein) ---- */
+.bk{background:transparent}
+.bk:hover{background:rgba(255,255,255,.06)}
+.bk.open{background:transparent}
+#mn .st{background:transparent}
+#mn .st:hover{background:rgba(255,255,255,.05)}
+#mn .restartBtn{background:transparent}
+.finsTag{background:transparent;border:1px solid var(--w-13);color:var(--tx-2)}
