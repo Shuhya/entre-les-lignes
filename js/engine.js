@@ -1012,12 +1012,25 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  else if(cur-base>=30)return;                                  /* dérive max 30 min sans repère */
  CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
 
+/* Boot matrix « chargement du récit » — joué APRÈS le choix de l'histoire, enchaîné avec phoneIn() */
+function bootIn(cb){try{if(document.getElementById("boot")){if(cb)cb();return}
+ const b=document.createElement("div");b.id="boot";
+ b.innerHTML='<canvas class="bootRain"></canvas><div class="bootGrid"></div><div class="bootScan"></div><div class="bootTx"><b>ENTRE LES LIGNES</b><span>chargement du r\u00e9cit\u2026</span></div>';
+ document.body.append(b);
+ let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+ const cv=b.querySelector(".bootRain");
+ if(cv&&!rm){const cx=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
+  const gl="アイウエオカキクケコサシスセソ01<>/\\|#@%&".split("");const cols=Math.ceil(cv.width/18);const y=[];for(let i=0;i<cols;i++)y.push(Math.floor(Math.random()*20));
+  const iv=setInterval(function(){cx.fillStyle="rgba(4,6,10,.16)";cx.fillRect(0,0,cv.width,cv.height);cx.font="14px monospace";for(let i=0;i<cols;i++){const ch=gl[Math.floor(Math.random()*gl.length)];cx.globalAlpha=.55;cx.fillStyle=Math.random()<.05?"#ffd166":"#3e91ff";cx.fillText(ch,i*18,y[i]*18);if(y[i]*18>cv.height&&Math.random()>.975)y[i]=0;y[i]++}},50);
+  setTimeout(function(){clearInterval(iv)},1300)}
+ setTimeout(function(){b.classList.add("off");setTimeout(function(){try{b.remove()}catch(e){}if(cb)cb()},650)},rm?60:1500);
+}catch(e){if(cb)cb()}}
 /* Sauvegarde de reprise */
 function phoneIn(){try{if(document.getElementById("phIn"))return;
  const app=document.getElementById("app");
  const r=app&&app.getBoundingClientRect?app.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight};
  const o=/** @type {HTMLElement} */(document.createElement("div"));o.id="phIn";
- o.innerHTML='<svg class="phSvg" viewBox="0 0 100 200" preserveAspectRatio="none"><rect class="phBody" x="1.5" y="1.5" width="97" height="197" rx="12"/><rect class="phScr" x="4" y="4" width="92" height="192" rx="9"/><rect class="phNotch" x="38" y="6.5" width="24" height="4" rx="2"/></svg><div class="phUi"><div class="phBar"><span class="phClk">9:41</span><span class="phSig"></span></div><div class="phBub b1"></div><div class="phBub b2"></div><div class="phBub b3"></div><div class="phInp"></div></div><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
+ o.innerHTML='<svg class="phSvg" viewBox="0 0 100 200" preserveAspectRatio="xMidYMid meet"><rect class="phBody" x="1.5" y="1.5" width="97" height="197" rx="12"/><rect class="phScr" x="4" y="4" width="92" height="192" rx="9"/><rect class="phNotch" x="38" y="6.5" width="24" height="4" rx="2"/></svg><div class="phUi"><div class="phBar"><span class="phClk">9:41</span><span class="phSig"></span></div><div class="phBub b1"></div><div class="phBub b2"></div><div class="phBub b3"></div><div class="phInp"></div></div><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
  const sv=o.querySelector(".phSvg");
  if(sv)sv.setAttribute("style","width:"+r.width+"px;height:"+r.height+"px");
  o.setAttribute("style","left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;right:auto;bottom:auto;inset:auto");
@@ -1030,8 +1043,8 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
  const oldPlay=play;
  let preChat=null;
  play=async function(id,r=run){nodeNow=id;if(!GHOST&&SK)path.push(id);preChat=$('chat').innerHTML;save();const v=await oldPlay(id,r);if(r!=run)return v;preChat=null;save();return v};
- function relBan(on){let b=document.getElementById("relBan");if(on&&!b){b=document.createElement("div");b.id="relBan";b.textContent="\uD83D\uDC41 Relecture \u2014 ta progression n\u2019est pas modifi\u00e9e";document.body.append(b)}if(b)b.style.display=on?"block":"none"}
- const oldFin=fin;fin=function(v,sk){if(GHOST){[523,659,784,1047].forEach((fq,i)=>setTimeout(()=>beep(fq,.6),i*160));relBan(false);ov(v[0],v[1],"\uD83D\uDCD6 Voir le r\u00e9sum\u00e9 \u00e9crit",()=>{ov(SS.t,(typeof ETL_SUM!=="undefined"&&ETL_SUM[SC])||"R\u00e9sum\u00e9 indisponible.","Revenir aux chapitres",()=>{GHOST=false;chap(SS)},null,null)},"Menu",()=>{GHOST=false;menu()},null,null);return}oldFin(v,sk);save()};
+ function relBan(on){/* mode relecture supprimé dans cette version — aucun bandeau */}
+ const oldFin=fin;fin=function(v,sk){oldFin(v,sk);save()};
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
  menu=function(){GHOST=false;try{relBan(false)}catch(e){}save();stopPro();run++;SK=0;nodeNow=null;try{veil(0)}catch(e){};ck();amb(null);$('ov').hidden=true;
   chap(STORIES.find(s=>s.id==='h')||STORIES[0]);
@@ -1060,35 +1073,42 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   show(c,()=>chap(s))}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard,resume:resume,ch2go:ch2go,pg:()=>PG}}catch(e){}
- const oldStart=start;start=function(){try{relBan(!!GHOST);phoneIn()}catch(e){}if(!GHOST){path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}relBan(false)}oldStart()};
+ const oldStart=start;start=function(){bootIn(function(){try{phoneIn()}catch(e){}});path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}oldStart()};
 function ch2pick(s){const done=((PG.c||0)>=2);
  const prev=(PG.s&&PG.s[1])||{};
  const base=Object.assign({t:0,l:0,r:0,v:0,e:""},(prev.pf!==undefined?{pf:prev.pf}:{}),(prev.pname!==undefined?{pname:prev.pname}:{}),(prev.t?{t:prev.t}:{}));
- const c=card(done?"Chapitre 2 · Quai 9 — avec quelle fin du chapitre 1\u00A0?":"Chapitre 2 · Quai 9 — sans jouer le chapitre 1");
+ const c=card(done?"Chapitre 2 \u00b7 Quai 9 \u2014 avec quelle fin du chapitre 1\u00a0?":"Chapitre 2 \u00b7 Quai 9 \u2014 sans jouer le chapitre 1");
  const hd=document.createElement("p");hd.className="proTxt";hd.textContent=done?"Avec quelle fin du chapitre 1 veux-tu commencer\u00a0?":"Tu n\u2019as pas jou\u00e9 le chapitre 1\u00a0: choisis une fin pour commencer.";c.append(hd);
  if(!done){let gpf=0;try{gpf=(localStorage.getItem("etl_pgen")==="f")?1:0}catch(e){}base.pf=gpf;
-  const nb=document.createElement("p");nb.className="proTxt";nb.textContent="Ton prénom ? L’histoire s’adressera à toi par ce nom (laisse vide pour rester anonyme).";c.append(nb);
-  const ni=/** @type {HTMLInputElement} */(document.createElement("input"));ni.id="ch2name";ni.type="text";ni.maxLength=14;ni.placeholder="Ton prénom";ni.autocomplete="off";try{ni["value"]=localStorage.getItem("etl_pname")||""}catch(e){}c.append(ni);
-  const gb=document.createElement("p");gb.className="proTxt";gb.textContent="Et ton genre ? L’histoire s’accorde au masculin ou au féminin.";c.append(gb);
-  const bf=row(c,"","L’histoire s’accorde au féminin.",()=>{}),bm=row(c,"","L’histoire s’accorde au masculin.",()=>{});
-  const rf=()=>{base.pf=gpf?1:0;bf.children[0].textContent=(gpf?"✓ ":"")+"♀ Une femme";bm.children[0].textContent=(!gpf?"✓ ":"")+"♂ Un homme"};
+  const nb=document.createElement("p");nb.className="proTxt";nb.textContent="Ton pr\u00e9nom\u00a0? L\u2019histoire s\u2019adressera \u00e0 toi par ce nom (laisse vide pour rester anonyme).";c.append(nb);
+  const ni=/** @type {HTMLInputElement} */(document.createElement("input"));ni.id="ch2name";ni.type="text";ni.maxLength=14;ni.placeholder="Ton pr\u00e9nom";ni.autocomplete="off";try{ni["value"]=localStorage.getItem("etl_pname")||""}catch(e){}c.append(ni);
+  const gb=document.createElement("p");gb.className="proTxt";gb.textContent="Et ton genre\u00a0? L\u2019histoire s\u2019accorde au masculin ou au f\u00e9minin.";c.append(gb);
+  const bf=row(c,"","L\u2019histoire s\u2019accorde au f\u00e9minin.",()=>{}),bm=row(c,"","L\u2019histoire s\u2019accorde au masculin.",()=>{});
+  const rf=()=>{base.pf=gpf?1:0;bf.children[0].textContent=(gpf?"\u2713 ":"")+"\u2640 Une femme";bm.children[0].textContent=(!gpf?"\u2713 ":"")+"\u2642 Un homme"};
   bf.onclick=()=>{gpf=1;rf()};bm.onclick=()=>{gpf=0;rf()};rf()}
  let actK=0;
  {const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];
-  const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer ?";c.append(lab);
+  const lab=document.createElement("p");lab.className="proTxt";lab.textContent="Par quel acte veux-tu commencer\u00a0?";c.append(lab);
   const aw=document.createElement("div");aw.className="actPick";
-  acts.forEach((a,k)=>{const b=document.createElement("button");b.type="button";b.textContent="Acte "+(k+1)+" · "+a[0];
+  acts.forEach((a,k)=>{const b=document.createElement("button");b.type="button";b.textContent="Acte "+(k+1)+" \u00b7 "+a[0];
    b.onclick=()=>{actK=k;Array.prototype.forEach.call(aw.children,function(x){x.classList.remove("on")});b.classList.add("on")};
    if(k===actK)b.classList.add("on");aw.append(b)});
   c.append(aw)}
-  row(c,"« Le rendez-vous manqué »","Tu as confirmé la prise du quai 9. Quelqu’un a attendu Nils.",()=>ch2go(s,base,{piege:1,mig:1},actK));
- row(c,"« La bonne nuit »","Cora veille sur toi : confiance totale.",()=>ch2go(s,base,{avou:1,trst:2,mig:1},actK));
- row(c,"« Le mensonge »","Elle t’a repéré en quatre minutes.",()=>ch2go(s,base,{mentir:1,mig:1},actK));
- row(c,"« La nuit sans sommeil »","La route standard : personne n’a écrit cette nuit.",()=>ch2go(s,base,{mig:1},actK));
- row(c,"« La nuit sans sommeil » + police","Tu as annoncé à Cora que tu irais voir le commandant Riffaud.",()=>ch2go(s,base,{mig:1,pol:1},actK));
- row(c,"« Le rendez-vous manqué » + police","Piège du quai 9, et l’annonce d’un passage à la police.",()=>ch2go(s,base,{mig:1,piege:1,pol:1},actK));
- row(c,"« La nuit sans sommeil » + silence","Tu n’as rien répondu à l’inconnu.",()=>ch2go(s,base,{mig:1,int:3,sil:1},actK));
- row(c,"« Vous vous trompez de numéro »","Tu as répondu à l’inconnu : erreur de numéro, rien de plus.",()=>ch2go(s,base,{mig:1,int:2},actK));
+ const FINS=[
+  ["\u00ab Le rendez-vous manqu\u00e9 \u00bb","Tu as confirm\u00e9 la prise du quai 9. Quelqu\u2019un a attendu Nils.",{piege:1,mig:1}],
+  ["\u00ab La bonne nuit \u00bb","Cora veille sur toi : confiance totale.",{avou:1,trst:2,mig:1}],
+  ["\u00ab Le mensonge \u00bb","Elle t\u2019a rep\u00e9r\u00e9 en quatre minutes.",{mentir:1,mig:1}],
+  ["\u00ab La nuit sans sommeil \u00bb","La route standard : personne n\u2019a \u00e9crit cette nuit.",{mig:1}],
+  ["\u00ab La nuit sans sommeil \u00bb + police","Tu as annonc\u00e9 \u00e0 Cora que tu irais voir le commandant Riffaud.",{mig:1,pol:1}],
+  ["\u00ab Le rendez-vous manqu\u00e9 \u00bb + police","Pi\u00e8ge du quai 9, et l\u2019annonce d\u2019un passage \u00e0 la police.",{mig:1,piege:1,pol:1}],
+  ["\u00ab La nuit sans sommeil \u00bb + silence","Tu n\u2019as rien r\u00e9pondu \u00e0 l\u2019inconnu.",{mig:1,int:3,sil:1}],
+  ["\u00ab Vous vous trompez de num\u00e9ro \u00bb","Tu as r\u00e9pondu \u00e0 l\u2019inconnu : erreur de num\u00e9ro, rien de plus.",{mig:1,int:2}]
+ ];
+ const fl=document.createElement("p");fl.className="proTxt";fl.textContent=done?"Choisis la fin du chapitre 1 avec laquelle lancer le chapitre 2 :":"Choisis une fin pour commencer :";c.append(fl);
+ const sel=document.createElement("select");sel.className="finSel";sel.setAttribute("aria-label","Choisir une fin du chapitre 1");
+ FINS.forEach(function(f,k){const o=document.createElement("option");o.value=k;o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
+ c.append(sel);
+ row(c,"\u25b6 Commencer le chapitre 2","Lancer avec la fin choisie dans le menu d\u00e9roulant.",function(){const f=FINS[+sel.value||0];ch2go(s,base,f[2],actK)});
  show(c,()=>chap(s))}
 function actOfNode(i,node){if(i!==1)return 0;const m=String(node).match(/^q(\d+)/);if(m){const n=+m[1];if(n<=3)return 0;if(n<=8)return 1;return 2}return 1}
 function actsMenu(s,i,h,b,v){
@@ -1109,18 +1129,37 @@ function actsMenu(s,i,h,b,v){
   rb.innerHTML='<b><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg> R\u00E9sum\u00E9 du chapitre '+(i+1)+'</b>';
   rb.onclick=()=>{ov(s.t,ETL_SUM[i],'\u2039 Retour',()=>{},null,null)};w.append(rb)}
  if(typeof b.after==="function")b.after(w);else{const pn=b.parentNode;if(pn)pn.append(w)}}
-function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];GHOST=true;SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
+function startAct(s,i,k){const acts=(s.ch[i][2]&&s.ch[i][2].length)?s.ch[i][2]:[[s.ch[i][0],s.ch[i][1]]];SC=i;$('nm').textContent=s.n;setAv(s.n[0]);ETL_ACT=acts[k][1];start()}
 function act3pick(s,i,k){
- const c=card('Quai 9 \u00B7 Acte III \u2014 par quel chemin\u00A0?');
- const hd=document.createElement('p');hd.className='proTxt';hd.textContent='Par quel \u00E9tat veux-tu arriver au square des Tanneurs\u00a0?';c.append(hd);
- row(c,'\u25B6 \u00AB Confiance totale \u00BB','Cora t\u2019a appel\u00E9. Carnet lu, dernier message \u00E9cout\u00E9, mot \u00AB sucrier \u00BB donn\u00E9 au t\u00E9l\u00E9phone.',()=>act3go(s,i,k,{avou:1,trst:2,pov:1,prm:1,cal_h8:1,recall:1,mig:1}));
- row(c,'\u25B6 \u00AB Le froid \u00BB','Pas d\u2019appel. Tu as r\u00E9pondu \u00AB erreur de num\u00E9ro \u00BB \u00E0 l\u2019inconnu.',()=>act3go(s,i,k,{mig:1,int:2}));
- row(c,'\u25B6 \u00AB Le menteur \u00BB','La nuit du mensonge\u00A0: rep\u00E9r\u00E9 en quatre minutes.',()=>act3go(s,i,k,{mentir:1,mig:1,int:2}));
- row(c,'\u25B6 \u00AB Le pi\u00E8ge + la police \u00BB','La prise du quai 9 confirm\u00E9e, et Riffaud pr\u00E9venu.',()=>act3go(s,i,k,{piege:1,pol:1,mig:1}));
- row(c,'\u25B6 \u00AB La nuit standard \u00BB','La route droite\u00A0: personne n\u2019a \u00E9crit cette nuit.',()=>act3go(s,i,k,{mig:1}));
+ const c=card('Quai 9 \u00b7 Acte III \u2014 par quel chemin\u00a0?');
+ const hd=document.createElement('p');hd.className='proTxt';hd.textContent='Par quel \u00e9tat veux-tu arriver au square des Tanneurs\u00a0? Choisis dans le menu d\u00e9roulant :';c.append(hd);
+ const FINS=[
+  ["\u00ab Confiance totale \u00bb","Cora t\u2019a appel\u00e9. Carnet lu, dernier message \u00e9cout\u00e9, mot \u00ab sucrier \u00bb donn\u00e9 au t\u00e9l\u00e9phone.",{avou:1,trst:2,pov:1,prm:1,cal_h8:1,recall:1,mig:1}],
+  ["\u00ab Le froid \u00bb","Pas d\u2019appel. Tu as r\u00e9pondu \u00ab erreur de num\u00e9ro \u00bb \u00e0 l\u2019inconnu.",{mig:1,int:2}],
+  ["\u00ab Le menteur \u00bb","La nuit du mensonge : rep\u00e9r\u00e9 en quatre minutes.",{mentir:1,mig:1,int:2}],
+  ["\u00ab Le pi\u00e8ge + la police \u00bb","La prise du quai 9 confirm\u00e9e, et Riffaud pr\u00e9venu.",{piege:1,pol:1,mig:1}],
+  ["\u00ab La nuit standard \u00bb","La route droite : personne n\u2019a \u00e9crit cette nuit.",{mig:1}]
+ ];
+ const sel=document.createElement("select");sel.className="finSel";sel.setAttribute("aria-label","Choisir un chemin pour l\u2019Acte III");
+ FINS.forEach(function(f,k2){const o=document.createElement("option");o.value=k2;o.textContent=f[0]+" \u2014 "+f[1];sel.append(o)});
+ c.append(sel);
+ row(c,"\u25b6 Commencer l\u2019Acte III","Lancer avec le chemin choisi dans le menu d\u00e9roulant.",function(){const f=FINS[+sel.value||0];act3go(s,i,k,f[2])});
  show(c,()=>chap(s))}
-function act3go(s,i,k,fl){GHOST=true;SC=i;ETL_ST=fl;ETL_ACT=(s.ch[i][2]&&s.ch[i][2][k])?s.ch[i][2][k][1]:s.ch[i][1];$('nm').textContent=s.n;setAv(s.n[0]);start()}
-function ch2go(s,base,fl,k){GHOST=true;SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];if(acts[k])ETL_ACT=acts[k][1]}try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()} chap=function(s){GHOST=false;try{relBan(false)}catch(e){}SS=s;
+function act3go(s,i,k,fl){SC=i;ETL_ST=fl;ETL_ACT=(s.ch[i][2]&&s.ch[i][2][k])?s.ch[i][2][k][1]:s.ch[i][1];$('nm').textContent=s.n;setAv(s.n[0]);start()}
+function ch2go(s,base,fl,k){SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].length)?s.ch[1][2]:[[s.ch[1][0],s.ch[1][1]]];if(acts[k])ETL_ACT=acts[k][1]}try{const ni=/** @type {HTMLInputElement} */($("ch2name"));if(ni&&typeof ni["value"]==="string"){const v=(ni["value"]||"").trim().slice(0,14);if(v)base.pname=v}}catch(e){}PG.s[1]=Object.assign({},base,fl);$("nm").textContent=s.n;setAv(s.n[0]);start()} function summaryPage(s){
+  let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
+  const c=card('R\u00e9sum\u00e9 \u2014 '+s.t);
+  const w=document.createElement('div');w.className='proTxt';
+  const addP=function(t){const p=document.createElement('p');p.textContent=t;w.append(p)};
+  addP('Tout ce que tu as fait dans \u00ab '+s.t+' \u00bb.');
+  let any=false;
+  s.ch.forEach(function(h,i){const done=i<(P.c||0)||!!(P.s&&P.s[i]);if(!done)return;any=true;
+   addP('Chapitre '+(i+1)+' \u00b7 '+h[0]+' \u2014 '+(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]?ETL_SUM[i]:'(r\u00e9sum\u00e9 indisponible)'))});
+  if(!any)addP('Aucune partie jou\u00e9e pour l\u2019instant.');
+  try{const got=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');if(got.length)addP('Fins vues ('+got.length+') : '+got.join(' \u00b7 '))}catch(e){}
+  c.append(w);
+  show(c,()=>chap(s))}
+ chap=function(s){GHOST=false;try{relBan(false)}catch(e){}SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
   let pgc=0;try{pgc=(JSON.parse(localStorage.getItem("pg"+s.id)||"{}").c)||0}catch(e){}
   const resuming=!!(v&&v.story===s.id&&v.node&&S[v.node]&&pgc<=(v.chapter||0)+1);
@@ -1129,11 +1168,15 @@ function ch2go(s,base,fl,k){GHOST=true;SC=1;if(k!=null){const acts=(s.ch[1][2]&&
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
    const c=card(s.t);
+   const rel=document.createElement('label');rel.className='relChk';
+   const cb=document.createElement('input');cb.type='checkbox';cb.id='relChk';
+   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel de tout ce que tu as fait \u2014 n\u2019ouvre pas le jeu.</small>';
+   rel.append(cb,rt);c.append(rel);
    const list=document.createElement('div');list.className='bkWrap';c.append(list);
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
     b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12')+'</h3>';
-    if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
+    if(ok)b.onclick=()=>{if(cb.checked){summaryPage(s);return}if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
     list.append(b)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
    const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';

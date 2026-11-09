@@ -1,5 +1,18 @@
 /* ts/engine/16c-chap-resume.ts — chap(), resume(), fin de l'IIFE (module chapitres/reprise) — module de js/engine.js (découpage v2.232). Source unique : ts/engine/, js généré. */
 /* [engine-section] */
+ function summaryPage(s){
+  let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
+  const c=card('R\u00e9sum\u00e9 \u2014 '+s.t);
+  const w=document.createElement('div');w.className='proTxt';
+  const addP=function(t){const p=document.createElement('p');p.textContent=t;w.append(p)};
+  addP('Tout ce que tu as fait dans \u00ab '+s.t+' \u00bb.');
+  let any=false;
+  s.ch.forEach(function(h,i){const done=i<(P.c||0)||!!(P.s&&P.s[i]);if(!done)return;any=true;
+   addP('Chapitre '+(i+1)+' \u00b7 '+h[0]+' \u2014 '+(typeof ETL_SUM!=='undefined'&&ETL_SUM&&ETL_SUM[i]?ETL_SUM[i]:'(r\u00e9sum\u00e9 indisponible)'))});
+  if(!any)addP('Aucune partie jou\u00e9e pour l\u2019instant.');
+  try{const got=JSON.parse(localStorage.getItem('fe'+s.id)||'[]');if(got.length)addP('Fins vues ('+got.length+') : '+got.join(' \u00b7 '))}catch(e){}
+  c.append(w);
+  show(c,()=>chap(s))}
  chap=function(s){GHOST=false;try{relBan(false)}catch(e){}SS=s;
   let v=null;try{v=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
   let pgc=0;try{pgc=(JSON.parse(localStorage.getItem("pg"+s.id)||"{}").c)||0}catch(e){}
@@ -9,11 +22,15 @@
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
    const c=card(s.t);
+   const rel=document.createElement('label');rel.className='relChk';
+   const cb=document.createElement('input');cb.type='checkbox';cb.id='relChk';
+   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel de tout ce que tu as fait \u2014 n\u2019ouvre pas le jeu.</small>';
+   rel.append(cb,rt);c.append(rel);
    const list=document.createElement('div');list.className='bkWrap';c.append(list);
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     const b=document.createElement('button');b.className='bk'+(ok?' open':' lock');if(!ok)b.disabled=true;
     b.innerHTML='<h3>Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12')+'</h3>';
-    if(ok)b.onclick=()=>{if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
+    if(ok)b.onclick=()=>{if(cb.checked){summaryPage(s);return}if(ch2free){ch2pick(s);return}actsMenu(s,i,h,b,v)};
     list.append(b)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
    const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
