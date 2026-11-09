@@ -1010,12 +1010,25 @@ setInterval(()=>{if(!SK||CLK.h==null)return;
  else if(cur-base>=30)return;                                  /* dérive max 30 min sans repère */
  CLK.m++;if(CLK.m>59){CLK.m=0;CLK.h=(CLK.h+1)%24}const el=$("clk");if(el)el.textContent=clkNow()},12000);
 
+/* Boot matrix « chargement du récit » — joué APRÈS le choix de l'histoire, enchaîné avec phoneIn() */
+function bootIn(cb){try{if(document.getElementById("boot")){if(cb)cb();return}
+ const b=document.createElement("div");b.id="boot";
+ b.innerHTML='<canvas class="bootRain"></canvas><div class="bootGrid"></div><div class="bootScan"></div><div class="bootTx"><b>ENTRE LES LIGNES</b><span>chargement du r\u00e9cit\u2026</span></div>';
+ document.body.append(b);
+ let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+ const cv=b.querySelector(".bootRain");
+ if(cv&&!rm){const cx=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
+  const gl="アイウエオカキクケコサシスセソ01<>/\\|#@%&".split("");const cols=Math.ceil(cv.width/18);const y=[];for(let i=0;i<cols;i++)y.push(Math.floor(Math.random()*20));
+  const iv=setInterval(function(){cx.fillStyle="rgba(4,6,10,.16)";cx.fillRect(0,0,cv.width,cv.height);cx.font="14px monospace";for(let i=0;i<cols;i++){const ch=gl[Math.floor(Math.random()*gl.length)];cx.globalAlpha=.55;cx.fillStyle=Math.random()<.05?"#ffd166":"#3e91ff";cx.fillText(ch,i*18,y[i]*18);if(y[i]*18>cv.height&&Math.random()>.975)y[i]=0;y[i]++}},50);
+  setTimeout(function(){clearInterval(iv)},1300)}
+ setTimeout(function(){b.classList.add("off");setTimeout(function(){try{b.remove()}catch(e){}if(cb)cb()},650)},rm?60:1500);
+}catch(e){if(cb)cb()}}
 /* Sauvegarde de reprise */
 function phoneIn(){try{if(document.getElementById("phIn"))return;
  const app=document.getElementById("app");
  const r=app&&app.getBoundingClientRect?app.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight};
  const o=/** @type {HTMLElement} */(document.createElement("div"));o.id="phIn";
- o.innerHTML='<svg class="phSvg" viewBox="0 0 100 200" preserveAspectRatio="none"><rect class="phBody" x="1.5" y="1.5" width="97" height="197" rx="12"/><rect class="phScr" x="4" y="4" width="92" height="192" rx="9"/><rect class="phNotch" x="38" y="6.5" width="24" height="4" rx="2"/></svg><div class="phUi"><div class="phBar"><span class="phClk">9:41</span><span class="phSig"></span></div><div class="phBub b1"></div><div class="phBub b2"></div><div class="phBub b3"></div><div class="phInp"></div></div><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
+ o.innerHTML='<svg class="phSvg" viewBox="0 0 100 200" preserveAspectRatio="xMidYMid meet"><rect class="phBody" x="1.5" y="1.5" width="97" height="197" rx="12"/><rect class="phScr" x="4" y="4" width="92" height="192" rx="9"/><rect class="phNotch" x="38" y="6.5" width="24" height="4" rx="2"/></svg><div class="phUi"><div class="phBar"><span class="phClk">9:41</span><span class="phSig"></span></div><div class="phBub b1"></div><div class="phBub b2"></div><div class="phBub b3"></div><div class="phInp"></div></div><div class="phScan"></div><p class="phTx">le t\u00e9l\u00e9phone s\u2019allume\u2026</p>';
  const sv=o.querySelector(".phSvg");
  if(sv)sv.setAttribute("style","width:"+r.width+"px;height:"+r.height+"px");
  o.setAttribute("style","left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;right:auto;bottom:auto;inset:auto");
