@@ -45,6 +45,13 @@ html.ambC{--ambImg:url("assets/amb/dusk.jpg")}
 .lBtn{background:none;border:1px solid #ffd16645;color:#ffe9b0;font:inherit;font-size:12px;padding:7px 15px;border-radius:999px;letter-spacing:1.6px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background .2s,border-color .2s}
 .lBtn:hover{background:#ffd1661a;border-color:#ffd166}
 .foot{position:fixed;z-index:21;bottom:14px;left:0;right:0;text-align:center;font-size:11.5px;color:#ffffff59;letter-spacing:.4px;pointer-events:none}
+#pwaBn{position:fixed;z-index:30;left:50%;bottom:46px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;max-width:92vw;background:#0e1522f2;border:1px solid #ffd16655;border-radius:999px;padding:8px 8px 8px 18px;color:#e8e6df;font:13px/1.4 system-ui,sans-serif;box-shadow:0 14px 40px #000a;backdrop-filter:blur(6px);animation:txin .5s both}
+#pwaBn[hidden]{display:none}
+#pwaBn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pwaBn .pwaGo{background:#ffd166;border:0;border-radius:999px;padding:8px 16px;font:600 12.5px system-ui,sans-serif;color:#1c1408;cursor:pointer;letter-spacing:.6px;text-transform:uppercase}
+#pwaBn .pwaNo{background:none;border:0;color:#9a958a;cursor:pointer;font-size:14px;padding:6px 8px}
+.pwaSet{padding:9px 20px;border:1px solid #ffd166;border-radius:999px;background:#ffd1661a;color:#ffe9b0;font:600 13px system-ui,sans-serif;cursor:pointer}
+.pwaSet:hover{background:#ffd1662e}
 @keyframes txin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes bfocus{to{opacity:0}}
 /* ---- téléphone démo : DA exacte du jeu (style.css répliqué) ---- */
@@ -206,6 +213,7 @@ html.ambC{--ambImg:url("assets/amb/dusk.jpg")}
 </div></div>
 </div>
 <div class="foot">Entre les lignes · un jeu narratif de Dylan Gaucher</div>
+<div id="pwaBn" hidden><span>Installer « Entre les lignes » sur ton écran d’accueil&nbsp;?</span><button class="pwaGo" id="pwaGo">Installer</button><button class="pwaNo" id="pwaNo" aria-label="Fermer">✕</button></div>
 <script>
 if("serviceWorker" in navigator){var __etlHad=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",function(){if(__etlHad&&!window.__etlRl){window.__etlRl=1;location.reload()}});addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
@@ -278,6 +286,17 @@ if("serviceWorker" in navigator){var __etlHad=!!navigator.serviceWorker.controll
 (function(){
  function get(k,d){try{return localStorage.getItem(k)===null?d:localStorage.getItem(k)}catch(e){return d}}
  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+ /* ---- bannière d'installation PWA (beforeinstallprompt, Android/Chrome) ---- */
+ window.__etlDp=null;
+ function etlStandalone(){try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}}
+ function etlPwaHide(){var b=document.getElementById("pwaBn");if(b)b.hidden=true}
+ window.__etlInstall=function(){var p=window.__etlDp;if(!p)return;window.__etlDp=null;etlPwaHide();try{p.prompt();p.userChoice.then(function(){}).catch(function(){})}catch(e){}};
+ if(!etlStandalone()){
+  addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__etlDp=e;var b=document.getElementById("pwaBn");if(b)b.hidden=false});
+  addEventListener("appinstalled",function(){window.__etlDp=null;etlPwaHide()});
+ }
+ var pGo=document.getElementById("pwaGo");if(pGo)pGo.onclick=function(){window.__etlInstall()};
+ var pNo=document.getElementById("pwaNo");if(pNo)pNo.onclick=function(){etlPwaHide()};
  
  function ov(inner){var o=document.createElement("div");o.className="lOv";var c=document.createElement("div");c.className="lCard";c.innerHTML=inner;o.append(c);document.body.append(o);
   o.addEventListener("click",function(e){if(e.target===o)o.remove()});return {o:o,c:c}}
@@ -287,8 +306,11 @@ if("serviceWorker" in navigator){var __etlHad=!!navigator.serviceWorker.controll
   var x=ov('<button class="lClose" aria-label="Fermer">✕</button><p class="lK">Préférences</p><h2>Réglages</h2>'
    +'<div class="lRow"><b>Smileys dans les messages</b><small>Activer ou désactiver les emojis selon ton humeur de lecture.</small>'
    +'<div class="seg" id="segE"><button data-v="on">Activés</button><button data-v="off">Désactivés</button></div></div>'
+   +'<div class="lRow" id="pwaRow" hidden><b>Ajouter à l’écran d’accueil</b><small>Installe le jeu comme une application, directement sur ton écran d’accueil.</small><br><button class="pwaSet" id="pwaSet">Installer</button></div>'
    +'<p class="lNote">Tes réglages sont enregistrés sur cet appareil. Il n’est pas nécessaire de posséder un compte. Le reste (thème nuit / jour, vitesse de lecture, volume, voix des appels) se règle depuis le ⚙ à l’intérieur du jeu.</p>');
   closeBtn(x.c);
+  var pr=x.c.querySelector("#pwaRow");if(pr&&window.__etlDp)pr.hidden=false;
+  var ps=x.c.querySelector("#pwaSet");if(ps)ps.onclick=function(){window.__etlInstall()};
   var v=get("view","0");[["segE",em,"etl_emoji"]].forEach(function(cfg){
    var id=cfg[0],cur=cfg[1],key=cfg[2];
    x.c.querySelectorAll("#"+id+" button").forEach(function(b){
