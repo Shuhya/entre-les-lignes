@@ -935,7 +935,7 @@ $("bk").onclick=()=>{const no=document.getElementById("notesOv");
  menu()};$("nb").onclick=()=>menu();$("fl").textContent="Envoyer un message";
 function setView(p){updMob();PC=0;document.body.classList.remove("pc");try{localStorage.setItem("view",0)}catch(e){}}
 setView(0)
-$("mn").style.backgroundImage="linear-gradient(#000b,#000f),url("+IMG.menu+")";
+$("mn").style.backgroundImage="none";
 if($("go")){$("go").onclick=()=>{try{if(matchMedia("(pointer:coarse)").matches&&!document.fullscreenElement){const d=document.documentElement;const rq=(d.requestFullscreen||d.webkitRequestFullscreen);if(rq){const p=rq.call(d);if(p&&p.catch)p.catch(()=>{})}}}catch(e){}startFromIntro()};$("sbi").onclick=togSnd}else{setTimeout(startFromIntro,0)}
 addEventListener("pointerdown",()=>{if(!ac){unlock();if(!SK)amb(null)}},{once:true});
 (async()=>{const im=$("bgi");if(!im)return;const ld=new Promise(res=>{const t=new Image();t.onload=t.onerror=res;t.src=IMG.menu});im.style.backgroundImage='url('+IMG.menu+')';try{await Promise.race([ld,sl(2500)])}catch(e){}
