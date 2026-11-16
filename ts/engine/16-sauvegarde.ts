@@ -17,7 +17,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.244";
+const VER="2.245";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -353,10 +353,13 @@ function endScreen(t,x,seen){seen=(seen||[]).filter(t2=>endsList(SS).includes(t2
    l2.textContent="Fins : "+got.length+" / "+all.length+(got.length<all.length?("\u00B7 encore "+(all.length-got.length)+" fin"+((all.length-got.length)>1?"s":"")+" \u00E0 d\u00E9couvrir"):"\u00B7 toutes trouv\u00E9es \u2728");
    es.append(l1);es.append(l2);c.append(es)}
  }catch(e){}
+ const F=(typeof ETL_FINS!=="undefined"&&ETL_FINS&&ETL_FINS[t])?ETL_FINS[t]:null;
+ if(F&&F.tag){const tg=document.createElement("div");tg.className="finTag";tg.textContent=F.tag;c.append(tg)}
+ if(F&&F.post){const pb=document.createElement("div");pb.className="finPost";pb.innerHTML="<b>Ton post \u00e0 partager</b>"+F.post;c.append(pb)}
 
  const b1=document.createElement("button");b1.id="ob";b1.textContent=(SC===0?"↺ Revivre le chapitre 1":"↺ Revivre l’histoire");b1.onclick=()=>{lockBgOff();o.remove();SC=0;start()};c.append(b1);
  const b2=document.createElement("button");b2.id="ob2";b2.textContent="Menu des histoires";b2.onclick=()=>{menu();setTimeout(lockBgOff,650);o.remove()};c.append(b2);
- const b4=document.createElement("button");b4.id="ob4";b4.className="obN";b4.textContent="\u2197 Partager cette fin";b4.onclick=()=>{const txt="Entre les lignes \u2014 j\u2019ai trouv\u00e9 la fin \u00ab "+t+" \u00bb. Et toi, quelle sera la tienne ? "+location.href;try{if(navigator.share){navigator.share({title:"Entre les lignes",text:txt,url:location.href}).catch(()=>{})}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>toast("Texte copi\u00e9 \u2713")).catch(()=>toast(txt))}else toast(txt)}catch(e){toast(txt)}};c.append(b4);
+ const b4=document.createElement("button");b4.id="ob4";b4.className="obN";b4.textContent="\u2197 Partager cette fin";b4.onclick=()=>{const txt=(F&&F.post)?("Entre les lignes \u2014 j\u2019ai trouv\u00e9 la fin \u00ab "+t+" \u00bb\n\n"+F.post+"\n"+location.href):("Entre les lignes \u2014 j\u2019ai trouv\u00e9 la fin \u00ab "+t+" \u00bb. Et toi, quelle sera la tienne ? "+location.href);try{if(navigator.share){navigator.share({title:"Entre les lignes",text:txt,url:location.href}).catch(()=>{})}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>toast("Texte copi\u00e9 \u2713")).catch(()=>toast(txt))}else toast(txt)}catch(e){toast(txt)}};c.append(b4);
  const nx=(SS.ch[SC+1]||[])[1];if(nx&&S[nx]){const b3=document.createElement("button");b3.id="ob3";b3.className="obN";b3.textContent="Chapitre suivant ›";b3.onclick=()=>{lockBgOff();o.remove();SC++;start()};c.append(b3)}
  try{document.querySelectorAll(".proOv").forEach(function(x){x.remove()})}catch(e3){}o.append(c);document.body.append(o);try{veil(0)}catch(e2){}
  }

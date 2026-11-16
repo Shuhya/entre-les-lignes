@@ -50,7 +50,8 @@
         "AVM1": "readonly",
         "AVM2": "readonly",
         "VOICES": "readonly",
-        "ETL_SUM": "readonly"
+        "ETL_SUM": "readonly",
+        "ETL_FINS": "readonly"
       },
       "rules": {
         "no-func-assign": "off"
