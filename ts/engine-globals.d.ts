@@ -10,6 +10,7 @@
 /* eslint-disable no-var */
 declare const S: any;
 declare const STORIES: any;
+declare const ETL_SUM: any;
 declare const ETL_FINS: any;
 declare const IMG: any;
 declare const VOICES: any;
