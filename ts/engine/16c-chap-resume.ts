@@ -22,28 +22,50 @@
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
    const c=card(s.t);
+   /* bascule Joueur / Test (bouton qui glisse) */
+   const tg=document.createElement('div');tg.className='modeTg';tg.dataset.mode='j';
+   const bJ=document.createElement('button');bJ.type='button';bJ.className='on';bJ.textContent='Joueur';
+   const bT=document.createElement('button');bT.type='button';bT.textContent='Test';
+   tg.append(bJ,bT);c.append(tg);
+   const pJ=document.createElement('div');pJ.className='modePane';
+   const pT=document.createElement('div');pT.className='modePane';pT.hidden=true;
+   c.append(pJ,pT);
+   const setMode=m=>{const j=m==='j';bJ.classList.toggle('on',j);bT.classList.toggle('on',!j);pJ.hidden=!j;pT.hidden=j;tg.dataset.mode=m};
+   bJ.onclick=()=>setMode('j');bT.onclick=()=>setMode('t');
+   const clearSave=()=>{try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}};
+   /* --- panneau Joueur : commencer / reprendre / \u00e9craser, 0 choix --- */
+   if(resuming)row(pJ,'\u25b6 Reprendre','Reprendre la conversation l\u00e0 o\u00f9 tu t\u2019es arr\u00eat\u00e9.',()=>resume(v));
+   const bGo=row(pJ,'\u25b6 Commencer l\u2019histoire','Nouvelle partie depuis le d\u00e9but.',()=>{
+    if(resuming&&!bGo.dataset.armed){bGo.dataset.armed='1';bGo.querySelector('b').textContent='\u26a0 Nouvelle partie\u00a0?';bGo.querySelector('small').textContent='La sauvegarde en cours sera \u00e9cras\u00e9e \u2014 reclique pour confirmer';return}
+    clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
+   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u00c9craser la progression</b><small>Efface sauvegarde, avancement et fins de cette histoire</small>';
+   rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00a0?';rsb.querySelector('small').textContent='Tout sera perdu \u2014 reclique pour confirmer';return}
+    clearSave();GHOST=false;delete seenPro[s.id];chap(s)};
+   pJ.append(rsb);
+   /* --- panneau Test : raccourcis qui fonctionnent tous --- */
    const rel=document.createElement('label');rel.className='relChk';
    const cb=document.createElement('input');cb.type='checkbox';cb.id='relChk';
-   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel de tout ce que tu as fait \u2014 n\u2019ouvre pas le jeu.</small>';
-   rel.append(cb,rt);c.append(rel);
-   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='Quel chapitre veux-tu ouvrir ?';c.append(cl);
+   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel \u2014 n\u2019ouvre pas le jeu.</small>';
+   rel.append(cb,rt);pT.append(rel);
+   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='Quel chapitre veux-tu ouvrir\u00a0?';pT.append(cl);
    const sel=document.createElement('select');sel.className='finSel';sel.id='chapSel';sel.setAttribute('aria-label','Choisir un chapitre');
    let firstOk=0;
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     if(ok&&!firstOk)firstOk=i;
     const o=document.createElement('option');o.value=i;o.textContent='Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12');o.disabled=!ok;sel.append(o)});
-   sel.value=String(firstOk);c.append(sel);
-   row(c,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
+   sel.value=String(firstOk);pT.append(sel);
+   row(pT,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
     if(cb.checked){summaryPage(s);return}
     const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);
     if(ch2free){ch2pick(s);return}
     actsMenu(s,i,h,sel,v)});
+   row(pT,'Chapitre 1 \u00b7 direct','Nouvelle partie, acte I, sans sauvegarde.',()=>{clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
+   row(pT,'Chapitre 2 \u00b7 Quai 9','Ouvre le menu de d\u00e9part du chapitre 2 (pr\u00e9nom, genre, acte, fin).',()=>ch2pick(s));
+   row(pT,'R\u00e9sum\u00e9 (relecture)','Page r\u00e9sum\u00e9 des chapitres et fins vues.',()=>summaryPage(s));
+   row(pT,'\u00c9cran de fin (factice)','Teste le rendu de l\u2019\u00e9cran de fin + tag format + post.',()=>endScreen('Le square des Tanneurs','Test du rendu de l\u2019\u00e9cran de fin.',[]));
+   row(pT,'Fins vues','Carte des fins d\u00e9couvertes / restantes.',()=>endsCard(s));
+   row(pT,'Vider la sauvegarde','Supprime tout et recharge le menu.',()=>{clearSave();GHOST=false;delete seenPro[s.id];chap(s)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
-   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
-   rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00A0?';rsb.querySelector('small').textContent='Progression, sauvegarde et fins de cette histoire seront perdues — reclique pour confirmer';return}
-    try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}
-    GHOST=false;delete seenPro[s.id];chap(s)};
-   c.append(rsb);
    show(c,homeIntro)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();

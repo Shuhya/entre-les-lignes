@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.245";
+const VER="2.246";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1076,7 +1076,7 @@ function toast(t){let d=document.getElementById("edToast");if(!d){d=document.cre
   show(c,()=>chap(s))}
  const feN=s=>{try{return(JSON.parse(localStorage.getItem('fe'+s.id)||'[]').filter(t=>endsAll(s).includes(t))).length}catch(e){return 0}};
  try{window.etlMisc={stopPro:stopPro,endsOf:endsOf,feN:feN,endsCard:endsCard,resume:resume,ch2go:ch2go,pg:()=>PG}}catch(e){}
- const oldStart=start;start=function(){bootIn(function(){try{phoneIn()}catch(e){}});path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}oldStart()};
+ const oldStart=start;start=function(){bootIn(function(){});path=[];if(!SC){try{localStorage.removeItem('etl_name_'+SS.id)}catch(e){}}oldStart()};
 function ch2pick(s){const done=((PG.c||0)>=2);
  const prev=(PG.s&&PG.s[1])||{};
  const base=Object.assign({t:0,l:0,r:0,v:0,e:""},(prev.pf!==undefined?{pf:prev.pf}:{}),(prev.pname!==undefined?{pname:prev.pname}:{}),(prev.t?{t:prev.t}:{}));
@@ -1169,28 +1169,50 @@ function ch2go(s,base,fl,k){SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].
    let P={c:0,s:[]};try{P=JSON.parse(localStorage.getItem('pg'+s.id))||P}catch(e){}
    PG=P;
    const c=card(s.t);
+   /* bascule Joueur / Test (bouton qui glisse) */
+   const tg=document.createElement('div');tg.className='modeTg';tg.dataset.mode='j';
+   const bJ=document.createElement('button');bJ.type='button';bJ.className='on';bJ.textContent='Joueur';
+   const bT=document.createElement('button');bT.type='button';bT.textContent='Test';
+   tg.append(bJ,bT);c.append(tg);
+   const pJ=document.createElement('div');pJ.className='modePane';
+   const pT=document.createElement('div');pT.className='modePane';pT.hidden=true;
+   c.append(pJ,pT);
+   const setMode=m=>{const j=m==='j';bJ.classList.toggle('on',j);bT.classList.toggle('on',!j);pJ.hidden=!j;pT.hidden=j;tg.dataset.mode=m};
+   bJ.onclick=()=>setMode('j');bT.onclick=()=>setMode('t');
+   const clearSave=()=>{try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}};
+   /* --- panneau Joueur : commencer / reprendre / \u00e9craser, 0 choix --- */
+   if(resuming)row(pJ,'\u25b6 Reprendre','Reprendre la conversation l\u00e0 o\u00f9 tu t\u2019es arr\u00eat\u00e9.',()=>resume(v));
+   const bGo=row(pJ,'\u25b6 Commencer l\u2019histoire','Nouvelle partie depuis le d\u00e9but.',()=>{
+    if(resuming&&!bGo.dataset.armed){bGo.dataset.armed='1';bGo.querySelector('b').textContent='\u26a0 Nouvelle partie\u00a0?';bGo.querySelector('small').textContent='La sauvegarde en cours sera \u00e9cras\u00e9e \u2014 reclique pour confirmer';return}
+    clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
+   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u00c9craser la progression</b><small>Efface sauvegarde, avancement et fins de cette histoire</small>';
+   rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00a0?';rsb.querySelector('small').textContent='Tout sera perdu \u2014 reclique pour confirmer';return}
+    clearSave();GHOST=false;delete seenPro[s.id];chap(s)};
+   pJ.append(rsb);
+   /* --- panneau Test : raccourcis qui fonctionnent tous --- */
    const rel=document.createElement('label');rel.className='relChk';
    const cb=document.createElement('input');cb.type='checkbox';cb.id='relChk';
-   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel de tout ce que tu as fait \u2014 n\u2019ouvre pas le jeu.</small>';
-   rel.append(cb,rt);c.append(rel);
-   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='Quel chapitre veux-tu ouvrir ?';c.append(cl);
+   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel \u2014 n\u2019ouvre pas le jeu.</small>';
+   rel.append(cb,rt);pT.append(rel);
+   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='Quel chapitre veux-tu ouvrir\u00a0?';pT.append(cl);
    const sel=document.createElement('select');sel.className='finSel';sel.id='chapSel';sel.setAttribute('aria-label','Choisir un chapitre');
    let firstOk=0;
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     if(ok&&!firstOk)firstOk=i;
     const o=document.createElement('option');o.value=i;o.textContent='Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12');o.disabled=!ok;sel.append(o)});
-   sel.value=String(firstOk);c.append(sel);
-   row(c,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
+   sel.value=String(firstOk);pT.append(sel);
+   row(pT,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
     if(cb.checked){summaryPage(s);return}
     const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);
     if(ch2free){ch2pick(s);return}
     actsMenu(s,i,h,sel,v)});
+   row(pT,'Chapitre 1 \u00b7 direct','Nouvelle partie, acte I, sans sauvegarde.',()=>{clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
+   row(pT,'Chapitre 2 \u00b7 Quai 9','Ouvre le menu de d\u00e9part du chapitre 2 (pr\u00e9nom, genre, acte, fin).',()=>ch2pick(s));
+   row(pT,'R\u00e9sum\u00e9 (relecture)','Page r\u00e9sum\u00e9 des chapitres et fins vues.',()=>summaryPage(s));
+   row(pT,'\u00c9cran de fin (factice)','Teste le rendu de l\u2019\u00e9cran de fin + tag format + post.',()=>endScreen('Le square des Tanneurs','Test du rendu de l\u2019\u00e9cran de fin.',[]));
+   row(pT,'Fins vues','Carte des fins d\u00e9couvertes / restantes.',()=>endsCard(s));
+   row(pT,'Vider la sauvegarde','Supprime tout et recharge le menu.',()=>{clearSave();GHOST=false;delete seenPro[s.id];chap(s)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
-   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg> Recommencer l\u2019histoire</b><small>Efface la progression de cette histoire</small>';
-   rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00A0?';rsb.querySelector('small').textContent='Progression, sauvegarde et fins de cette histoire seront perdues — reclique pour confirmer';return}
-    try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}
-    GHOST=false;delete seenPro[s.id];chap(s)};
-   c.append(rsb);
    show(c,homeIntro)};
   const goList=()=>{stopPro();
    if(!resuming)return goChaps();

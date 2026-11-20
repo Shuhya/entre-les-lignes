@@ -1135,3 +1135,11 @@ body.wa #app{background-color:var(--phone)}
 .finTag{display:inline-block;margin:2px 0 10px;padding:5px 12px;border:1px solid var(--gold-33);border-radius:var(--r-full);color:var(--gold);font:600 12.5px system-ui,sans-serif;letter-spacing:.4px}
 .finPost{margin:10px 0 4px;padding:12px 14px;border:1px dashed var(--w-20);border-radius:var(--r-10);background:var(--w-04);font:14px/1.6 system-ui,sans-serif;color:var(--tx-2);white-space:pre-line}
 .finPost b{display:block;margin-bottom:6px;color:var(--w-72);font-size:11.5px;text-transform:uppercase;letter-spacing:.12em}
+
+/* ---- v2.246 : bascule Joueur/Test coulissante ---- */
+.modeTg{position:relative;display:flex;margin:0 0 14px;border:1px solid var(--w-13);border-radius:var(--r-full);background:var(--w-04);padding:3px}
+.modeTg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);background:var(--gold);border-radius:var(--r-full);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.modeTg[data-mode="t"]::before{transform:translateX(100%)}
+.modeTg button{position:relative;z-index:1;flex:1;border:0;background:transparent;color:var(--tx-2);font:600 13px system-ui,sans-serif;padding:8px 0;border-radius:var(--r-full);cursor:pointer;transition:color .2s}
+.modeTg button.on{color:#0b0d12}
+.modePane{display:flex;flex-direction:column;gap:2px}

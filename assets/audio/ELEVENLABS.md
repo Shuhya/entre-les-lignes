@@ -1,151 +1,81 @@
-# ELEVENLABS — lignes à générer (voix des appels) — v2.244
+# ELEVENLABS — lignes à générer (voix des appels) — v2.246
 
-Source : `assets/audio/CALLS.csv` (type `replique` uniquement — les didascalies restent en texte, les choix ne se disent jamais).
+Objectif : une voix qui **sonne téléphone et humaine** — pas une IA parfaite.
+On veut entendre des « euh… », des « bon », des hésitations, des respirations.
 
-Acte 3 (q9…) = WhatsApp uniquement : aucune voix à enregistrer pour l'instant (le moteur retombe sur les bips TTS).
+Source : `assets/audio/CALLS.csv` (type `replique` uniquement — didascalies en texte, choix jamais dits).
+Acte 3 (q9…) = WhatsApp : aucune voix pour l'instant (repli = bips TTS).
 
 ## 0. TEST d'abord (1 ligne)
+Génère **uniquement** `cora-h8-1.mp3` avec la version parlée ci-dessous + réglages, écoute sur le **haut-parleur du téléphone** (pas les écouteurs), ajuste, puis batch le reste.
 
-Génère **uniquement** `cora-h8-1.mp3` avec les réglages ci-dessous, écoute sur le haut-parleur du téléphone, ajuste, puis batch le reste.
+## 1. Voix (Voice Design v3 — reproductible)
+- **Cora** — prompt : « young French woman, 25–35, low-pitched fast voice, tense, whispery, urgent, natural speech with fillers (euh, bon), hesitations and breaths, NOT a clean synthetic voice, not villainous ».
+- **Riffaud** — prompt : « middle-aged French man, 45–60, calm deep voice, precise but natural, slight hesitations, quietly threatening ».
+- **IMPORTANT pour le réalisme** : fournis 2–3 **vrais échantillons** (20–30 s) enregistrés sur ton téléphone avec tes propres tics de langage — la voix clonera les hésitations naturelles. Ne prends pas une voix « studio propre » de la bibliothèque.
+(Alternative : voix « conversational/dramatic » French de la bibliothèque.)
 
-## 1. Voix (Voice Design v3, 100 % reproductible)
-
-- **Cora** — prompt : « young French woman, 25–35, low-pitched fast voice, tense, whispery, urgent, not villainous » + 2–3 échantillons de référence (20–30 s de français expressif).
-- **Riffaud** — prompt : « middle-aged French man, 45–60, calm deep voice, precise, quietly threatening » + échantillons.
-(Alternative moins chère : 2 voix « dramatic » French de la bibliothèque, épinglées en professional.)
-
-## 2. Réglages communs (toutes les lignes)
-
+## 2. Réglages communs
 | Réglage | Valeur |
 |---|---|
-| Modèle | `eleven_v3` (alpha) si dispo, sinon `eleven_multilingual_v2` |
-| Stability | 0.40 |
+| Modèle | `eleven_v3` (alpha) sinon `eleven_multilingual_v2` |
+| Stability | **0.35–0.45** (plus bas = plus d'émotion/variation humaine) |
 | Similarity boost | 0.80 |
-| Style | 0.40 |
+| Style | **0.30** (moins = moins « joué ») |
 | Speaker boost | ON |
-| Output | `mp3_22050_32` (22 kHz / 32 kbps) |
-| Post-traitement | `ffmpeg -i in.mp3 -af loudnorm=I=-16 -ar 22050 -ac 1 out.mp3` |
+| Output | `mp3_22050_32` |
 
-Tags audio v3 à tester : `[whispers]`, `[sighs]`, `[hesitates]`, pauses `…`.
+## 3. Post-traitement « téléphone » (obligatoire)
+Simule le haut-parleur mono d'un mobile (bande 300–3400 Hz) + loudness :
+```bash
+ffmpeg -i in.mp3 -af "highpass=f=300,lowpass=f=3400,loudnorm=I=-16,acompressor=threshold=-20dB:ratio=3" -ar 22050 -ac 1 out.mp3
+```
+Tags audio v3 dans le texte : `[hesitates]`, `[sighs]`, `[breathes]`, pauses `…`.
 
-## 3. Les 12 lignes (copier-coller le texte + prompt)
+## 4. Les 12 lignes — TEXTE PARLÉ (avec tics) à coller + prompt
+> Le texte à l'écran dans le jeu reste propre (CALLS.csv) : seuls les tics sont ajoutés à la version parlée.
 
+### `cora-h8-1.mp3` — C. (h8) — prompt: urgent, tense, whispered, with fillers and hesitations
+> Euh… le quai 9, c'est un test de Mandragore, hein… le réseau derrière la Larme. Bon. Leur répondre… ça veut dire exister pour eux.
 
-### `cora-h8-1.mp3` — C. (nœud h8)
+### `cora-h8-3.mp3` — C. (h8) — prompt: hushed revelation, lower on CHIMÈRE, breath before
+> [breathes] Ce que Nils cachait… ça s'appelle CHIMÈRE. Deux ans d'enquête sur Mandragore… chiffrés, rattachés à ce numéro. La clé, c'est la ligne elle-même. Euh… ton téléphone, c'est la clé ET le coffre. Voilà pourquoi ils te cherchent.
 
-**Prompt (direction) :** urgent, tense, whispered, fast — she is warning him mid-call
+### `cora-h8-5.mp3` — C. (h8) — prompt: cold, precise, final — short, no filler
+> Demain, 12 h 15, square des Tanneurs. Le banc face au kiosque. Sois à l'heure.
 
-**Texte à coller :**
+### `cora-h8i-1.mp3` — C. (h8i) — prompt: angry, accusatory, fast, barely controlled
+> D'abord… une chose. Ta réponse tout à l'heure, « personne »… c'est faux, hein, et tu le sais. Quelqu'un d'autre t'a écrit sur ce numéro… et je sais que t'as répondu. Bon. Ne me mens plus jamais. Et ce soir : garde ta porte verrouillée.
 
-> Le quai 9, c'est un test de Mandragore, le réseau derrière la Larme. Leur répondre, c'est exister pour eux.
+### `cora-h8i-2.mp3` — C. (h8i) — prompt: urgent, tense, whispered
+> Euh… le quai 9, c'est un test de Mandragore… le réseau derrière la Larme. Leur répondre, c'est exister pour eux.
 
+### `cora-h8i-4.mp3` — C. (h8i) — prompt: hushed revelation, lower on CHIMÈRE
+> [breathes] Ce que Nils cachait… CHIMÈRE. Deux ans d'enquête… chiffrés, rattachés à ce numéro. La ligne elle-même, c'est la clé. Ton téléphone… c'est la clé et le coffre. Voilà pourquoi ils te cherchent.
 
-### `cora-h8-3.mp3` — C. (nœud h8)
+### `cora-h8i-6.mp3` — C. (h8i) — prompt: cold, precise, final
+> Demain, 12 h 15, square des Tanneurs. Le banc face au kiosque. Sois à l'heure.
 
-**Prompt (direction) :** tense, hushed revelation — leaning in, lower volume on CHIMÈRE
+### `cora-h8p-1.mp3` — C. (h8p) — prompt: urgent, confrontational, fast
+> Bon. Tu as répondu « prise confirmée ». Écoute… le quai 9, c'est un test de Mandragore : le réseau derrière la Larme, la drogue de synthèse qui noie la ville depuis l'été. Et à 23 h 40… quelqu'un y attendra un échantillon.
 
-**Texte à coller :**
+### `cora-h8p-4.mp3` — C. (h8p) — prompt: hushed revelation, lower on CHIMÈRE
+> [sighs] Nils cachait CHIMÈRE… deux ans d'enquête, chiffrés, sur ce numéro. La ligne, c'est la clé. Ton téléphone… c'est la clé et le coffre. Demain, 12 h 15, square des Tanneurs.
 
-> Ce que Nils cachait s'appelle CHIMÈRE : deux ans d'enquête sur Mandragore, chiffrés, rattachés à ce numéro. La clé, c'est la ligne elle-même. Ton téléphone est la clé et le coffre. Voilà pourquoi ils te cherchent.
+### `riffaud-q6c-1.mp3` — Riffaud (q6c) — prompt: calm, deep, polite opening that already threatens, slight pause
+> Alors… [hesitates] Le quai 9, vous y avez un rendez-vous ?
 
+### `riffaud-q6c-4.mp3` — Riffaud (q6c) — prompt: calm, measured, quietly threatening
+> Trois signalements sur la Larme ce mois-ci. Trois. Tous classés. Même magistrat, les trois fois. Euh… c'est propre, ce genre de coïncidence.
 
-### `cora-h8-5.mp3` — C. (nœud h8)
+### `riffaud-q6c-5.mp3` — Riffaud (q6c) — prompt: slow, ominous warning, soft voice, hard ending
+> [breathes] Faites attention à qui vous faites confiance. Les gens bien informés… finissent mal, à Vaubris.
 
-**Prompt (direction) :** cold, precise, final — she is giving an order, then hangs up
-
-**Texte à coller :**
-
-> Demain, 12 h 15, square des Tanneurs. Le banc face au kiosque. Sois à l'heure.
-
-
-### `cora-h8i-1.mp3` — C. (nœud h8i)
-
-**Prompt (direction) :** angry, accusatory, fast — she caught him lying, barely controlled
-
-**Texte à coller :**
-
-> D’abord, une chose : ta réponse tout à l’heure, « personne », c’est faux, et tu le sais. Quelqu’un d’autre t’a écrit sur ce numéro, et je sais que tu as répondu. Ne me mens plus jamais. Et ce soir : garde ta porte verrouillée.
-
-
-### `cora-h8i-2.mp3` — C. (nœud h8i)
-
-**Prompt (direction) :** urgent, tense, whispered, fast
-
-**Texte à coller :**
-
-> Le quai 9, c'est un test de Mandragore, le réseau derrière la Larme. Leur répondre, c'est exister pour eux.
-
-
-### `cora-h8i-4.mp3` — C. (nœud h8i)
-
-**Prompt (direction) :** tense, hushed revelation — lower volume on CHIMÈRE
-
-**Texte à coller :**
-
-> Ce que Nils cachait s'appelle CHIMÈRE : deux ans d'enquête sur Mandragore, chiffrés, rattachés à ce numéro. La clé, c'est la ligne elle-même. Ton téléphone est la clé et le coffre. Voilà pourquoi ils te cherchent.
-
-
-### `cora-h8i-6.mp3` — C. (nœud h8i)
-
-**Prompt (direction) :** cold, precise, final — order, then hang up
-
-**Texte à coller :**
-
-> Demain, 12 h 15, square des Tanneurs. Le banc face au kiosque. Sois à l'heure.
-
-
-### `cora-h8p-1.mp3` — C. (nœud h8p)
-
-**Prompt (direction) :** urgent, tense, fast — she opens by confronting his confirmation
-
-**Texte à coller :**
-
-> Tu as répondu « prise confirmée ». Le quai 9, c'est un test de Mandragore : le réseau derrière la Larme, la drogue de synthèse qui noie la ville depuis l'été. Et à 23 h 40, quelqu'un y attendra un échantillon.
-
-
-### `cora-h8p-4.mp3` — C. (nœud h8p)
-
-**Prompt (direction) :** hushed, tense revelation — lower volume on CHIMÈRE
-
-**Texte à coller :**
-
-> Nils cachait CHIMÈRE : deux ans d'enquête, chiffrés, rattachés à ce numéro. La clé, c'est la ligne elle-même. Ton téléphone est la clé et le coffre. Voilà pourquoi ils te cherchent. Demain, 12 h 15, square des Tanneurs.
-
-
-### `riffaud-q6c-1.mp3` — Riffaud (nœud q6c)
-
-**Prompt (direction) :** calm, deep, precise — polite opening that already threatens
-
-**Texte à coller :**
-
-> Alors. Le quai 9, vous y avez un rendez-vous ?
-
-
-### `riffaud-q6c-4.mp3` — Riffaud (nœud q6c)
-
-**Prompt (direction) :** calm, measured, quietly threatening — listing the sealed cases
-
-**Texte à coller :**
-
-> Trois signalements sur la Larme ce mois-ci. Tous classés. Même magistrat, les trois fois. C’est propre, ce genre de coïncidence.
-
-
-### `riffaud-q6c-5.mp3` — Riffaud (nœud q6c)
-
-**Prompt (direction) :** slow, ominous warning — soft voice, hard ending
-
-**Texte à coller :**
-
-> Faites attention à qui vous faites confiance. Les gens bien informés finissent mal, à Vaubris.
-
-
-## 4. Intégration
-
-1. Déposer les mp3 dans `assets/audio/calls/` (noms déjà prévus dans le CSV).
-2. `js/assets.js` : `VOICES` déjà en squelette (`cora.mp3` / `riffaud.mp3` = extrait de sonnerie) — si fichier absent, le moteur retombe sur les bips.
-3. Ne PAS ajouter les mp3 au precache `PRE` de `sw.js` tant qu'ils n'existent pas (addAll atomique).
+## 5. Intégration
+1. mp3 dans `assets/audio/calls/` (noms du CSV).
+2. `VOICES` déjà en squelette dans `js/assets.js` ; sinon repli bips.
+3. Ne PAS ajouter les mp3 au precache `PRE` de `sw.js` tant qu'ils n'existent pas.
 4. Test : `node scripts/validate.js` + playtest §4 de `PLAYTEST.md`.
 
-## 5. Coût
-
-12 lignes ≈ 1 718 caractères ≈ ~1,7 k crédits → OK en gratuit pour TESTER. Pour publier : plan Creator (licence commerciale) ~5 $/mois — voir `AUDIO.md`.
+## 6. Coût
+12 lignes ≈ ~1,9 k caractères ≈ ~2 k crédits → OK en gratuit pour TESTER. Publier : plan Creator (licence commerciale) ~5 $/mois — voir `AUDIO.md`.

@@ -93,14 +93,22 @@ const first=s=>qa(doc.body,s)[0]||null;
 
 (async()=>{try{
  T.menu(); await sleep(200);
+ /* bascule en mode Test (le d\u00e9roulant chapitres y vit) */
+ const tg=first(".modeTg");
+ if(!tg)throw new Error("bascule Joueur/Test absente");
+ if(tg.dataset.mode!=="j")throw new Error("mode par d\u00e9faut devrait \u00eatre Joueur");
+ const bTest=qa(doc.body,".modeTg button")[1]; bTest.click();
+ if(tg.dataset.mode!=="t")throw new Error("la bascule ne passe pas en Test");
+ const pJ=first(".modePane"); if(!pJ||!pJ.hidden)throw new Error("panneau Joueur devrait \u00eatre masqu\u00e9 en mode Test");
  const cards=qa(doc.body,"#chapSel option");
- if(cards.length!==2)throw new Error("attendu 2 chapitres dans le d\u00e9roulant (ouverture directe), trouv\u00e9 "+cards.length);
+ if(cards.length!==2)throw new Error("attendu 2 chapitres dans le d\u00e9roulant (mode Test), trouv\u00e9 "+cards.length);
  if(/Ouvrir le livre|Param\u00e8tres de la partie/.test(doc.body.textContent))throw new Error("niveau biblioth\u00e8que encore pr\u00e9sent");
  const ft=first(".finsTag");
  if(!ft||!/\d+ \/ \d+/.test(ft.textContent))throw new Error("badge fins absent: "+(ft&&ft.textContent));
  const sel=first("#chapSel"); if(!sel)throw new Error("déroulant chapitres absent");
  sel.value="0";
- const go=qa(doc.body,".st").find(b=>/Commencer/.test(b.textContent));
+ const go=qa(doc.body,".st").find(b=>b.textContent.indexOf("\u25b6 Commencer")===0&&b.textContent.indexOf("histoire")<0);
+ if(!go)throw new Error("bouton Commencer (panneau Test) absent");
  if(!go)throw new Error("bouton Commencer absent");
  go.click(); await sleep(80);
  const acts=qa(doc.body,".actBtn");
