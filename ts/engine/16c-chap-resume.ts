@@ -32,16 +32,17 @@
    c.append(pJ,pT);
    const setMode=m=>{const j=m==='j';bJ.classList.toggle('on',j);bT.classList.toggle('on',!j);pJ.hidden=!j;pT.hidden=j;tg.dataset.mode=m};
    bJ.onclick=()=>setMode('j');bT.onclick=()=>setMode('t');
+   /* --- panneau Joueur : 1 gros bouton Jouer + lien effacer --- */
    const clearSave=()=>{try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}};
-   /* --- panneau Joueur : commencer / reprendre / \u00e9craser, 0 choix --- */
-   if(resuming)row(pJ,'\u25b6 Reprendre','Reprendre la conversation l\u00e0 o\u00f9 tu t\u2019es arr\u00eat\u00e9.',()=>resume(v));
-   const bGo=row(pJ,'\u25b6 Commencer l\u2019histoire','Nouvelle partie depuis le d\u00e9but.',()=>{
-    if(resuming&&!bGo.dataset.armed){bGo.dataset.armed='1';bGo.querySelector('b').textContent='\u26a0 Nouvelle partie\u00a0?';bGo.querySelector('small').textContent='La sauvegarde en cours sera \u00e9cras\u00e9e \u2014 reclique pour confirmer';return}
-    clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
-   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u00c9craser la progression</b><small>Efface sauvegarde, avancement et fins de cette histoire</small>';
-   rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00a0?';rsb.querySelector('small').textContent='Tout sera perdu \u2014 reclique pour confirmer';return}
+   const bJouer=document.createElement('button');bJouer.className='jouerBtn';bJouer.type='button';
+   bJouer.textContent=resuming?'\u25b6  Reprendre':'\u25b6  Commencer l\u2019histoire';
+   bJouer.onclick=()=>{if(resuming){resume(v);return}clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)};
+   pJ.append(bJouer);
+   const eff=document.createElement('button');eff.type='button';eff.className='effLink';
+   eff.textContent='Effacer la sauvegarde';
+   eff.onclick=()=>{if(!eff.dataset.armed){eff.dataset.armed='1';eff.textContent='Confirmer l\u2019effacement\u00a0?';return}
     clearSave();GHOST=false;delete seenPro[s.id];chap(s)};
-   pJ.append(rsb);
+   pJ.append(eff);
    /* --- panneau Test : où commencer + quelle fin --- */
    const cl=document.createElement('p');cl.className='proTxt';cl.textContent='O\u00f9 veux-tu commencer\u00a0?';pT.append(cl);
    const sel=document.createElement('select');sel.className='finSel';sel.id='chapSel';sel.setAttribute('aria-label','Choisir un chapitre');

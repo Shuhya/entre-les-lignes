@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.247";
+const VER="2.248";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1179,16 +1179,17 @@ function ch2go(s,base,fl,k){SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].
    c.append(pJ,pT);
    const setMode=m=>{const j=m==='j';bJ.classList.toggle('on',j);bT.classList.toggle('on',!j);pJ.hidden=!j;pT.hidden=j;tg.dataset.mode=m};
    bJ.onclick=()=>setMode('j');bT.onclick=()=>setMode('t');
+   /* --- panneau Joueur : 1 gros bouton Jouer + lien effacer --- */
    const clearSave=()=>{try{localStorage.removeItem(KEY);localStorage.removeItem('pg'+s.id);localStorage.removeItem('fe'+s.id);localStorage.removeItem('etl_name_'+s.id);localStorage.removeItem('etl_part_'+s.id)}catch(e){}};
-   /* --- panneau Joueur : commencer / reprendre / \u00e9craser, 0 choix --- */
-   if(resuming)row(pJ,'\u25b6 Reprendre','Reprendre la conversation l\u00e0 o\u00f9 tu t\u2019es arr\u00eat\u00e9.',()=>resume(v));
-   const bGo=row(pJ,'\u25b6 Commencer l\u2019histoire','Nouvelle partie depuis le d\u00e9but.',()=>{
-    if(resuming&&!bGo.dataset.armed){bGo.dataset.armed='1';bGo.querySelector('b').textContent='\u26a0 Nouvelle partie\u00a0?';bGo.querySelector('small').textContent='La sauvegarde en cours sera \u00e9cras\u00e9e \u2014 reclique pour confirmer';return}
-    clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
-   const rsb=document.createElement('button');rsb.className='st restartBtn';rsb.innerHTML='<b>\u00c9craser la progression</b><small>Efface sauvegarde, avancement et fins de cette histoire</small>';
-   rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00a0?';rsb.querySelector('small').textContent='Tout sera perdu \u2014 reclique pour confirmer';return}
+   const bJouer=document.createElement('button');bJouer.className='jouerBtn';bJouer.type='button';
+   bJouer.textContent=resuming?'\u25b6  Reprendre':'\u25b6  Commencer l\u2019histoire';
+   bJouer.onclick=()=>{if(resuming){resume(v);return}clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)};
+   pJ.append(bJouer);
+   const eff=document.createElement('button');eff.type='button';eff.className='effLink';
+   eff.textContent='Effacer la sauvegarde';
+   eff.onclick=()=>{if(!eff.dataset.armed){eff.dataset.armed='1';eff.textContent='Confirmer l\u2019effacement\u00a0?';return}
     clearSave();GHOST=false;delete seenPro[s.id];chap(s)};
-   pJ.append(rsb);
+   pJ.append(eff);
    /* --- panneau Test : où commencer + quelle fin --- */
    const cl=document.createElement('p');cl.className='proTxt';cl.textContent='O\u00f9 veux-tu commencer\u00a0?';pT.append(cl);
    const sel=document.createElement('select');sel.className='finSel';sel.id='chapSel';sel.setAttribute('aria-label','Choisir un chapitre');

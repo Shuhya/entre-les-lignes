@@ -1144,3 +1144,9 @@ body.wa #app{background-color:var(--phone)}
 .modeTg button.on{color:#0b0d12}
 .modePane{display:flex;flex-direction:column;gap:2px}
 .modePane[hidden]{display:none!important}
+
+/* ---- v2.248 : menu joueur minimal ---- */
+.jouerBtn{display:block;width:100%;margin:6px 0 10px;padding:16px 18px;border:0;border-radius:var(--r-14);background:var(--gold);color:#0b0d12;font:700 17px system-ui,sans-serif;letter-spacing:.3px;cursor:pointer;box-shadow:0 6px 24px #ffd16633}
+.jouerBtn:active{transform:scale(.98)}
+.effLink{align-self:center;border:0;background:transparent;color:var(--tx-2);font:500 12.5px system-ui,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
+.effLink:hover{color:var(--tx)}
