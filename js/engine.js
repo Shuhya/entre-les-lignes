@@ -19,7 +19,7 @@ const R=(a,b)=>a+Math.random()*(b-a),Pk=a=>a[Math.random()*a.length|0];
 function hit(f,d,v,ty="bandpass",a=.01,q=1){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=nz;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(ag);s.start(t,Math.random()*(nz.duration-d-1),d+.1)}
 function tn(f,f2,d,v,a=.01){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ag);o.start(t);o.stop(t+d)}
 const steps=n=>{for(let i=0;i<n;i++)setTimeout(()=>hit(R(150,260),.09,R(.03,.06),"lowpass"),i*R(380,520))};
-const VER="2.246";
+const VER="2.247";
 const LKLOCK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.6"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/></svg>';
 /* ---- v2.85 : vrai téléphone = pas de nav du bas, sbar allégée (l'heure fiction reste) ---- */
 function updMob(){try{document.body.classList.toggle("mob",!PC&&(typeof matchMedia==="function")&&matchMedia("(pointer:coarse)").matches)}catch(e){}}
@@ -1189,28 +1189,28 @@ function ch2go(s,base,fl,k){SC=1;if(k!=null){const acts=(s.ch[1][2]&&s.ch[1][2].
    rsb.onclick=()=>{if(!rsb.dataset.armed){rsb.dataset.armed='1';rsb.querySelector('b').textContent='Confirmer l\u2019effacement\u00a0?';rsb.querySelector('small').textContent='Tout sera perdu \u2014 reclique pour confirmer';return}
     clearSave();GHOST=false;delete seenPro[s.id];chap(s)};
    pJ.append(rsb);
-   /* --- panneau Test : raccourcis qui fonctionnent tous --- */
-   const rel=document.createElement('label');rel.className='relChk';
-   const cb=document.createElement('input');cb.type='checkbox';cb.id='relChk';
-   const rt=document.createElement('span');rt.innerHTML='<b>Relecture</b><small>Voir le r\u00e9sum\u00e9 textuel \u2014 n\u2019ouvre pas le jeu.</small>';
-   rel.append(cb,rt);pT.append(rel);
-   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='Quel chapitre veux-tu ouvrir\u00a0?';pT.append(cl);
+   /* --- panneau Test : où commencer + quelle fin --- */
+   const cl=document.createElement('p');cl.className='proTxt';cl.textContent='O\u00f9 veux-tu commencer\u00a0?';pT.append(cl);
    const sel=document.createElement('select');sel.className='finSel';sel.id='chapSel';sel.setAttribute('aria-label','Choisir un chapitre');
    let firstOk=0;
    s.ch.forEach((h,i)=>{const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);const w=!!S[h[1]],ok=w&&(i===0||i<P.c||ch2free);
     if(ok&&!firstOk)firstOk=i;
     const o=document.createElement('option');o.value=i;o.textContent='Chapitre '+(i+1)+' \u00B7 '+h[0]+(ok?'':' \u00B7 \uD83D\uDD12');o.disabled=!ok;sel.append(o)});
    sel.value=String(firstOk);pT.append(sel);
-   row(pT,'\u25b6 Commencer','Ouvrir le chapitre choisi.',()=>{const i=+sel.value;const h=s.ch[i];if(!h)return;
-    if(cb.checked){summaryPage(s);return}
-    const ch2free=(s.id==='h'&&i===1&&h[1]==='q1'&&(P.c||0)<2);
+   const al=document.createElement('p');al.className='proTxt';al.textContent='Quel acte\u00a0?';pT.append(al);
+   const asel=document.createElement('select');asel.className='finSel';asel.id='actSel';asel.setAttribute('aria-label','Choisir un acte');
+   const fillActs=()=>{const i2=+sel.value;const acts=(s.ch[i2][2]&&s.ch[i2][2].length)?s.ch[i2][2]:[[s.ch[i2][0],s.ch[i2][1]]];asel.innerHTML='';
+    acts.forEach(function(a,k){const op=document.createElement('option');op.value=k;op.textContent='Acte '+(k+1)+' \u00b7 '+a[0];asel.append(op)})};
+   sel.onchange=fillActs;fillActs();pT.append(asel);
+   row(pT,'\u25b6 Commencer','Lancer \u00e0 ce chapitre / cet acte.',()=>{const i2=+sel.value;const k=+asel.value;const h=s.ch[i2];if(!h)return;
+    const ch2free=(s.id==='h'&&i2===1&&h[1]==='q1'&&(P.c||0)<2);
     if(ch2free){ch2pick(s);return}
-    actsMenu(s,i,h,sel,v)});
-   row(pT,'Chapitre 1 \u00b7 direct','Nouvelle partie, acte I, sans sauvegarde.',()=>{clearSave();GHOST=false;delete seenPro[s.id];SC=0;startAct(s,0,0)});
-   row(pT,'Chapitre 2 \u00b7 Quai 9','Ouvre le menu de d\u00e9part du chapitre 2 (pr\u00e9nom, genre, acte, fin).',()=>ch2pick(s));
-   row(pT,'R\u00e9sum\u00e9 (relecture)','Page r\u00e9sum\u00e9 des chapitres et fins vues.',()=>summaryPage(s));
-   row(pT,'\u00c9cran de fin (factice)','Teste le rendu de l\u2019\u00e9cran de fin + tag format + post.',()=>endScreen('Le square des Tanneurs','Test du rendu de l\u2019\u00e9cran de fin.',[]));
-   row(pT,'Fins vues','Carte des fins d\u00e9couvertes / restantes.',()=>endsCard(s));
+    startAct(s,i2,k)});
+   const fl=document.createElement('p');fl.className='proTxt';fl.textContent='Quelle fin veux-tu voir\u00a0?';pT.append(fl);
+   const fsel=document.createElement('select');fsel.className='finSel';fsel.id='finSel';fsel.setAttribute('aria-label','Choisir une fin');
+   endsList(s).forEach(function(f){const op=document.createElement('option');op.value=f;op.textContent=f;fsel.append(op)});
+   pT.append(fsel);
+   row(pT,'\uD83C\uDFC1 Voir la fin','Affiche l\u2019\u00e9cran de fin choisi (tag format + post partageable).',()=>endScreen(fsel.value,'Test de l\u2019\u00e9cran de fin.',[]));
    row(pT,'Vider la sauvegarde','Supprime tout et recharge le menu.',()=>{clearSave();GHOST=false;delete seenPro[s.id];chap(s)});
    {const tot=endsOf(s),got=feN(s);const fb=document.createElement('button');fb.className='finsTag';fb.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg> '+Math.min(got,tot)+' / '+tot;fb.onclick=()=>endsCard(s);c.append(fb)}
    show(c,homeIntro)};

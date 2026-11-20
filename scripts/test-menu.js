@@ -110,11 +110,11 @@ const first=s=>qa(doc.body,s)[0]||null;
  const go=qa(doc.body,".st").find(b=>b.textContent.indexOf("\u25b6 Commencer")===0&&b.textContent.indexOf("histoire")<0);
  if(!go)throw new Error("bouton Commencer (panneau Test) absent");
  if(!go)throw new Error("bouton Commencer absent");
- go.click(); await sleep(80);
- const acts=qa(doc.body,".actBtn");
- if(acts.length!==2)throw new Error("attendu 2 boutons acte (Acte + R\u00e9sum\u00e9) pour ch1, trouv\u00e9 "+acts.length);
- acts.forEach(a=>{if(a.children.some(c=>c.tagName==="SMALL"))throw new Error("sous-libell\u00e9 acte encore pr\u00e9sent: "+a.textContent)});
- if(!first(".mnBack"))throw new Error("chevron retour absent");
+ go.click(); await sleep(1700); /* boot matrix ~1,5 s avant le 1er n\u0153ud */
+ /* Commencer lance directement le chapitre choisi (plus de liste d'actes interm\u00e9diaire) */
+ if(!first("#nameGate"))throw new Error("le jeu n'a pas d\u00e9marr\u00e9 apr\u00e8s Commencer (nameGate absent)");
+ const fs2=first("#finSel"); if(!fs2)throw new Error("d\u00e9roulant des fins absent en mode Test");
+ const ao=first("#actSel"); if(!ao)throw new Error("d\u00e9roulant des actes absent en mode Test");
  const vol=doc.getElementById("vol");const h0=vol.hidden;
  doc.getElementById("set").click(); await sleep(30);
  if(vol.hidden===h0)throw new Error("#vol n'a pas bascul\u00e9 via \u2699");
